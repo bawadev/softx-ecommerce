@@ -264,7 +264,10 @@ export default function HomePageClient({
       {isAuthenticated && filteredRecentlyViewed.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">{t('recentlyViewed')}</h2>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">{t('recentlyViewed')}</h2>
+              <p className="text-sm text-gray-600 mt-1">{t('recentlyViewedSubtitle')}</p>
+            </div>
             <Link href={`/${locale}/shop`} className="text-sm font-medium text-navy-600 hover:text-navy-700">
               {t('viewAll')}
             </Link>

@@ -69,8 +69,15 @@ export async function getRecentlyViewedProducts(
     const result = await session.run(
       `
       MATCH (v:ProductView {userId: $userId})-[:VIEWED_PRODUCT]->(p:Product)
-      WITH p, v
-      ORDER BY v.viewedAt DESC
+      WHERE NOT EXISTS {
+        MATCH (:User {id: $userId})-[:PLACED_ORDER]->(o:Order)-[:HAS_ITEM]->(:OrderItem)-[:ITEM_OF_VARIANT]->(:ProductVariant)-[:VARIANT_OF]->(p)
+        WHERE o.status <> 'CANCELLED'
+      }
+      AND NOT EXISTS {
+        MATCH (:User {id: $userId})-[:HAS_CART_ITEM]->(:CartItem)-[:CART_ITEM_FOR]->(:ProductVariant)-[:VARIANT_OF]->(p)
+      }
+      WITH p, max(v.viewedAt) as lastViewed
+      ORDER BY lastViewed DESC
       LIMIT $limit
       OPTIONAL MATCH (variant:ProductVariant)-[:VARIANT_OF]->(p)
       WITH p, collect(DISTINCT variant {.*}) as variants
