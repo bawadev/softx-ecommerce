@@ -38,6 +38,7 @@ export async function createHeroSlideAction(data: {
   badgeText: string
   title: string
   subtitle: string
+  linkUrl?: string
   displayOrder: number
   isActive?: boolean
 }): Promise<ActionResponse<HeroSlide>> {
@@ -75,6 +76,7 @@ export async function updateHeroSlideAction(
     badgeText: string
     title: string
     subtitle: string
+    linkUrl: string
     displayOrder: number
     isActive: boolean
   }>

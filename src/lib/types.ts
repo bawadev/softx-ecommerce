@@ -167,6 +167,7 @@ export interface HeroSlide {
   badgeText: string
   title: string
   subtitle: string
+  linkUrl?: string
   displayOrder: number
   isActive: boolean
   createdAt: string

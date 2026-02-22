@@ -22,6 +22,7 @@ function mapToHeroSlide(properties: any): HeroSlide {
     badgeText: properties.badgeText,
     title: properties.title,
     subtitle: properties.subtitle,
+    linkUrl: properties.linkUrl || undefined,
     displayOrder: toNumber(properties.displayOrder),
     isActive: properties.isActive,
     createdAt: properties.createdAt.toString(),
@@ -85,6 +86,7 @@ export async function createHeroSlide(
     badgeText: string
     title: string
     subtitle: string
+    linkUrl?: string
     displayOrder: number
     isActive?: boolean
   }
@@ -98,6 +100,7 @@ export async function createHeroSlide(
       badgeText: $badgeText,
       title: $title,
       subtitle: $subtitle,
+      linkUrl: $linkUrl,
       displayOrder: $displayOrder,
       isActive: $isActive,
       createdAt: $now,
@@ -111,6 +114,7 @@ export async function createHeroSlide(
       badgeText: data.badgeText,
       title: data.title,
       subtitle: data.subtitle,
+      linkUrl: data.linkUrl || null,
       displayOrder: data.displayOrder,
       isActive: data.isActive ?? true,
       now: new Date().toISOString(),
@@ -132,6 +136,7 @@ export async function updateHeroSlide(
     badgeText: string
     title: string
     subtitle: string
+    linkUrl: string
     displayOrder: number
     isActive: boolean
   }>
@@ -158,6 +163,10 @@ export async function updateHeroSlide(
   if (data.subtitle !== undefined) {
     updates.push('h.subtitle = $subtitle')
     params.subtitle = data.subtitle
+  }
+  if (data.linkUrl !== undefined) {
+    updates.push('h.linkUrl = $linkUrl')
+    params.linkUrl = data.linkUrl || null
   }
   if (data.displayOrder !== undefined) {
     updates.push('h.displayOrder = $displayOrder')
