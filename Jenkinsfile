@@ -1,51 +1,45 @@
 @Library('softx-cicd') _
 
-deployApp(
-    appName: 'factorybay',
-    dockerImage: 'bawadev/factorybay',
+// Environment configuration
+def environment = params.ENVIRONMENT ?: 'dev'
+
+def config = [
+    dev: [
+        domain:       'dev.renfy.style',
+        serverIp:     '185.211.6.206',
+        credentialId: 'ssh-key-dev'
+    ],
+    prod: [
+        domain:       'renfy.style',
+        serverIp:     '62.171.137.117',
+        credentialId: 'ssh-key-prod'
+    ],
+    prod2: [
+        domain:       'renfy.style',
+        serverIp:     '95.111.252.20',
+        credentialId: 'ssh-key-prod2'
+    ]
+]
+
+def envConfig = config[environment]
+
+if (!envConfig) {
+    error "Unknown environment: ${environment}. Valid values: dev, prod, prod2"
+}
+
+// Deploy full e-commerce stack (infrastructure + database + application)
+deployEcommerceStack(
+    appName:       'factorybay',
+    appRepo:       'bawadev/TheFactoryBay',
+    dockerImage:   'bawadev/factorybay',
     containerPort: '3000',
-    traefikLabels: [
-        prod: [domain: 'renfy.style'],
-        dev:  [domain: 'dev.renfy.style']
-    ],
-    buildArgs: [
-        prod: [
-            NEXT_PUBLIC_MINIO_URL: 'http://62.171.137.117:9000',
-            NEXT_PUBLIC_APP_URL: 'https://renfy.style'
-        ],
-        dev: [
-            NEXT_PUBLIC_MINIO_URL: 'http://62.171.137.117:9000',
-            NEXT_PUBLIC_APP_URL: 'https://dev.renfy.style'
-        ]
-    ],
-    envVars: [
-        prod: [
-            NODE_ENV: 'production',
-            NEO4J_URI: 'neo4j://62.171.137.117:7687',
-            NEO4J_USER: 'neo4j',
-            NEO4J_PASSWORD: 'FactoryBay2024!Secure',
-            JWT_SECRET: '7pJd0cmSU12mGdZ6+WpTLG+GToa+wn/Y0G0EHaKdni8=',
-            MINIO_ENDPOINT: '62.171.137.117',
-            MINIO_PORT: '9000',
-            MINIO_ACCESS_KEY: 'factorybay_admin',
-            MINIO_SECRET_KEY: 'MinIOFactoryBay2024!Secure',
-            MINIO_BUCKET_NAME: 'product-images',
-            MINIO_USE_SSL: 'false',
-            PORT: '3000'
-        ],
-        dev: [
-            NODE_ENV: 'production',
-            NEO4J_URI: 'neo4j://62.171.137.117:7687',
-            NEO4J_USER: 'neo4j',
-            NEO4J_PASSWORD: 'FactoryBay2024!Secure',
-            JWT_SECRET: '7pJd0cmSU12mGdZ6+WpTLG+GToa+wn/Y0G0EHaKdni8=',
-            MINIO_ENDPOINT: '62.171.137.117',
-            MINIO_PORT: '9000',
-            MINIO_ACCESS_KEY: 'factorybay_admin',
-            MINIO_SECRET_KEY: 'MinIOFactoryBay2024!Secure',
-            MINIO_BUCKET_NAME: 'product-images',
-            MINIO_USE_SSL: 'false',
-            PORT: '3000'
-        ]
+    domain:        envConfig.domain,
+    serverIp:      envConfig.serverIp,
+    credentialId:  envConfig.credentialId,
+    dbInitScripts: [
+        'npm run db:init',
+        'npm run db:seed',
+        'npm run setup:categories',
+        'npm run minio:init'
     ]
 )
