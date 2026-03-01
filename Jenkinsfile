@@ -19,7 +19,7 @@ if (environment == 'auto') {
 def config = [
     dev: [
         domain:       'dev.renfy.style',
-        serverIp:     '185.211.6.206',
+        serverIp:     '95.111.252.20',
         credentialId: 'ssh-key-dev'
     ],
     prod: [
