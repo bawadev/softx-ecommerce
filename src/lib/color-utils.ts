@@ -22,12 +22,29 @@ const COLOR_MAP: Record<string, string> = {
 }
 
 /**
+ * Fashion color type with name and hex properties.
+ */
+export type FashionColor = {
+  name: string
+  hex: string
+}
+
+/**
  * Get hex color code for a color name.
  * Returns a neutral gray fallback for unknown colors.
  */
 export function getColorHex(colorName: string): string {
   return COLOR_MAP[colorName.toLowerCase()] ?? '#e5e7eb'
 }
+
+/**
+ * Get array of all predefined fashion colors.
+ * Used for seeding the database.
+ */
+export const FASHION_COLORS = Object.entries(COLOR_MAP).map(([name, hex]) => ({
+  name: name.charAt(0).toUpperCase() + name.slice(1),
+  hex,
+}))
 
 /**
  * Convert hex color to RGB object.
@@ -107,4 +124,61 @@ export function sortByHue(colors: Array<{ name: string; hex: string }>): Array<{
     })
     .sort((a, b) => a.hue - b.hue)
     .map(({ hue, ...color }) => color)
+}
+
+/**
+ * Find the closest color name from COLOR_MAP for a given hex color.
+ * Uses Euclidean distance in RGB space to find the nearest match.
+ */
+export function getClosestColorName(hex: string): string {
+  const targetRgb = hexToRgb(hex)
+  if (!targetRgb) return 'gray'
+
+  let minDistance = Infinity
+  let closestColor = 'gray'
+
+  for (const [name, colorHex] of Object.entries(COLOR_MAP)) {
+    const rgb = hexToRgb(colorHex)
+    if (!rgb) continue
+
+    // Calculate Euclidean distance in RGB space
+    const distance = Math.sqrt(
+      Math.pow(targetRgb.r - rgb.r, 2) +
+        Math.pow(targetRgb.g - rgb.g, 2) +
+        Math.pow(targetRgb.b - rgb.b, 2)
+    )
+
+    if (distance < minDistance) {
+      minDistance = distance
+      closestColor = name
+    }
+  }
+
+  return closestColor
+}
+
+/**
+ * Fetch color information from an external color API.
+ * Searches for a color by name and returns the hex value.
+ */
+export async function fetchColorFromAPI(query: string): Promise<FashionColor | null> {
+  try {
+    // Using the Color API (thecolorapi.com)
+    const response = await fetch(`https://www.thecolorapi.com/id?hex=${query}`)
+    if (!response.ok) return null
+
+    const data = await response.json()
+
+    if (data && data.hex && data.name) {
+      return {
+        name: data.name.value,
+        hex: data.hex.clean,
+      }
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error fetching color from API:', error)
+    return null
+  }
 }
