@@ -1,21 +1,24 @@
 @Library('bawadev/kamal-deployment@main') _
 
-// Jenkinsfile for Ecom
+// Jenkinsfile for SoftX Ecommerce
 // Type: E-commerce (Neo4j + MinIO)
-// Infrastructure: Managed via Kamal accessories
+// Infrastructure: Managed via Docker Compose (Neo4j + MinIO)
 //
 // This file lives in softx-ecommerce repository and delegates to
 // the kamal-deployment pipeline library for actual deployment logic
 
-deploySupabaseApp(
-    appName:      'ecommerce',
-    sourceRepo:   'bawadev/softx-ecommerce',
-    dockerImage:  'bawadev/ecommerce',
+deployEcommerceStack(
+    appName:       'ecommerce',
+    appRepo:       'bawadev/softx-ecommerce',
+    dockerImage:   'bawadev/ecommerce',
     containerPort: '3000',
-    kamalConfig:  'apps/ecommerce/deploy.yml',
-    domains:      [
-        dev:  'dev.renfy.style',
-        prod: 'renfy.style'
+    domains: [
+        dev:  'dev.locked.lk',
+        prod: 'locked.lk'
     ],
-    skipBuild:    true  // Image is already built in Jenkins, use kamal redeploy
+    dbInitScripts: [
+        'npm run db:init',
+        'npm run db:seed',
+        'npm run setup:categories'
+    ]
 )
