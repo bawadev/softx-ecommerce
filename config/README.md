@@ -4,7 +4,7 @@ This directory contains JSON configuration files for defining your custom catego
 
 ## Overview
 
-The Factory Bay category system is **completely flexible** and supports:
+The Ecom category system is **completely flexible** and supports:
 - ✅ **Infinite levels** (L0, L1, L2, L3... L100, L1000, etc.)
 - ✅ **Multiple parents** (a category can belong to multiple parent categories)
 - ✅ **Any structure** (Men/Women, Pets, Kids, or any other categorization)

@@ -1,6 +1,6 @@
 # Admin Filter Components
 
-This directory contains React components for managing the filter hierarchy in the Factory Bay admin panel.
+This directory contains React components for managing the filter hierarchy in the Ecom admin panel.
 
 ## Components
 
@@ -210,7 +210,7 @@ Both components use the following Server Actions from `/src/app/actions/custom-f
 
 ## Styling
 
-Both components follow the Factory Bay design system:
+Both components follow the Ecom design system:
 
 - **Colors:** Navy (primary), Gold (accent), Coral (CTA), Gray scales
 - **Spacing:** 4px base unit (Tailwind spacing scale)

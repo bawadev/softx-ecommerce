@@ -1,6 +1,6 @@
-# Factory Bay - Deployment Changes Guide
+# Ecom - Deployment Changes Guide
 
-This guide covers all methods for deploying code changes to your Factory Bay production environment.
+This guide covers all methods for deploying code changes to your Ecom production environment.
 
 ## 📋 Table of Contents
 
@@ -91,12 +91,12 @@ To verify or modify webhook settings:
 ```bash
 # List webhooks
 curl -H "Authorization: token YOUR_GITHUB_PAT" \
-  https://api.github.com/repos/bawaDev/TheFactoryBay/hooks
+  https://api.github.com/repos/bawaDev/softx-ecommerce/hooks
 
 # Test webhook
 curl -H "Authorization: token YOUR_GITHUB_PAT" \
   -X POST \
-  https://api.github.com/repos/bawaDev/TheFactoryBay/hooks/579868469/test
+  https://api.github.com/repos/bawaDev/softx-ecommerce/hooks/579868469/test
 ```
 
 ---
@@ -111,9 +111,9 @@ Use this method when you want more control over deployment timing.
    - Navigate to: http://62.171.137.117:3000/
    - Login with your credentials
 
-2. **Navigate to Factory Bay App**
-   - Click on "Factory Bay" project
-   - Click on "Factory Bay App" service
+2. **Navigate to Ecom App**
+   - Click on "Ecom" project
+   - Click on "Ecom App" service
 
 3. **Trigger Deployment**
    - In the "General" tab, click the **"Deploy"** button
@@ -129,8 +129,8 @@ Use this method when you want more control over deployment timing.
 ```javascript
 // Example automation script
 await page.goto('http://62.171.137.117:3000/');
-await page.getByRole('link', { name: 'Factory Bay' }).click();
-await page.locator('.rounded-lg').first().click(); // Factory Bay App
+await page.getByRole('link', { name: 'Ecom' }).click();
+await page.locator('.rounded-lg').first().click(); // Ecom App
 await page.getByRole('button', { name: 'Deploy' }).click();
 await page.getByRole('button', { name: 'Confirm' }).click();
 ```
@@ -155,18 +155,18 @@ curl -X POST http://62.171.137.117:3000/api/deploy/i4eKS6RBJFkmAo_vFc3Iw
 ssh root@62.171.137.117
 
 # Navigate to application code
-cd /etc/dokploy/applications/factory-bay-factory-bay-app-i61kg8/code
+cd /etc/dokploy/applications/softx-ecommerce-app-i61kg8/code
 
 # Pull latest code
 git pull origin master
 
 # Build new Docker image (from Dokploy container)
 docker exec dokploy.1.u9slww8giihlpwz82qbe6x8i3 \
-  nixpacks build /etc/dokploy/applications/factory-bay-factory-bay-app-i61kg8/code \
-  --name factory-bay-factory-bay-app-i61kg8
+  nixpacks build /etc/dokploy/applications/softx-ecommerce-app-i61kg8/code \
+  --name softx-ecommerce-app-i61kg8
 
 # Update the service
-docker service update --image factory-bay-factory-bay-app-i61kg8:latest htrdmado8qtz
+docker service update --image softx-ecommerce-app-i61kg8:latest htrdmado8qtz
 ```
 
 ### Option C: Docker Service Update
@@ -197,14 +197,14 @@ await mcp.browser.navigate({
   url: "http://62.171.137.117:3000/"
 });
 
-// 2. Navigate to Factory Bay App
+// 2. Navigate to Ecom App
 await mcp.browser.click({
-  element: "Factory Bay project",
+  element: "Ecom project",
   ref: "project_link"
 });
 
 await mcp.browser.click({
-  element: "Factory Bay App service",
+  element: "Ecom App service",
   ref: "app_service"
 });
 
@@ -245,7 +245,7 @@ await mcp.browser.click({
 2. **Via SSH**
    ```bash
    # Watch container logs
-   ssh root@62.171.137.117 "docker logs -f factory-bay-factory-bay-app-i61kg8.1.CONTAINER_ID"
+   ssh root@62.171.137.117 "docker logs -f softx-ecommerce-app-i61kg8.1.CONTAINER_ID"
 
    # Check service status
    ssh root@62.171.137.117 "docker service ps htrdmado8qtz"
@@ -311,7 +311,7 @@ sleep 180
 
 # 5. Run migration on server
 ssh root@62.171.137.117
-docker exec factory-bay-factory-bay-app-i61kg8.1.XXX npm run db:init
+docker exec softx-ecommerce-app-i61kg8.1.XXX npm run db:init
 ```
 
 ### Example 3: Emergency Rollback
@@ -339,7 +339,7 @@ docker service update --rollback htrdmado8qtz
    ```bash
    # View recent webhook deliveries
    curl -H "Authorization: token YOUR_GITHUB_PAT" \
-     https://api.github.com/repos/bawaDev/TheFactoryBay/hooks/579868469/deliveries
+     https://api.github.com/repos/bawaDev/softx-ecommerce/hooks/579868469/deliveries
    ```
 
 2. **Test webhook manually**
@@ -354,7 +354,7 @@ docker service update --rollback htrdmado8qtz
 ### Build Failures
 
 1. **Check build logs**
-   - Dokploy → Factory Bay App → Deployments → View
+   - Dokploy → Ecom App → Deployments → View
 
 2. **Common issues:**
    - **Out of memory:** Container needs more resources
@@ -375,7 +375,7 @@ docker service update --rollback htrdmado8qtz
 2. **Check logs**
    ```bash
    ssh root@62.171.137.117
-   docker logs factory-bay-factory-bay-app-i61kg8.1.XXX --tail 100
+   docker logs softx-ecommerce-app-i61kg8.1.XXX --tail 100
    ```
 
 3. **Verify services**
@@ -434,13 +434,13 @@ docker service update --rollback htrdmado8qtz
 curl http://62.171.137.117:3000/ -I
 
 # View running containers
-ssh root@62.171.137.117 "docker ps | grep factory"
+ssh root@62.171.137.117 "docker ps | grep ecommerce"
 
 # Trigger deployment
 curl -X POST http://62.171.137.117:3000/api/deploy/i4eKS6RBJFkmAo_vFc3Iw
 
 # View logs
-ssh root@62.171.137.117 "docker logs factory-bay-factory-bay-app-i61kg8.1.XXX --tail 50"
+ssh root@62.171.137.117 "docker logs softx-ecommerce-app-i61kg8.1.XXX --tail 50"
 
 # Restart service
 ssh root@62.171.137.117 "docker service update --force htrdmado8qtz"

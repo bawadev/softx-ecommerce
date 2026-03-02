@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Default filter hierarchy for Factory Bay e-commerce platform",
+  "description": "Default filter hierarchy for Ecom e-commerce platform",
   "filters": [
     {
       "name": "Men",

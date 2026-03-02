@@ -125,10 +125,10 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                 <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
                   <div>
                     <p className="text-sm text-gray-600">{t('accountName')}</p>
-                    <p className="text-lg font-semibold text-gray-900">Factory Bay (Pvt) Ltd</p>
+                    <p className="text-lg font-semibold text-gray-900">Ecom (Pvt) Ltd</p>
                   </div>
                   <button
-                    onClick={() => copyToClipboard('Factory Bay (Pvt) Ltd')}
+                    onClick={() => copyToClipboard('Ecom (Pvt) Ltd')}
                     className="text-sm text-navy-600 hover:text-navy-700"
                   >
                     📋 {tCommon('copy')}

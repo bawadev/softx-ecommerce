@@ -9,6 +9,9 @@ import { getCategoryByIdAction } from '@/app/actions/categories'
 import { addProductImageAction, removeProductImageAction } from '@/app/actions/admin-products'
 import { uploadMultipleImages, deleteImage } from '@/app/actions/upload'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import SizeVariantCard from '@/components/admin/SizeVariantCard'
+import ColorPicker from '@/components/admin/ColorPicker'
+import type { ColorQty } from '@/components/admin/SizeVariantCard'
 
 interface ProductFormDialogProps {
   isOpen: boolean
@@ -40,6 +43,19 @@ export type VariantFormData = {
   stockQuantity: number
 }
 
+// New hierarchical variant structure for UI
+export type ColorQty = {
+  color: string
+  quantity: number
+}
+
+export type SizeVariantData = {
+  colors: ColorQty[]
+  total: number
+}
+
+export type SizeVariants = Record<SizeOption, SizeVariantData>
+
 const GENDERS: ProductGender[] = ['MEN', 'WOMEN', 'UNISEX']
 const SIZES: SizeOption[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
@@ -65,14 +81,10 @@ export default function ProductFormDialog({
     images: [],
   })
 
-  const [variants, setVariants] = useState<VariantFormData[]>([])
-  const [variantForm, setVariantForm] = useState<VariantFormData>({
-    size: 'M',
-    color: '',
-    stockQuantity: 0,
-  })
-  const [showVariantForm, setShowVariantForm] = useState(false)
-  const [editingVariantIndex, setEditingVariantIndex] = useState<number | null>(null)
+  // Hierarchical variant state
+  const [sizeVariants, setSizeVariants] = useState<SizeVariants>({})
+  const [addingColorForSize, setAddingColorForSize] = useState<SizeOption | null>(null)
+  const [newColorForm, setNewColorForm] = useState<ColorQty>({ color: '', quantity: 0 })
 
   // Autocomplete
   const [showBrandSuggestions, setShowBrandSuggestions] = useState(false)
@@ -172,13 +184,15 @@ export default function ProductFormDialog({
         images: editingProduct.images || [],
       })
 
-      setVariants(
-        editingProduct.variants.map((v) => ({
-          id: v.id,
-          size: v.size,
-          color: v.color,
-          stockQuantity: v.stockQuantity,
-        }))
+      setSizeVariants(
+        convertToSizeVariants(
+          editingProduct.variants.map((v) => ({
+            id: v.id,
+            size: v.size,
+            color: v.color,
+            stockQuantity: v.stockQuantity,
+          }))
+        )
       )
 
       // Load product images
@@ -196,7 +210,7 @@ export default function ProductFormDialog({
         sku: '',
         images: [],
       })
-      setVariants([])
+      setSizeVariants({})
       setProductImages([])
     }
   }, [isEditing, editingProduct, isOpen])
@@ -272,41 +286,133 @@ export default function ProductFormDialog({
     }
   }
 
-  const handleAddVariant = () => {
-    if (!variantForm.size || !variantForm.color.trim()) {
-      alert('Please fill in size and color')
+  // Hierarchical variant handlers
+  const handleAddSizeVariant = (size: SizeOption) => {
+    if (!size) return
+
+    setSizeVariants(prev => ({
+      ...prev,
+      [size]: { colors: [], total: 0 }
+    }))
+  }
+
+  const handleDeleteSizeVariant = (size: SizeOption) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Remove Size Variant',
+      message: `Are you sure you want to remove size ${size}? All colors in this size will be removed.`,
+      onConfirm: () => {
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }))
+        setSizeVariants(prev => {
+          const updated = { ...prev }
+          delete updated[size]
+          return updated
+        })
+      },
+    })
+  }
+
+  const handleAddColor = (size: SizeOption) => {
+    setAddingColorForSize(size)
+    setNewColorForm({ color: '', quantity: 0 })
+  }
+
+  const handleSaveColor = () => {
+    if (!addingColorForSize || !newColorForm.color.trim()) {
+      alert('Please select a color')
       return
     }
 
-    if (editingVariantIndex !== null) {
-      const updatedVariants = [...variants]
-      updatedVariants[editingVariantIndex] = variantForm
-      setVariants(updatedVariants)
-      setEditingVariantIndex(null)
-    } else {
-      setVariants([...variants, variantForm])
-    }
+    setSizeVariants(prev => ({
+      ...prev,
+      [addingColorForSize]: {
+        ...prev[addingColorForSize],
+        colors: [...prev[addingColorForSize].colors, newColorForm],
+        total: prev[addingColorForSize].total + newColorForm.quantity
+      }
+    }))
 
-    setVariantForm({ size: 'M', color: '', stockQuantity: 0 })
-    setShowVariantForm(false)
+    setAddingColorForSize(null)
+    setNewColorForm({ color: '', quantity: 0 })
   }
 
-  const handleEditVariant = (index: number) => {
-    setVariantForm(variants[index])
-    setEditingVariantIndex(index)
-    setShowVariantForm(true)
+  const handleEditColorQty = (size: SizeOption, index: number, updatedColorQty: ColorQty) => {
+    setSizeVariants(prev => {
+      const sizeData = prev[size]
+      const oldQuantity = sizeData.colors[index]?.quantity || 0
+      const quantityDiff = updatedColorQty.quantity - oldQuantity
+
+      const updatedColors = [...sizeData.colors]
+      updatedColors[index] = updatedColorQty
+
+      return {
+        ...prev,
+        [size]: {
+          ...sizeData,
+          colors: updatedColors,
+          total: sizeData.total + quantityDiff
+        }
+      }
+    })
   }
 
-  const handleDeleteVariant = (index: number) => {
+  const handleDeleteColor = (size: SizeOption, index: number) => {
     setConfirmDialog({
       isOpen: true,
-      title: 'Delete Variant',
-      message: 'Are you sure you want to delete this variant?',
+      title: 'Remove Color',
+      message: 'Are you sure you want to remove this color?',
       onConfirm: () => {
         setConfirmDialog(prev => ({ ...prev, isOpen: false }))
-        setVariants(variants.filter((_, i) => i !== index))
+        setSizeVariants(prev => {
+          const sizeData = prev[size]
+          const removedQuantity = sizeData.colors[index]?.quantity || 0
+
+          return {
+            ...prev,
+            [size]: {
+              ...sizeData,
+              colors: sizeData.colors.filter((_, i) => i !== index),
+              total: sizeData.total - removedQuantity
+            }
+          }
+        })
       },
     })
+  }
+
+  // Convert hierarchical UI state to flat variants for submission
+  const convertToFlatVariants = (): VariantFormData[] => {
+    const flatVariants: VariantFormData[] = []
+
+    Object.entries(sizeVariants).forEach(([size, sizeData]) => {
+      sizeData.colors.forEach((colorQty) => {
+        flatVariants.push({
+          size: size as SizeOption,
+          color: colorQty.color,
+          stockQuantity: colorQty.quantity
+        })
+      })
+    })
+
+    return flatVariants
+  }
+
+  // Convert flat variants from DB to hierarchical UI state
+  const convertToSizeVariants = (flatVariants: VariantFormData[]): SizeVariants => {
+    const hierarchical: SizeVariants = {}
+
+    flatVariants.forEach((variant) => {
+      if (!hierarchical[variant.size]) {
+        hierarchical[variant.size] = { colors: [], total: 0 }
+      }
+      hierarchical[variant.size].colors.push({
+        color: variant.color,
+        quantity: variant.stockQuantity
+      })
+      hierarchical[variant.size].total += variant.stockQuantity
+    })
+
+    return hierarchical
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -317,7 +423,7 @@ export default function ProductFormDialog({
       categoryIds: selectedCategoryIds,
       images: productImages
     }
-    await onSubmit(submissionData, variants)
+    await onSubmit(submissionData, convertToFlatVariants())
   }
 
   if (!isOpen) return null
@@ -745,134 +851,66 @@ export default function ProductFormDialog({
           <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-gray-700">Product Variants *</h3>
-              <button
-                type="button"
-                onClick={() => setShowVariantForm(!showVariantForm)}
-                className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
-              >
-                {showVariantForm ? 'Cancel' : '+ Add Variant'}
-              </button>
+              <div className="flex items-center gap-2">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAddSizeVariant(e.target.value as SizeOption)
+                      // Reset select to default
+                      e.target.value = ''
+                    }
+                  }}
+                  className="px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  disabled={Object.keys(sizeVariants).length >= SIZES.length}
+                >
+                  <option value="" disabled>
+                    {Object.keys(sizeVariants).length === 0
+                      ? '+ Add Size Variant'
+                      : '+ Add Another Size'}
+                  </option>
+                  {SIZES.filter(size => !Object.keys(sizeVariants).includes(size)).map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+                {Object.keys(sizeVariants).length >= SIZES.length && (
+                  <span className="text-xs text-gray-500">All sizes added</span>
+                )}
+              </div>
             </div>
 
-            {/* Add/Edit Variant Form */}
-            {showVariantForm && (
-              <div className="mb-4 p-3 border border-indigo-200 rounded-lg bg-white">
-                <h4 className="text-xs font-semibold text-gray-700 mb-2">
-                  {editingVariantIndex !== null ? 'Edit Variant' : 'New Variant'}
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Size *</label>
-                    <select
-                      value={variantForm.size}
-                      onChange={(e) => setVariantForm({ ...variantForm, size: e.target.value as SizeOption })}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500"
-                    >
-                      {SIZES.map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Color *</label>
-                    <input
-                      type="text"
-                      value={variantForm.color}
-                      onChange={(e) => setVariantForm({ ...variantForm, color: e.target.value })}
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500"
-                      placeholder="e.g., Red, Blue"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Stock *</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={variantForm.stockQuantity}
-                      onChange={(e) =>
-                        setVariantForm({ ...variantForm, stockQuantity: parseInt(e.target.value) || 0 })
-                      }
-                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500"
-                      placeholder="0"
-                    />
-                  </div>
-                </div>
-                <div className="flex gap-2 mt-3">
-                  <button
-                    type="button"
-                    onClick={handleAddVariant}
-                    className="px-3 py-1.5 text-xs font-medium text-white bg-green-600 hover:bg-green-700 rounded transition-colors"
-                  >
-                    {editingVariantIndex !== null ? 'Update' : 'Add'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setVariantForm({ size: 'M', color: '', stockQuantity: 0 })
-                      setShowVariantForm(false)
-                      setEditingVariantIndex(null)
-                    }}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Variants List */}
-            {variants.length > 0 ? (
-              <div className="space-y-2">
-                {variants.map((variant, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm font-medium text-gray-900">Size: {variant.size}</span>
-                      <span className="text-sm text-gray-600">|</span>
-                      <span className="text-sm font-medium text-gray-900">Color: {variant.color}</span>
-                      <span className="text-sm text-gray-600">|</span>
-                      <span className="text-sm font-medium text-green-600">Stock: {variant.stockQuantity}</span>
-                    </div>
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => handleEditVariant(index)}
-                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteVariant(index)}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
+            {/* Size Variant Cards */}
+            {Object.keys(sizeVariants).length > 0 ? (
+              <div className="space-y-3">
+                {Object.entries(sizeVariants).map(([size, sizeData]) => (
+                  <SizeVariantCard
+                    key={size}
+                    size={size as SizeOption}
+                    colorQtys={sizeData.colors}
+                    onAddColor={handleAddColor}
+                    onEditColor={handleEditColorQty}
+                    onDeleteColor={handleDeleteColor}
+                    onDeleteSize={handleDeleteSizeVariant}
+                  />
                 ))}
               </div>
             ) : (
               <div className="text-center py-6 text-sm text-gray-500 italic">
-                No variants added yet. Click &quot;+ Add Variant&quot; to create one.
+                No size variants added yet. Select a size from the dropdown to get started.
+              </div>
+            )}
+
+            {/* Grand Total Display */}
+            {Object.keys(sizeVariants).length > 0 && (
+              <div className="mt-4 p-4 bg-navy-50 border border-navy-200 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-navy-900">Total T-Shirts (All Sizes):</span>
+                  <span className="text-xl font-bold text-navy-600">
+                    {Object.values(sizeVariants).reduce((sum, sizeVar) => sum + sizeVar.total, 0)}
+                  </span>
+                </div>
               </div>
             )}
           </div>
@@ -904,6 +942,62 @@ export default function ProductFormDialog({
         onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
         type="warning"
       />
+
+      {/* Add Color Dialog */}
+      {addingColorForSize && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 max-w-full shadow-xl">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">
+              Add Color to Size {addingColorForSize}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Color *
+                </label>
+                <ColorPicker
+                  value={newColorForm.color}
+                  onChange={(color) => setNewColorForm({ ...newColorForm, color })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Quantity *
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={newColorForm.quantity}
+                  onChange={(e) =>
+                    setNewColorForm({ ...newColorForm, quantity: parseInt(e.target.value) || 0 })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="0"
+                />
+              </div>
+              <div className="flex gap-2 justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAddingColorForSize(null)
+                    setNewColorForm({ color: '', quantity: 0 })
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveColor}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
+                >
+                  Add Color
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

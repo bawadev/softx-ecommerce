@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "description": "Default filter hierarchy for Factory Bay e-commerce platform",
+  "description": "Default filter hierarchy for Ecom e-commerce platform",
   "filters": [
     {
       "name": "Men",
@@ -33,198 +33,299 @@
     {
       "name": "Clothing",
       "level": 1,
-      "parents": ["Men", "Women", "Kids"],
+      "parents": [
+        "Men",
+        "Women",
+        "Kids"
+      ],
       "description": "All clothing items",
       "isFeatured": true
     },
     {
       "name": "Footwear",
       "level": 1,
-      "parents": ["Men", "Women", "Kids"],
+      "parents": [
+        "Men",
+        "Women",
+        "Kids"
+      ],
       "description": "All footwear items",
       "isFeatured": true
     },
     {
       "name": "Accessories",
       "level": 1,
-      "parents": ["Men", "Women", "Kids", "Unisex"],
+      "parents": [
+        "Men",
+        "Women",
+        "Kids",
+        "Unisex"
+      ],
       "description": "All accessories",
       "isFeatured": false
     },
     {
       "name": "Activewear",
       "level": 1,
-      "parents": ["Men", "Women", "Kids"],
+      "parents": [
+        "Men",
+        "Women",
+        "Kids"
+      ],
       "description": "Sports and fitness clothing",
       "isFeatured": false
     },
     {
       "name": "Tops",
       "level": 2,
-      "parents": ["Clothing"],
-      "description": "All tops and upper body clothing"
+      "parents": [
+        "Clothing"
+      ],
+      "description": "All tops and upper body clothing",
+      "isFeatured": false
     },
     {
       "name": "Bottoms",
       "level": 2,
-      "parents": ["Clothing"],
-      "description": "All bottoms and lower body clothing"
+      "parents": [
+        "Clothing"
+      ],
+      "description": "All bottoms and lower body clothing",
+      "isFeatured": false
     },
     {
       "name": "Outerwear",
       "level": 2,
-      "parents": ["Clothing"],
-      "description": "Jackets, coats, and outer layers"
+      "parents": [
+        "Clothing"
+      ],
+      "description": "Jackets, coats, and outer layers",
+      "isFeatured": false
     },
     {
       "name": "Dresses & Skirts",
       "level": 2,
-      "parents": ["Clothing"],
-      "description": "Dresses and skirts"
+      "parents": [
+        "Clothing"
+      ],
+      "description": "Dresses and skirts",
+      "isFeatured": false
     },
     {
       "name": "Sneakers",
       "level": 2,
-      "parents": ["Footwear"],
-      "description": "Casual and athletic sneakers"
+      "parents": [
+        "Footwear"
+      ],
+      "description": "Casual and athletic sneakers",
+      "isFeatured": false
     },
     {
       "name": "Formal Shoes",
       "level": 2,
-      "parents": ["Footwear"],
-      "description": "Dress shoes and formal footwear"
+      "parents": [
+        "Footwear"
+      ],
+      "description": "Dress shoes and formal footwear",
+      "isFeatured": false
     },
     {
       "name": "Boots",
       "level": 2,
-      "parents": ["Footwear"],
-      "description": "All types of boots"
+      "parents": [
+        "Footwear"
+      ],
+      "description": "All types of boots",
+      "isFeatured": false
     },
     {
       "name": "Sandals",
       "level": 2,
-      "parents": ["Footwear"],
-      "description": "Sandals and open-toe footwear"
+      "parents": [
+        "Footwear"
+      ],
+      "description": "Sandals and open-toe footwear",
+      "isFeatured": false
     },
     {
       "name": "Bags & Wallets",
       "level": 2,
-      "parents": ["Accessories"],
-      "description": "Bags, purses, and wallets"
+      "parents": [
+        "Accessories"
+      ],
+      "description": "Bags, purses, and wallets",
+      "isFeatured": false
     },
     {
       "name": "Jewelry & Watches",
       "level": 2,
-      "parents": ["Accessories"],
-      "description": "Jewelry, watches, and timepieces"
+      "parents": [
+        "Accessories"
+      ],
+      "description": "Jewelry, watches, and timepieces",
+      "isFeatured": false
     },
     {
       "name": "Belts",
       "level": 2,
-      "parents": ["Accessories"],
-      "description": "Belts and waist accessories"
+      "parents": [
+        "Accessories"
+      ],
+      "description": "Belts and waist accessories",
+      "isFeatured": false
     },
     {
       "name": "Hats & Caps",
       "level": 2,
-      "parents": ["Accessories"],
-      "description": "Headwear and caps"
+      "parents": [
+        "Accessories"
+      ],
+      "description": "Headwear and caps",
+      "isFeatured": false
     },
     {
       "name": "Sunglasses",
       "level": 2,
-      "parents": ["Accessories"],
-      "description": "Sunglasses and eyewear"
+      "parents": [
+        "Accessories"
+      ],
+      "description": "Sunglasses and eyewear",
+      "isFeatured": false
     },
     {
       "name": "T-Shirts",
       "level": 3,
-      "parents": ["Tops"],
-      "description": "T-shirts and tees"
+      "parents": [
+        "Tops"
+      ],
+      "description": "T-shirts and tees",
+      "isFeatured": false
     },
     {
       "name": "Shirts",
       "level": 3,
-      "parents": ["Tops"],
-      "description": "Casual and formal shirts"
+      "parents": [
+        "Tops"
+      ],
+      "description": "Casual and formal shirts",
+      "isFeatured": false
     },
     {
       "name": "Blouses",
       "level": 3,
-      "parents": ["Tops"],
-      "description": "Women's blouses"
+      "parents": [
+        "Tops"
+      ],
+      "description": "Women's blouses",
+      "isFeatured": false
     },
     {
       "name": "Sweaters & Hoodies",
       "level": 3,
-      "parents": ["Tops"],
-      "description": "Sweaters, hoodies, and sweatshirts"
+      "parents": [
+        "Tops"
+      ],
+      "description": "Sweaters, hoodies, and sweatshirts",
+      "isFeatured": false
     },
     {
       "name": "Tank Tops",
       "level": 3,
-      "parents": ["Tops"],
-      "description": "Tank tops and sleeveless shirts"
+      "parents": [
+        "Tops"
+      ],
+      "description": "Tank tops and sleeveless shirts",
+      "isFeatured": false
     },
     {
       "name": "Jeans",
       "level": 3,
-      "parents": ["Bottoms"],
-      "description": "All types of jeans"
+      "parents": [
+        "Bottoms"
+      ],
+      "description": "All types of jeans",
+      "isFeatured": false
     },
     {
       "name": "Pants",
       "level": 3,
-      "parents": ["Bottoms"],
-      "description": "Casual and formal pants"
+      "parents": [
+        "Bottoms"
+      ],
+      "description": "Casual and formal pants",
+      "isFeatured": false
     },
     {
       "name": "Shorts",
       "level": 3,
-      "parents": ["Bottoms"],
-      "description": "Shorts and bermudas"
+      "parents": [
+        "Bottoms"
+      ],
+      "description": "Shorts and bermudas",
+      "isFeatured": false
     },
     {
       "name": "Leggings",
       "level": 3,
-      "parents": ["Bottoms"],
-      "description": "Leggings and tights"
+      "parents": [
+        "Bottoms"
+      ],
+      "description": "Leggings and tights",
+      "isFeatured": false
     },
     {
       "name": "Jackets",
       "level": 3,
-      "parents": ["Outerwear"],
-      "description": "All types of jackets"
+      "parents": [
+        "Outerwear"
+      ],
+      "description": "All types of jackets",
+      "isFeatured": false
     },
     {
       "name": "Coats",
       "level": 3,
-      "parents": ["Outerwear"],
-      "description": "Winter coats and overcoats"
+      "parents": [
+        "Outerwear"
+      ],
+      "description": "Winter coats and overcoats",
+      "isFeatured": false
     },
     {
       "name": "Blazers",
       "level": 3,
-      "parents": ["Outerwear"],
-      "description": "Blazers and suit jackets"
+      "parents": [
+        "Outerwear"
+      ],
+      "description": "Blazers and suit jackets",
+      "isFeatured": false
     },
     {
       "name": "Vests",
       "level": 3,
-      "parents": ["Outerwear"],
-      "description": "Vests and gilets"
+      "parents": [
+        "Outerwear"
+      ],
+      "description": "Vests and gilets",
+      "isFeatured": false
     },
     {
       "name": "Dresses",
       "level": 3,
-      "parents": ["Dresses & Skirts"],
-      "description": "All types of dresses"
+      "parents": [
+        "Dresses & Skirts"
+      ],
+      "description": "All types of dresses",
+      "isFeatured": false
     },
     {
       "name": "Skirts",
       "level": 3,
-      "parents": ["Dresses & Skirts"],
-      "description": "All types of skirts"
+      "parents": [
+        "Dresses & Skirts"
+      ],
+      "description": "All types of skirts",
+      "isFeatured": false
     },
     {
       "name": "Casual",
@@ -255,84 +356,96 @@
       "level": 0,
       "parents": [],
       "description": "Party and evening wear",
-      "category": "occasion"
+      "category": "occasion",
+      "isFeatured": false
     },
     {
       "name": "Office Wear",
       "level": 0,
       "parents": [],
       "description": "Professional office attire",
-      "category": "occasion"
+      "category": "occasion",
+      "isFeatured": false
     },
     {
       "name": "Beach Wear",
       "level": 0,
       "parents": [],
       "description": "Beach and vacation wear",
-      "category": "occasion"
+      "category": "occasion",
+      "isFeatured": false
     },
     {
       "name": "Wedding & Events",
       "level": 0,
       "parents": [],
       "description": "Special event and wedding attire",
-      "category": "occasion"
+      "category": "occasion",
+      "isFeatured": false
     },
     {
       "name": "Summer",
       "level": 0,
       "parents": [],
       "description": "Summer season collection",
-      "category": "season"
+      "category": "season",
+      "isFeatured": false
     },
     {
       "name": "Winter",
       "level": 0,
       "parents": [],
       "description": "Winter season collection",
-      "category": "season"
+      "category": "season",
+      "isFeatured": false
     },
     {
       "name": "Spring",
       "level": 0,
       "parents": [],
       "description": "Spring season collection",
-      "category": "season"
+      "category": "season",
+      "isFeatured": false
     },
     {
       "name": "Fall",
       "level": 0,
       "parents": [],
       "description": "Fall/Autumn season collection",
-      "category": "season"
+      "category": "season",
+      "isFeatured": false
     },
     {
       "name": "Premium Items",
       "level": 0,
       "parents": [],
       "description": "Premium and luxury brands",
-      "category": "special"
+      "category": "special",
+      "isFeatured": false
     },
     {
       "name": "New Arrivals",
       "level": 0,
       "parents": [],
       "description": "Newly added products",
-      "category": "special"
+      "category": "special",
+      "isFeatured": false
     },
     {
       "name": "Best Sellers",
       "level": 0,
       "parents": [],
       "description": "Top selling products",
-      "category": "special"
+      "category": "special",
+      "isFeatured": false
     },
     {
       "name": "Sale Items",
       "level": 0,
       "parents": [],
       "description": "Products on sale",
-      "category": "special"
+      "category": "special",
+      "isFeatured": false
     }
   ],
   "premiumBrands": [
@@ -348,12 +461,32 @@
     "Michael Kors"
   ],
   "categoryMappings": {
-    "SHIRT": ["Shirts", "Tops", "Clothing"],
-    "PANTS": ["Pants", "Bottoms", "Clothing"],
-    "JACKET": ["Jackets", "Outerwear", "Clothing"],
-    "DRESS": ["Dresses", "Dresses & Skirts", "Clothing"],
-    "SHOES": ["Footwear"],
-    "ACCESSORIES": ["Accessories"]
+    "SHIRT": [
+      "Shirts",
+      "Tops",
+      "Clothing"
+    ],
+    "PANTS": [
+      "Pants",
+      "Bottoms",
+      "Clothing"
+    ],
+    "JACKET": [
+      "Jackets",
+      "Outerwear",
+      "Clothing"
+    ],
+    "DRESS": [
+      "Dresses",
+      "Dresses & Skirts",
+      "Clothing"
+    ],
+    "SHOES": [
+      "Footwear"
+    ],
+    "ACCESSORIES": [
+      "Accessories"
+    ]
   },
   "genderMappings": {
     "MEN": "Men",
@@ -361,53 +494,197 @@
     "UNISEX": "Unisex"
   },
   "productNamePatterns": {
-    "t-shirt": ["T-Shirts", "Tops", "Casual"],
-    "tee": ["T-Shirts", "Tops", "Casual"],
-    "shirt": ["Shirts", "Tops"],
-    "blouse": ["Blouses", "Tops"],
-    "sweater": ["Sweaters & Hoodies", "Tops"],
-    "hoodie": ["Sweaters & Hoodies", "Tops", "Casual"],
-    "sweatshirt": ["Sweaters & Hoodies", "Tops", "Casual"],
-    "tank": ["Tank Tops", "Tops"],
-    "jeans": ["Jeans", "Bottoms", "Casual"],
-    "pants": ["Pants", "Bottoms"],
-    "chino": ["Pants", "Bottoms", "Casual"],
-    "shorts": ["Shorts", "Bottoms"],
-    "leggings": ["Leggings", "Bottoms"],
-    "jacket": ["Jackets", "Outerwear"],
-    "coat": ["Coats", "Outerwear", "Winter"],
-    "blazer": ["Blazers", "Outerwear", "Formal"],
-    "vest": ["Vests", "Outerwear"],
-    "dress": ["Dresses", "Dresses & Skirts"],
-    "skirt": ["Skirts", "Dresses & Skirts"],
-    "sneaker": ["Sneakers", "Footwear", "Casual"],
-    "running": ["Sneakers", "Footwear", "Sports"],
-    "boot": ["Boots", "Footwear"],
-    "sandal": ["Sandals", "Footwear", "Summer"],
-    "formal": ["Formal"],
-    "oxford": ["Formal Shoes", "Footwear", "Formal"],
-    "belt": ["Belts", "Accessories"],
-    "bag": ["Bags & Wallets", "Accessories"],
-    "wallet": ["Bags & Wallets", "Accessories"],
-    "watch": ["Jewelry & Watches", "Accessories"],
-    "jewelry": ["Jewelry & Watches", "Accessories"],
-    "hat": ["Hats & Caps", "Accessories"],
-    "cap": ["Hats & Caps", "Accessories"],
-    "sunglasses": ["Sunglasses", "Accessories", "Summer"],
-    "summer": ["Summer"],
-    "winter": ["Winter"],
-    "spring": ["Spring"],
-    "fall": ["Fall"],
-    "office": ["Office Wear", "Formal"],
-    "party": ["Party Wear"],
-    "evening": ["Party Wear"],
-    "beach": ["Beach Wear", "Summer"],
-    "wedding": ["Wedding & Events", "Formal"],
-    "sport": ["Sports"],
-    "athletic": ["Sports"],
-    "gym": ["Sports"],
-    "leather": ["Premium Items"],
-    "silk": ["Premium Items"],
-    "cashmere": ["Premium Items"]
+    "t-shirt": [
+      "T-Shirts",
+      "Tops",
+      "Casual"
+    ],
+    "tee": [
+      "T-Shirts",
+      "Tops",
+      "Casual"
+    ],
+    "shirt": [
+      "Shirts",
+      "Tops"
+    ],
+    "blouse": [
+      "Blouses",
+      "Tops"
+    ],
+    "sweater": [
+      "Sweaters & Hoodies",
+      "Tops"
+    ],
+    "hoodie": [
+      "Sweaters & Hoodies",
+      "Tops",
+      "Casual"
+    ],
+    "sweatshirt": [
+      "Sweaters & Hoodies",
+      "Tops",
+      "Casual"
+    ],
+    "tank": [
+      "Tank Tops",
+      "Tops"
+    ],
+    "jeans": [
+      "Jeans",
+      "Bottoms",
+      "Casual"
+    ],
+    "pants": [
+      "Pants",
+      "Bottoms"
+    ],
+    "chino": [
+      "Pants",
+      "Bottoms",
+      "Casual"
+    ],
+    "shorts": [
+      "Shorts",
+      "Bottoms"
+    ],
+    "leggings": [
+      "Leggings",
+      "Bottoms"
+    ],
+    "jacket": [
+      "Jackets",
+      "Outerwear"
+    ],
+    "coat": [
+      "Coats",
+      "Outerwear",
+      "Winter"
+    ],
+    "blazer": [
+      "Blazers",
+      "Outerwear",
+      "Formal"
+    ],
+    "vest": [
+      "Vests",
+      "Outerwear"
+    ],
+    "dress": [
+      "Dresses",
+      "Dresses & Skirts"
+    ],
+    "skirt": [
+      "Skirts",
+      "Dresses & Skirts"
+    ],
+    "sneaker": [
+      "Sneakers",
+      "Footwear",
+      "Casual"
+    ],
+    "running": [
+      "Sneakers",
+      "Footwear",
+      "Sports"
+    ],
+    "boot": [
+      "Boots",
+      "Footwear"
+    ],
+    "sandal": [
+      "Sandals",
+      "Footwear",
+      "Summer"
+    ],
+    "formal": [
+      "Formal"
+    ],
+    "oxford": [
+      "Formal Shoes",
+      "Footwear",
+      "Formal"
+    ],
+    "belt": [
+      "Belts",
+      "Accessories"
+    ],
+    "bag": [
+      "Bags & Wallets",
+      "Accessories"
+    ],
+    "wallet": [
+      "Bags & Wallets",
+      "Accessories"
+    ],
+    "watch": [
+      "Jewelry & Watches",
+      "Accessories"
+    ],
+    "jewelry": [
+      "Jewelry & Watches",
+      "Accessories"
+    ],
+    "hat": [
+      "Hats & Caps",
+      "Accessories"
+    ],
+    "cap": [
+      "Hats & Caps",
+      "Accessories"
+    ],
+    "sunglasses": [
+      "Sunglasses",
+      "Accessories",
+      "Summer"
+    ],
+    "summer": [
+      "Summer"
+    ],
+    "winter": [
+      "Winter"
+    ],
+    "spring": [
+      "Spring"
+    ],
+    "fall": [
+      "Fall"
+    ],
+    "office": [
+      "Office Wear",
+      "Formal"
+    ],
+    "party": [
+      "Party Wear"
+    ],
+    "evening": [
+      "Party Wear"
+    ],
+    "beach": [
+      "Beach Wear",
+      "Summer"
+    ],
+    "wedding": [
+      "Wedding & Events",
+      "Formal"
+    ],
+    "sport": [
+      "Sports"
+    ],
+    "athletic": [
+      "Sports"
+    ],
+    "gym": [
+      "Sports"
+    ],
+    "leather": [
+      "Premium Items"
+    ],
+    "silk": [
+      "Premium Items"
+    ],
+    "cashmere": [
+      "Premium Items"
+    ]
   }
 }

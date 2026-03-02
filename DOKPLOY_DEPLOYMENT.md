@@ -1,6 +1,6 @@
-# Factory Bay - Dokploy Deployment Guide
+# Ecom - Dokploy Deployment Guide
 
-This guide provides step-by-step instructions for deploying Factory Bay to Dokploy.
+This guide provides step-by-step instructions for deploying Ecom to Dokploy.
 
 ## 🎯 Prerequisites
 
@@ -20,7 +20,7 @@ If not already deployed, create a Neo4j service in Dokploy:
 
 1. **Create New Service** → Database → Neo4j
 2. **Configuration:**
-   - Name: `factory-bay-neo4j`
+   - Name: `softx-ecommerce-neo4j`
    - Version: `5.26` (or latest 5.x)
    - Username: `neo4j`
    - Password: `[SECURE_PASSWORD]` (save this!)
@@ -42,8 +42,8 @@ If not already deployed, create a MinIO service:
 
 1. **Create New Service** → Application → MinIO
 2. **Configuration:**
-   - Name: `factory-bay-minio`
-   - Access Key: `factorybay` (or your custom key)
+   - Name: `softx-ecommerce-minio`
+   - Access Key: `ecommerce` (or your custom key)
    - Secret Key: `[SECURE_PASSWORD]` (save this!)
    - Exposed Ports:
      - `9000` (API - REQUIRED for images)
@@ -64,7 +64,7 @@ If not already deployed, create a MinIO service:
 2. Create **New Application**
 3. **Source Configuration:**
    - Type: `GitHub`
-   - Repository: `bawaDev/TheFactoryBay` (or your fork)
+   - Repository: `bawaDev/softx-ecommerce` (or your fork)
    - Branch: `master`
    - Build Type: `nixpacks` (auto-detected for Next.js)
 
@@ -74,7 +74,7 @@ In the application settings, add these environment variables:
 
 ```env
 # Neo4j Database (use internal service name)
-NEO4J_URI=neo4j://factory-bay-neo4j:7687
+NEO4J_URI=neo4j://softx-ecommerce-neo4j:7687
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=[YOUR_NEO4J_PASSWORD]
 
@@ -82,9 +82,9 @@ NEO4J_PASSWORD=[YOUR_NEO4J_PASSWORD]
 JWT_SECRET=[YOUR_SECURE_JWT_SECRET]
 
 # MinIO Storage (internal service name)
-MINIO_ENDPOINT=factory-bay-minio
+MINIO_ENDPOINT=softx-ecommerce-minio
 MINIO_PORT=9000
-MINIO_ACCESS_KEY=factorybay
+MINIO_ACCESS_KEY=ecommerce
 MINIO_SECRET_KEY=[YOUR_MINIO_SECRET_KEY]
 MINIO_BUCKET_NAME=product-images
 MINIO_USE_SSL=false
@@ -134,8 +134,8 @@ ssh root@YOUR_SERVER_IP
 # List all running containers
 docker ps
 
-# Find your Factory Bay container (look for the image name)
-# It will be something like: dokploy-factory-bay-xxx
+# Find your Ecom container (look for the image name)
+# It will be something like: dokploy-softx-ecommerce-xxx
 ```
 
 #### 3.3 Run Initialization Script
@@ -168,13 +168,13 @@ If Dokploy provides a console/terminal for your app:
 
 Visit your application: `http://YOUR_SERVER_IP:3000`
 
-You should see the Factory Bay homepage.
+You should see the Ecom homepage.
 
 #### 4.2 Test Login
 
 Try logging in with the default admin account:
 
-- Email: `testadmin@factorybay.com`
+- Email: `testadmin@ecommerce.com`
 - Password: `Admin123!`
 
 #### 4.3 Verify Services
@@ -202,7 +202,7 @@ Try logging in with the default admin account:
 
 **IMPORTANT:** Change all default passwords immediately!
 
-1. Login as `testadmin@factorybay.com`
+1. Login as `testadmin@ecommerce.com`
 2. Go to Profile → Change Password
 3. Update to a strong password
 
@@ -317,7 +317,7 @@ If auto-deploy is enabled in Dokploy (default):
 If auto-deploy is disabled or you want manual control:
 
 1. Go to your Dokploy dashboard: `http://YOUR_SERVER_IP:3000`
-2. Navigate to: **Projects** → **Factory Bay** → **Application**
+2. Navigate to: **Projects** → **Ecom** → **Application**
 3. Click the **Deployments** tab
 4. Click the **Deploy** button (top right)
 5. Confirm the deployment
@@ -458,7 +458,7 @@ git push origin master
 ssh root@YOUR_SERVER_IP
 
 # Restart container to previous image
-docker ps -a | grep factory-bay
+docker ps -a | grep ecommerce
 docker restart [CONTAINER_NAME]
 ```
 
@@ -502,7 +502,7 @@ git push origin master              # Deploy to production
 
 # Check deployment status
 ssh root@YOUR_SERVER_IP
-docker ps | grep factory-bay        # Check if running
+docker ps | grep ecommerce        # Check if running
 docker logs [CONTAINER_NAME] -f     # Watch logs
 
 # Emergency rollback
@@ -528,7 +528,7 @@ git revert HEAD && git push origin master
 **Verify Neo4j service:**
 ```bash
 docker ps | grep neo4j
-docker logs factory-bay-neo4j
+docker logs softx-ecommerce-neo4j
 ```
 
 **Test connection:**
@@ -541,7 +541,7 @@ docker exec -it [APP_CONTAINER] npm run db:init
 **Verify MinIO:**
 ```bash
 docker ps | grep minio
-docker logs factory-bay-minio
+docker logs softx-ecommerce-minio
 ```
 
 **Check bucket:**
@@ -553,7 +553,7 @@ docker exec -it [APP_CONTAINER] npm run minio:init
 
 **Check if app is running:**
 ```bash
-docker ps | grep factory-bay
+docker ps | grep ecommerce
 docker logs [CONTAINER_NAME]
 ```
 
@@ -586,13 +586,13 @@ ssh root@YOUR_SERVER_IP
 
 # Backup Neo4j
 docker run --rm \
-  --volumes-from factory-bay-neo4j \
+  --volumes-from softx-ecommerce-neo4j \
   -v $(pwd)/backups:/backup \
   ubuntu tar czf /backup/neo4j-backup-$(date +%Y%m%d).tar.gz /data
 
 # Backup MinIO
 docker run --rm \
-  --volumes-from factory-bay-minio \
+  --volumes-from softx-ecommerce-minio \
   -v $(pwd)/backups:/backup \
   ubuntu tar czf /backup/minio-backup-$(date +%Y%m%d).tar.gz /data
 ```
@@ -619,7 +619,7 @@ docker exec -it [CONTAINER_NAME] /bin/bash
 - **PAT:** [Stored securely - not in git]
 
 ### Default Application Accounts (After Seeding)
-- **Admin:** testadmin@factorybay.com / Admin123!
+- **Admin:** testadmin@ecommerce.com / Admin123!
 - **Customer:** test@example.com / Customer123!
 
 **⚠️ SECURITY WARNING:** Change these credentials in production!
@@ -652,4 +652,4 @@ For issues:
 
 ---
 
-**Factory Bay** - Deployed with Dokploy 🚀
+**Ecom** - Deployed with Dokploy 🚀

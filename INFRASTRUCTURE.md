@@ -1,6 +1,6 @@
-# Factory Bay - Infrastructure & Data Persistence Guide
+# Ecom - Infrastructure & Data Persistence Guide
 
-Complete technical documentation for Factory Bay's infrastructure setup, Docker configuration, and data persistence mechanisms.
+Complete technical documentation for Ecom's infrastructure setup, Docker configuration, and data persistence mechanisms.
 
 ---
 
@@ -18,11 +18,11 @@ Complete technical documentation for Factory Bay's infrastructure setup, Docker 
 
 ## Architecture Overview
 
-Factory Bay uses a **containerized microservices architecture** with three main components:
+Ecom uses a **containerized microservices architecture** with three main components:
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   Factory Bay Stack                 │
+│                   Ecom Stack                        │
 ├─────────────────────────────────────────────────────┤
 │                                                     │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────┐ │
@@ -62,12 +62,12 @@ All services are defined in `docker-compose.yml`:
 ```yaml
 neo4j:
   image: neo4j:latest
-  container_name: factory-bay-neo4j
+  container_name: softx-ecommerce-neo4j
   ports:
     - "7474:7474"  # HTTP Browser Interface
     - "7687:7687"  # Bolt Protocol (Driver Connection)
   environment:
-    - NEO4J_AUTH=neo4j/factorybay123
+    - NEO4J_AUTH=neo4j/ecommerce123
   volumes:
     - neo4j_data:/data      # Database files
     - neo4j_logs:/logs      # Log files
@@ -76,7 +76,7 @@ neo4j:
 
 **Features:**
 - Automatically restarts on system boot (unless manually stopped)
-- Default credentials: `neo4j` / `factorybay123`
+- Default credentials: `neo4j` / `ecommerce123`
 - Persistent volumes for data and logs
 - HTTP browser at http://localhost:7474
 - Bolt driver connection at bolt://localhost:7687
@@ -86,13 +86,13 @@ neo4j:
 ```yaml
 minio:
   image: minio/minio:latest
-  container_name: factory-bay-minio
+  container_name: softx-ecommerce-minio
   ports:
     - "9000:9000"  # S3 API
     - "9001:9001"  # Web Console
   environment:
-    - MINIO_ROOT_USER=factorybay
-    - MINIO_ROOT_PASSWORD=factorybay123
+    - MINIO_ROOT_USER=ecommerce
+    - MINIO_ROOT_PASSWORD=ecommerce123
   volumes:
     - minio_data:/data
   command: server /data --console-address ":9001"
@@ -109,7 +109,7 @@ minio:
 - Web console for manual management
 - Health checks for monitoring
 - Persistent volume for object storage
-- Credentials: `factorybay` / `factorybay123`
+- Credentials: `ecommerce` / `ecommerce123`
 
 ---
 
@@ -143,13 +143,13 @@ Docker stores volumes on your host filesystem:
 
 ```bash
 # Neo4j data location
-/var/lib/docker/volumes/thefactorybay_neo4j_data/_data
+/var/lib/docker/volumes/softx-ecommerce_neo4j_data/_data
 
 # Neo4j logs location
-/var/lib/docker/volumes/thefactorybay_neo4j_logs/_data
+/var/lib/docker/volumes/softx-ecommerce_neo4j_logs/_data
 
 # MinIO data location
-/var/lib/docker/volumes/thefactorybay_minio_data/_data
+/var/lib/docker/volumes/softx-ecommerce_minio_data/_data
 ```
 
 ### Data Survival Matrix
@@ -191,14 +191,14 @@ Docker stores volumes on your host filesystem:
 # List all volumes
 docker volume ls
 
-# List Factory Bay volumes only
-docker volume ls | grep thefactorybay
+# List Ecom volumes only
+docker volume ls | grep softx-ecommerce
 
 # Inspect volume details
-docker volume inspect thefactorybay_neo4j_data
+docker volume inspect softx-ecommerce_neo4j_data
 
 # View volume mount point on host
-docker volume inspect thefactorybay_neo4j_data --format '{{ .Mountpoint }}'
+docker volume inspect softx-ecommerce_neo4j_data --format '{{ .Mountpoint }}'
 
 # Check volume size
 docker system df -v
@@ -208,13 +208,13 @@ docker system df -v
 
 ```bash
 # View Neo4j database files
-docker exec factory-bay-neo4j ls -lh /data/databases
+docker exec softx-ecommerce-neo4j ls -lh /data/databases
 
 # View MinIO buckets
-docker exec factory-bay-minio ls -lh /data
+docker exec softx-ecommerce-minio ls -lh /data
 
 # Count files in volume
-docker exec factory-bay-neo4j find /data -type f | wc -l
+docker exec softx-ecommerce-neo4j find /data -type f | wc -l
 ```
 
 ### Creating Additional Volumes
@@ -248,7 +248,7 @@ BACKUP_FILE="neo4j-backup-${TIMESTAMP}.tar.gz"
 mkdir -p "$BACKUP_DIR"
 
 docker run --rm \
-  --volumes-from factory-bay-neo4j \
+  --volumes-from softx-ecommerce-neo4j \
   -v "$(pwd)/$BACKUP_DIR:/backup" \
   ubuntu tar czf "/backup/$BACKUP_FILE" /data
 
@@ -268,7 +268,7 @@ BACKUP_FILE="minio-backup-${TIMESTAMP}.tar.gz"
 mkdir -p "$BACKUP_DIR"
 
 docker run --rm \
-  --volumes-from factory-bay-minio \
+  --volumes-from softx-ecommerce-minio \
   -v "$(pwd)/$BACKUP_DIR:/backup" \
   ubuntu tar czf "/backup/$BACKUP_FILE" /data
 
@@ -295,7 +295,7 @@ docker compose stop neo4j
 
 # Restore data
 docker run --rm \
-  --volumes-from factory-bay-neo4j \
+  --volumes-from softx-ecommerce-neo4j \
   -v "$(pwd)/backups/neo4j:/backup" \
   ubuntu bash -c "cd / && tar xzf /backup/$BACKUP_FILE"
 
@@ -309,11 +309,11 @@ echo "✅ Neo4j restored from: $BACKUP_FILE"
 
 ```bash
 # Export to Cypher script
-docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123 \
+docker exec softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123 \
   "CALL apoc.export.cypher.all('backup.cypher', {format: 'cypher-shell'})"
 
 # Copy export to host
-docker cp factory-bay-neo4j:/var/lib/neo4j/import/backup.cypher ./backups/
+docker cp softx-ecommerce-neo4j:/var/lib/neo4j/import/backup.cypher ./backups/
 ```
 
 ### MinIO Client (mc) Backup
@@ -324,13 +324,13 @@ wget https://dl.min.io/client/mc/release/linux-amd64/mc
 chmod +x mc
 
 # Configure alias
-./mc alias set factorybay http://localhost:9000 factorybay factorybay123
+./mc alias set ecommerce http://localhost:9000 ecommerce ecommerce123
 
 # Mirror bucket to local directory
-./mc mirror factorybay/product-images ./backups/product-images
+./mc mirror ecommerce/product-images ./backups/product-images
 
 # Restore from backup
-./mc mirror ./backups/product-images factorybay/product-images
+./mc mirror ./backups/product-images ecommerce/product-images
 ```
 
 ---
@@ -342,13 +342,13 @@ chmod +x mc
 By default, Docker Compose creates a bridge network for all services:
 
 ```
-Network: thefactorybay_default
+Network: softx-ecommerce_default
 Driver:  bridge
 Subnet:  172.18.0.0/16 (example)
 
 Services:
-  - factory-bay-neo4j   → 172.18.0.2
-  - factory-bay-minio   → 172.18.0.3
+  - softx-ecommerce-neo4j   → 172.18.0.2
+  - softx-ecommerce-minio   → 172.18.0.3
 ```
 
 ### Service Discovery
@@ -428,15 +428,15 @@ docker compose logs -f minio
 docker compose restart neo4j
 
 # Execute command in container
-docker exec -it factory-bay-neo4j bash
-docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123
+docker exec -it softx-ecommerce-neo4j bash
+docker exec -it softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123
 ```
 
 ### Service Health Checks
 
 ```bash
 # Check if services are running
-docker ps --filter "name=factory-bay"
+docker ps --filter "name=softx-ecommerce"
 
 # Check Neo4j health
 curl http://localhost:7474
@@ -469,16 +469,16 @@ Neo4jError: Could not perform discovery. No routing servers available.
 docker ps | grep neo4j
 
 # 2. Check logs for errors
-docker logs factory-bay-neo4j
+docker logs softx-ecommerce-neo4j
 
 # 3. Restart container
-docker restart factory-bay-neo4j
+docker restart softx-ecommerce-neo4j
 
 # 4. Wait for full initialization (can take 10-15 seconds)
 sleep 10
 
 # 5. Test connection
-docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123 "RETURN 1"
+docker exec softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123 "RETURN 1"
 ```
 
 #### Port Already in Use
@@ -513,11 +513,11 @@ ports:
 # 1. Restore from backup (see Backup section)
 
 # 2. If no backup, try repair
-docker exec factory-bay-neo4j neo4j-admin database check neo4j
+docker exec softx-ecommerce-neo4j neo4j-admin database check neo4j
 
 # 3. Last resort: Clear and reinitialize
 docker compose down
-docker volume rm thefactorybay_neo4j_data
+docker volume rm softx-ecommerce_neo4j_data
 docker compose up -d
 npm run db:init
 npm run db:seed
@@ -536,13 +536,13 @@ npm run db:seed
 docker ps | grep minio
 
 # 2. Check logs
-docker logs factory-bay-minio
+docker logs softx-ecommerce-minio
 
 # 3. Verify healthcheck
-docker inspect factory-bay-minio | grep -A 10 Health
+docker inspect softx-ecommerce-minio | grep -A 10 Health
 
 # 4. Restart service
-docker restart factory-bay-minio
+docker restart softx-ecommerce-minio
 ```
 
 #### Images Not Loading
@@ -554,7 +554,7 @@ docker restart factory-bay-minio
 **Solutions:**
 ```bash
 # 1. Check bucket exists
-docker exec factory-bay-minio ls /data
+docker exec softx-ecommerce-minio ls /data
 
 # 2. Verify bucket policy (should be public read)
 # Access MinIO console and check bucket permissions
@@ -563,7 +563,7 @@ docker exec factory-bay-minio ls /data
 npm run minio:init
 
 # 4. Check file exists
-docker exec factory-bay-minio ls /data/product-images
+docker exec softx-ecommerce-minio ls /data/product-images
 ```
 
 ### Volume Issues
@@ -578,7 +578,7 @@ Error: permission denied
 **Solutions:**
 ```bash
 # Fix ownership (Linux/Mac)
-sudo chown -R $(whoami):$(whoami) /var/lib/docker/volumes/thefactorybay_*
+sudo chown -R $(whoami):$(whoami) /var/lib/docker/volumes/softx-ecommerce_*
 
 # Or run containers with user permissions
 docker compose down
@@ -639,7 +639,7 @@ docker ps | grep neo4j
 cat .env.local | grep NEO4J
 
 # 3. Test connection manually
-docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123
+docker exec softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123
 ```
 
 ---
@@ -653,7 +653,7 @@ Add to `docker-compose.yml`:
 ```yaml
 neo4j:
   environment:
-    - NEO4J_AUTH=neo4j/factorybay123
+    - NEO4J_AUTH=neo4j/ecommerce123
     - NEO4J_dbms_memory_heap_initial__size=512m
     - NEO4J_dbms_memory_heap_max__size=2G
     - NEO4J_dbms_memory_pagecache_size=1G
@@ -664,8 +664,8 @@ neo4j:
 ```yaml
 minio:
   environment:
-    - MINIO_ROOT_USER=factorybay
-    - MINIO_ROOT_PASSWORD=factorybay123
+    - MINIO_ROOT_USER=ecommerce
+    - MINIO_ROOT_PASSWORD=ecommerce123
     - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
   deploy:
     resources:
@@ -740,7 +740,7 @@ docker compose logs --since 2024-01-01T00:00:00 neo4j
 #!/bin/bash
 # monitor-health.sh
 
-echo "=== Factory Bay Health Check ==="
+echo "=== Ecom Health Check ==="
 echo ""
 
 # Neo4j
@@ -765,7 +765,7 @@ else
 fi
 
 echo ""
-docker stats --no-stream factory-bay-neo4j factory-bay-minio
+docker stats --no-stream softx-ecommerce-neo4j softx-ecommerce-minio
 ```
 
 ---
@@ -791,7 +791,7 @@ docker stats --no-stream factory-bay-neo4j factory-bay-minio
 
 # Volume Management
 docker volume ls                                  # List volumes
-docker volume inspect thefactorybay_neo4j_data  # Inspect volume
+docker volume inspect softx-ecommerce_neo4j_data  # Inspect volume
 docker system df -v                              # Disk usage
 
 # Database Operations
@@ -800,10 +800,10 @@ npm run db:seed    # Seed test data
 npm run db:clear   # Clear database
 
 # Direct Access
-docker exec -it factory-bay-neo4j cypher-shell -u neo4j -p factorybay123
-docker exec -it factory-bay-minio mc alias set local http://localhost:9000
+docker exec -it softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123
+docker exec -it softx-ecommerce-minio mc alias set local http://localhost:9000
 
 # Backup
-docker run --rm --volumes-from factory-bay-neo4j -v $(pwd):/backup ubuntu tar czf /backup/neo4j.tar.gz /data
-docker run --rm --volumes-from factory-bay-minio -v $(pwd):/backup ubuntu tar czf /backup/minio.tar.gz /data
+docker run --rm --volumes-from softx-ecommerce-neo4j -v $(pwd):/backup ubuntu tar czf /backup/neo4j.tar.gz /data
+docker run --rm --volumes-from softx-ecommerce-minio -v $(pwd):/backup ubuntu tar czf /backup/minio.tar.gz /data
 ```

@@ -16,7 +16,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Factory Bay - Branded Clothing at Stock Prices',
+  title: 'Ecom - Branded Clothing at Stock Prices',
   description: 'Shop premium branded clothing at wholesale stock prices. Modern fashion at unbeatable value.',
   keywords: ['clothing', 'fashion', 'stock price', 'wholesale', 'branded apparel'],
   icons: {

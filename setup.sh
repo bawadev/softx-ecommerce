@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Factory Bay Development Environment Manager
+# Ecom Development Environment Manager
 # This script manages Neo4j, MinIO, and Next.js development server
 
 set -e
@@ -42,7 +42,7 @@ check_database() {
     print_info "Checking database status..."
 
     # Check if any users exist in the database
-    USER_COUNT=$(docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123 \
+    USER_COUNT=$(docker exec ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123 \
         "MATCH (u:User) RETURN count(u) as count" 2>/dev/null | tail -1 | tr -d ' \r\n' || echo "0")
 
     # Default to 0 if empty
@@ -104,7 +104,7 @@ check_database() {
 
 # Function to start all services
 start_services() {
-    print_info "Starting Factory Bay development environment..."
+    print_info "Starting Ecom development environment..."
 
     # Check Docker
     check_docker
@@ -113,9 +113,9 @@ start_services() {
     print_info "Starting Neo4j and MinIO containers..."
 
     # Check if containers exist and are stopped
-    if docker ps -a --format '{{.Names}}' | grep -q "factory-bay-neo4j"; then
+    if docker ps -a --format '{{.Names}}' | grep -q "ecommerce-neo4j"; then
         # Containers exist, just start them
-        docker start factory-bay-neo4j factory-bay-minio 2>/dev/null || true
+        docker start ecommerce-neo4j ecommerce-minio 2>/dev/null || true
     else
         # Containers don't exist, create them
         docker compose up -d
@@ -139,7 +139,7 @@ start_services() {
     done
 
     # Check MinIO
-    if docker ps | grep -q factory-bay-minio; then
+    if docker ps | grep -q ecommerce-minio; then
         print_success "MinIO is running on port 9000 (API) and 9001 (Console)"
     else
         print_warning "MinIO container not running"
@@ -178,23 +178,23 @@ start_services() {
     echo ""
     print_info "Services:"
     echo "  - Next.js:       http://localhost:3000"
-    echo "  - Neo4j Browser: http://localhost:7474 (neo4j/factorybay123)"
-    echo "  - MinIO Console: http://localhost:9001 (factorybay/factorybay123)"
+    echo "  - Neo4j Browser: http://localhost:7474 (neo4j/ecommerce123)"
+    echo "  - MinIO Console: http://localhost:9001 (ecommerce/ecommerce123)"
     echo ""
     print_info "Test Accounts:"
-    echo "  - Admin:    testadmin@factorybay.com / Admin123!"
+    echo "  - Admin:    testadmin@ecommerce.com / Admin123!"
     echo "  - Customer: test@example.com / Customer123!"
     echo ""
     print_info "Logs:"
     echo "  - Next.js: tail -f .dev-server.log"
-    echo "  - Neo4j:   docker logs -f factory-bay-neo4j"
-    echo "  - MinIO:   docker logs -f factory-bay-minio"
+    echo "  - Neo4j:   docker logs -f ecommerce-neo4j"
+    echo "  - MinIO:   docker logs -f ecommerce-minio"
     echo ""
 }
 
 # Function to stop all services
 stop_services() {
-    print_info "Stopping Factory Bay development environment..."
+    print_info "Stopping Ecom development environment..."
 
     # Stop Next.js dev server
     if [ -f .dev-server.pid ]; then
@@ -230,7 +230,7 @@ stop_services() {
 
 # Function to restart all services
 restart_services() {
-    print_info "Restarting Factory Bay development environment..."
+    print_info "Restarting Ecom development environment..."
     stop_services
     sleep 2
     start_services
@@ -238,7 +238,7 @@ restart_services() {
 
 # Function to show status of all services
 status_services() {
-    print_info "Factory Bay Development Environment Status"
+    print_info "Ecom Development Environment Status"
     echo ""
 
     # Check Docker
@@ -250,7 +250,7 @@ status_services() {
 
     echo ""
     print_info "Docker Containers:"
-    docker ps -a --filter "name=factory-bay" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+    docker ps -a --filter "name=ecommerce" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
     echo ""
     print_info "Next.js Development Server:"
@@ -332,10 +332,10 @@ logs_services() {
             fi
             ;;
         neo4j)
-            docker logs -f factory-bay-neo4j
+            docker logs -f ecommerce-neo4j
             ;;
         minio)
-            docker logs -f factory-bay-minio
+            docker logs -f ecommerce-minio
             ;;
         *)
             print_error "Unknown service: $SERVICE"
@@ -356,7 +356,7 @@ backup_neo4j() {
     mkdir -p "$BACKUP_DIR"
 
     docker run --rm \
-        --volumes-from factory-bay-neo4j \
+        --volumes-from ecommerce-neo4j \
         -v "$(pwd)/$BACKUP_DIR:/backup" \
         ubuntu tar czf "/backup/$BACKUP_FILE" /data 2>/dev/null
 
@@ -380,7 +380,7 @@ backup_minio() {
     mkdir -p "$BACKUP_DIR"
 
     docker run --rm \
-        --volumes-from factory-bay-minio \
+        --volumes-from ecommerce-minio \
         -v "$(pwd)/$BACKUP_DIR:/backup" \
         ubuntu tar czf "/backup/$BACKUP_FILE" /data 2>/dev/null
 
@@ -405,18 +405,18 @@ backup_all() {
 
 # Function to show volume information
 volumes_info() {
-    print_info "Factory Bay Docker Volumes"
+    print_info "Ecom Docker Volumes"
     echo ""
 
     # List volumes
     echo "Volumes:"
-    docker volume ls | grep thefactorybay
+    docker volume ls | grep ecommerce
     echo ""
 
     # Volume details
     print_info "Volume Details:"
     for vol in neo4j_data neo4j_logs minio_data; do
-        VOL_NAME="thefactorybay_${vol}"
+        VOL_NAME="ecommerce_${vol}"
         if docker volume inspect "$VOL_NAME" > /dev/null 2>&1; then
             MOUNTPOINT=$(docker volume inspect "$VOL_NAME" --format '{{ .Mountpoint }}' 2>/dev/null)
             echo "  ${vol}: ${MOUNTPOINT}"
@@ -430,13 +430,13 @@ volumes_info() {
 
 # Function to show health status
 health_check() {
-    print_info "Factory Bay Health Check"
+    print_info "Ecom Health Check"
     echo ""
 
     # Neo4j
     echo -n "  Neo4j Database:     "
     if nc -z localhost 7687 2>/dev/null; then
-        if docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123 "RETURN 1" > /dev/null 2>&1; then
+        if docker exec ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123 "RETURN 1" > /dev/null 2>&1; then
             print_success "Healthy"
         else
             print_warning "Running but not responding"
@@ -537,7 +537,7 @@ reset_hard() {
 
 # Function to show help
 show_help() {
-    echo "Factory Bay Development Environment Manager"
+    echo "Ecom Development Environment Manager"
     echo ""
     echo "Usage: $0 [command]"
     echo ""

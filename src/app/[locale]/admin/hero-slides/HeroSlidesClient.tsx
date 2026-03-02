@@ -583,7 +583,7 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
                     type="text"
                     value={form.title}
                     onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
-                    placeholder="e.g. Factory Bay"
+                    placeholder="e.g. Ecom"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent text-sm"
                   />
                 </div>

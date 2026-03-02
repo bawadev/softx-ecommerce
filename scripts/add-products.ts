@@ -76,7 +76,7 @@ const products = [
 ]
 
 async function main() {
-  console.log('🚀 Adding products to Factory Bay...\n')
+  console.log('🚀 Adding products to Ecom...\n')
 
   for (const productData of products) {
     try {

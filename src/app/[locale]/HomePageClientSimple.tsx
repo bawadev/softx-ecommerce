@@ -193,7 +193,7 @@ export default function HomePageClientSimple({
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-navy-900 to-navy-700 text-white py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Factory Bay</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Ecom</h1>
           <p className="text-xl mb-8">Branded Clothing at Stock Prices</p>
 
           {/* Search */}

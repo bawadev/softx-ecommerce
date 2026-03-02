@@ -25,7 +25,7 @@ interface SeedUser {
 
 const DEFAULT_USERS: SeedUser[] = [
   {
-    email: 'testadmin@factorybay.com',
+    email: 'testadmin@ecommerce.com',
     password: 'Admin123!',
     firstName: 'Test',
     lastName: 'Admin',
@@ -92,7 +92,7 @@ async function seedDatabase() {
     console.log('\n' + '='.repeat(60))
     console.log('✅ Database seeding completed successfully!')
     console.log('\n📋 Test Accounts:')
-    console.log('   Admin:    testadmin@factorybay.com / Admin123!')
+    console.log('   Admin:    testadmin@ecommerce.com / Admin123!')
     console.log('   Customer: test@example.com / Customer123!')
     console.log('\n🔗 URLs:')
     console.log('   App:   http://localhost:3000/en/login')

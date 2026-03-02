@@ -1,10 +1,10 @@
-# Factory Bay - Kamal Deployment Config
-# Copy to bawaDev/TheFactoryBay repo as config/deploy.yml
+# Ecom - Kamal Deployment Config
+# Copy to bawaDev/TheEcom repo as config/deploy.yml
 # Reference: server-credentials.md
 # Uses Traefik (from Appwrite) for reverse proxy and SSL
 
-service: factory-bay
-image: ghcr.io/bawadev/factory-bay
+service: ecommerce
+image: ghcr.io/bawadev/ecommerce
 
 servers:
   web:
@@ -13,11 +13,11 @@ servers:
     labels:
       traefik.enable: "true"
       traefik.constraint-label-stack: "appwrite"
-      traefik.http.routers.factory-bay.rule: "Host(\`dev.renfy.style\`)"
-      traefik.http.routers.factory-bay.entrypoints: "appwrite_websecure"
-      traefik.http.routers.factory-bay.tls: "true"
-      traefik.http.routers.factory-bay.tls.certresolver: "dns"
-      traefik.http.services.factory-bay.loadbalancer.server.port: "3000"
+      traefik.http.routers.ecommerce.rule: "Host(\`dev.renfy.style\`)"
+      traefik.http.routers.ecommerce.entrypoints: "appwrite_websecure"
+      traefik.http.routers.ecommerce.tls: "true"
+      traefik.http.routers.ecommerce.tls.certresolver: "dns"
+      traefik.http.services.ecommerce.loadbalancer.server.port: "3000"
       traefik.docker.network: "gateway"
     options:
       network: gateway

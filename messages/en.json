@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Factory Bay",
+    "appName": "Ecom",
     "tagline": "Branded Clothing at Stock Prices",
     "logout": "Logout",
     "loggingOut": "Logging out...",
@@ -35,7 +35,7 @@
   "home": {
     "hero": {
       "badge": "Premium Experience closer to You",
-      "title": "Factory Bay",
+      "title": "Ecom",
       "subtitle": "Branded Clothing at Stock Prices",
       "shopNow": "Shop Now",
       "getStarted": "Get Started",
@@ -61,7 +61,7 @@
       "supportLabel": "Customer Support"
     },
     "cta": {
-      "title": "Join Factory Bay Today",
+      "title": "Join Ecom Today",
       "subtitle": "Get access to exclusive deals, personalized recommendations, and premium branded clothing at wholesale prices.",
       "createAccount": "Create Account"
     }
@@ -69,7 +69,7 @@
   "auth": {
     "login": {
       "title": "Sign In",
-      "subtitle": "Welcome back to Factory Bay",
+      "subtitle": "Welcome back to Ecom",
       "email": "Email",
       "password": "Password",
       "rememberMe": "Remember me",
@@ -81,7 +81,7 @@
     },
     "signup": {
       "title": "Create Account",
-      "subtitle": "Join Factory Bay and start shopping",
+      "subtitle": "Join Ecom and start shopping",
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
@@ -199,7 +199,7 @@
     "youSave": "You Save",
     "retailPrice": "Retail Price",
     "addMoreForFreeShipping": "Add ${amount} more for free shipping",
-    "secureCheckout": "Secure checkout powered by Factory Bay",
+    "secureCheckout": "Secure checkout powered by Ecom",
     "failedToLoad": "Failed to load cart",
     "noImage": "No Image"
   },

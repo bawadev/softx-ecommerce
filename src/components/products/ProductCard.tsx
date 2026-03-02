@@ -136,13 +136,10 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   }
 
-  // Whether the panel should be in "revealed" state
-  const panelRevealed = showMobilePanel ? '-translate-y-1/2' : ''
-
   return (
-    <div ref={cardRef} className="card-hover group relative overflow-hidden">
+    <div ref={cardRef} className="card-hover group relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
       {/* Image - clickable link */}
-      <Link href={productUrl} onClick={handleCardClick}>
+      <Link href={productUrl} onClick={handleCardClick} className="relative z-0 block">
         <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-gray-100">
           {(firstVariant?.images?.[0] || product.images?.[0]) ? (
             <Image
@@ -160,14 +157,14 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Discount Badge */}
           {discountPercent > 0 && (
-            <div className="absolute right-3 top-3 rounded-full bg-gold-600 px-3 py-1 text-xs font-bold text-navy-900 shadow-lg">
+            <div className="absolute right-3 top-3 rounded-full bg-gold-600 px-3 py-1 text-xs font-bold text-navy-900 shadow-lg z-10">
               -{discountPercent}%
             </div>
           )}
 
           {/* Stock Status */}
           {!hasStock && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-900/70">
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-900/70 z-10">
               <span className="rounded-lg bg-gray-800 px-4 py-2 text-sm font-semibold text-white">
                 Out of Stock
               </span>
@@ -175,56 +172,48 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
 
           {hasStock && totalStock < 10 && (
-            <div className="absolute left-3 top-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow-lg">
+            <div className="absolute left-3 top-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow-lg z-10">
               Low Stock
             </div>
           )}
         </div>
       </Link>
 
-      {/*
-        Bottom panel — a fixed-height window with two stacked "pages".
-        Page 1 (name+price) is visible by default.
-        On hover the inner wrapper slides up by 50%, revealing page 2 (quick-add).
-      */}
-      <div className={`${hasStock ? 'h-[72px]' : ''} overflow-hidden`}>
-        <div
-          className={
-            hasStock
-              ? `transition-transform duration-300 ease-out group-hover:-translate-y-1/2 ${panelRevealed}`
-              : ''
-          }
-        >
-          {/* Page 1: Name + Price */}
+      {/* Enhanced floating overlay panel */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 bg-white">
+        {/* Title and Price - always visible */}
+        <div className="p-2 sm:p-3 border-t border-gray-100 rounded-b-lg">
           <Link
             href={productUrl}
             onClick={handleCardClick}
-            className={`block ${hasStock ? 'h-[72px]' : ''}`}
+            className="block"
           >
-            <div className={`p-2 sm:p-3 ${hasStock ? 'flex h-full flex-col justify-center' : ''}`}>
-              <h3 className="line-clamp-1 sm:line-clamp-2 font-semibold text-gray-900 text-xs sm:text-sm md:text-base group-hover:text-navy-600 transition-colors break-words">
-                {product.name}
-              </h3>
-              <div className="mt-1 flex items-baseline gap-1 min-w-0">
-                <span className="text-sm sm:text-base md:text-lg font-bold text-navy-600 truncate">
-                  Rs {product.stockPrice.toFixed(0)}
-                </span>
-                <span className="text-[10px] sm:text-xs md:text-sm text-gray-400 line-through truncate">
-                  Rs {product.retailPrice.toFixed(0)}
-                </span>
-              </div>
+            <h3 className="line-clamp-2 font-semibold text-gray-900 text-xs sm:text-sm md:text-base group-hover:text-navy-600 transition-colors break-words leading-tight">
+              {product.name}
+            </h3>
+            <div className="mt-1 flex items-baseline gap-1 min-w-0">
+              <span className="text-xs sm:text-sm font-bold text-navy-600 truncate">
+                Rs {product.stockPrice.toFixed(0)}
+              </span>
+              <span className="text-[10px] sm:text-xs text-gray-400 line-through truncate">
+                Rs {product.retailPrice.toFixed(0)}
+              </span>
             </div>
           </Link>
+        </div>
 
-          {/* Page 2: Quick Add (revealed when panel slides up) */}
-          {hasStock && (
-            <div
-              className="h-[72px] flex flex-col justify-between p-1.5"
-              onClick={(e) => e.stopPropagation()}
-            >
+        {/* Quick Add Controls - expand on hover */}
+        {hasStock && (
+          <div
+            className={`max-h-0 overflow-hidden transition-all duration-500 ease-out ${
+              showMobilePanel ? 'max-h-[180px]' : 'group-hover:max-h-[180px]'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-2 sm:p-3 rounded-t-lg">
               {/* Size buttons */}
               <div
-                className={`flex flex-wrap gap-1 ${
+                className={`flex flex-wrap gap-1 mb-2 ${
                   needsSelection === 'size' ? 'ring-1 ring-red-400 rounded p-0.5 animate-pulse' : ''
                 }`}
               >
@@ -316,8 +305,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )

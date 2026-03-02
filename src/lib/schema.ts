@@ -1,5 +1,5 @@
 /**
- * Database Schema Initialization for Factory Bay
+ * Database Schema Initialization for Ecom
  * This file contains all the Cypher queries to set up the Neo4j database
  */
 

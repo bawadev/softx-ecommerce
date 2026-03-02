@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the comprehensive cycle prevention system implemented for the parent-child filter hierarchy in the Factory Bay e-commerce platform. The system prevents the creation of circular dependencies in the filter hierarchy graph.
+This document describes the comprehensive cycle prevention system implemented for the parent-child filter hierarchy in the Ecom e-commerce platform. The system prevents the creation of circular dependencies in the filter hierarchy graph.
 
 ## Types of Cycles Prevented
 

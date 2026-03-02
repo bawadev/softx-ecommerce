@@ -72,7 +72,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                 <div className="relative h-14 w-14 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
                   <Image
                     src="/favicon.svg"
-                    alt="Factory Bay Logo"
+                    alt="Ecom Logo"
                     width={48}
                     height={48}
                     className="object-contain"
@@ -269,7 +269,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
               <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden">
                 <Image
                   src="/favicon.svg"
-                  alt="Factory Bay Logo"
+                  alt="Ecom Logo"
                   width={36}
                   height={36}
                   className="object-contain"

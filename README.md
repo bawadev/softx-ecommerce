@@ -1,14 +1,14 @@
-# Factory Bay 🏭
+# Ecom 🏭
 
 **Branded Clothing at Stock Prices**
 
-A modern e-commerce platform built with Next.js, TypeScript, Neo4j, and Tailwind CSS. Factory Bay offers premium branded clothing at wholesale prices with intelligent recommendations and personalized shopping experiences.
+A modern e-commerce platform built with Next.js, TypeScript, Neo4j, and Tailwind CSS. Ecom offers premium branded clothing at wholesale prices with intelligent recommendations and personalized shopping experiences.
 
 ---
 
 ## 🎯 Project Vision
 
-Factory Bay disrupts traditional retail by offering customers direct access to branded clothing at stock/wholesale prices. The platform leverages graph database technology (Neo4j) to provide smart recommendations based on user preferences, measurements, and shopping behavior.
+Ecom disrupts traditional retail by offering customers direct access to branded clothing at stock/wholesale prices. The platform leverages graph database technology (Neo4j) to provide smart recommendations based on user preferences, measurements, and shopping behavior.
 
 ---
 
@@ -48,7 +48,7 @@ Use the automated setup script to manage everything:
 ```bash
 # 1. Clone and install
 git clone <your-repo>
-cd TheFactoryBay
+cd softx-ecommerce
 npm install
 
 # 2. Copy environment variables
@@ -70,7 +70,7 @@ That's it! The script will:
 
 ### Setup Script Commands
 
-The `./setup.sh` script is your central control panel for managing the entire Factory Bay infrastructure:
+The `./setup.sh` script is your central control panel for managing the entire Ecom infrastructure:
 
 ```bash
 # Service Management
@@ -130,13 +130,13 @@ The `./setup.sh` script is your central control panel for managing the entire Fa
 
 | Account | Email | Password |
 |---------|-------|----------|
-| Admin | `testadmin@factorybay.com` | `Admin123!` |
+| Admin | `testadmin@ecommerce.com` | `Admin123!` |
 | Customer | `test@example.com` | `Customer123!` |
 
 **Service URLs:**
-- Factory Bay: http://localhost:3000
-- Neo4j Browser: http://localhost:7474 (`neo4j` / `factorybay123`)
-- MinIO Console: http://localhost:9001 (`factorybay` / `factorybay123`)
+- Ecom: http://localhost:3000
+- Neo4j Browser: http://localhost:7474 (`neo4j` / `ecommerce123`)
+- MinIO Console: http://localhost:9001 (`ecommerce` / `ecommerce123`)
 
 ### Manual Setup (Alternative)
 
@@ -232,7 +232,7 @@ npm run setup:categories  # Setup Ladies/Gents/Kids category hierarchy
 ## 📁 Project Structure
 
 ```
-factory-bay/
+softx-ecommerce/
 ├── src/
 │   ├── app/                  # Next.js pages
 │   │   ├── page.tsx         # Homepage
@@ -280,7 +280,7 @@ factory-bay/
 
 ## 🗄 Database Schema
 
-Factory Bay uses **Neo4j**, a graph database, to model complex relationships:
+Ecom uses **Neo4j**, a graph database, to model complex relationships:
 
 - **Nodes:** User, Product, ProductVariant, Order, Cart, Preferences, Measurements
 - **Relationships:** Purchases, Views, Recommendations, Inventory
@@ -305,7 +305,7 @@ This enables powerful features like:
 
 ## 📱 Mobile-First Design
 
-Factory Bay is built mobile-first with these breakpoints:
+Ecom is built mobile-first with these breakpoints:
 - Mobile: < 640px (1 column)
 - Tablet: 640px - 1024px (2 columns)
 - Desktop: > 1024px (4 columns)
@@ -440,4 +440,4 @@ For setup issues, see [INFRASTRUCTURE.md](./INFRASTRUCTURE.md) or check:
 
 ---
 
-**Factory Bay** - Where premium meets affordable.
+**Ecom** - Where premium meets affordable.

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Factory Bay Deployment Initialization Script
+# Ecom Deployment Initialization Script
 # This script initializes the production database and storage after deployment
 
 set -e
@@ -108,7 +108,7 @@ seed_database() {
         print_success "Database seeded successfully"
         echo ""
         print_info "Default accounts created:"
-        echo "  - Admin:    testadmin@factorybay.com / Admin123!"
+        echo "  - Admin:    testadmin@ecommerce.com / Admin123!"
         echo "  - Customer: test@example.com / Customer123!"
         echo ""
     else
@@ -142,7 +142,7 @@ init_minio() {
 main() {
     echo ""
     echo "========================================="
-    echo "  Factory Bay Deployment Initialization"
+    echo "  Ecom Deployment Initialization"
     echo "========================================="
     echo ""
 
@@ -169,7 +169,7 @@ main() {
     echo ""
     print_info "Next steps:"
     echo "  1. Access your application at: ${NEXT_PUBLIC_APP_URL:-http://your-domain.com}"
-    echo "  2. Login with the admin account: testadmin@factorybay.com / Admin123!"
+    echo "  2. Login with the admin account: testadmin@ecommerce.com / Admin123!"
     echo "  3. Change default passwords immediately!"
     echo ""
     print_warning "SECURITY REMINDER:"

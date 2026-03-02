@@ -21,7 +21,7 @@ export default async function AdminDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
-              <p className="mt-1 text-sm text-gray-600">Manage your Factory Bay store</p>
+              <p className="mt-1 text-sm text-gray-600">Manage your Ecom store</p>
             </div>
             <Link href={`/${locale}`} className="text-sm text-navy-600 hover:text-navy-700 font-medium">
               ← Back to Store

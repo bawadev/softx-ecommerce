@@ -11,8 +11,8 @@ const minioConfig = {
   endPoint: process.env.MINIO_ENDPOINT || 'localhost',
   port: parseInt(process.env.MINIO_PORT || '9000'),
   useSSL: process.env.MINIO_USE_SSL === 'true',
-  accessKey: process.env.MINIO_ACCESS_KEY || 'factorybay',
-  secretKey: process.env.MINIO_SECRET_KEY || 'factorybay123',
+  accessKey: process.env.MINIO_ACCESS_KEY || 'ecommerce',
+  secretKey: process.env.MINIO_SECRET_KEY || 'ecommerce123',
 }
 
 const bucketName = process.env.MINIO_BUCKET_NAME || 'product-images'

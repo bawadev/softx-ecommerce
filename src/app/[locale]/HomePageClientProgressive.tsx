@@ -282,7 +282,7 @@ export default function HomePageClientProgressive({
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
               Welcome to{' '}
               <span className="bg-gradient-to-r from-gold-400 to-coral-400 bg-clip-text text-transparent">
-                Factory Bay
+                Ecom
               </span>
             </h1>
 

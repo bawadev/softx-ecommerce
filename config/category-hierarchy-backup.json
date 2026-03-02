@@ -1,5 +1,5 @@
 {
-  "$schema": "Category hierarchy configuration for Factory Bay",
+  "$schema": "Category hierarchy configuration for Ecom",
   "description": "Define your custom category hierarchy here. You can have any structure - Men/Women, Pets, Kids, etc.",
   "filters": [
     {

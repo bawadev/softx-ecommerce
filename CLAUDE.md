@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Factory Bay is a modern e-commerce platform for branded clothing at wholesale prices. Built with Next.js 15 (App Router), TypeScript, Neo4j graph database, and MinIO for object storage. The platform features internationalization (i18n) with English and Sinhala support.
+Ecom is a modern e-commerce platform for branded clothing at wholesale prices. Built with Next.js 15 (App Router), TypeScript, Neo4j graph database, and MinIO for object storage. The platform features internationalization (i18n) with English and Sinhala support.
 
 ## Essential Commands
 
@@ -43,7 +43,7 @@ npm run filters:recalculate # Recalculate filter levels
 ```
 
 **Default Test Users (created by `db:seed`):**
-- Admin: `testadmin@factorybay.com` / `Admin123!`
+- Admin: `testadmin@ecommerce.com` / `Admin123!`
 - Customer: `test@example.com` / `Customer123!`
 
 ### MinIO Setup
@@ -131,7 +131,7 @@ src/
 
 ### Neo4j Graph Model
 
-Factory Bay uses Neo4j to model complex relationships between users, products, orders, and preferences.
+Ecom uses Neo4j to model complex relationships between users, products, orders, and preferences.
 
 **Key Node Types:**
 - `User` - Customers and admins
@@ -284,17 +284,17 @@ tsx scripts/your-test-script.ts
 ### Debugging
 
 **Web Interfaces:**
-- Neo4j Browser: http://localhost:7474 (neo4j/factorybay123)
-- MinIO Console: http://localhost:9001 (factorybay/factorybay123)
+- Neo4j Browser: http://localhost:7474 (neo4j/ecommerce123)
+- MinIO Console: http://localhost:9001 (ecommerce/ecommerce123)
 
 **Direct Database Access:**
 ```bash
 # Neo4j Cypher Shell
-docker exec -it factory-bay-neo4j cypher-shell -u neo4j -p factorybay123
+docker exec -it softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123
 
 # Quick queries
-docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123 "MATCH (n) RETURN labels(n), count(*)"
-docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123 "MATCH (c:Category) WHERE c.level = 0 RETURN c.name, c.hierarchy"
+docker exec softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123 "MATCH (n) RETURN labels(n), count(*)"
+docker exec softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123 "MATCH (c:Category) WHERE c.level = 0 RETURN c.name, c.hierarchy"
 ```
 
 ## Environment Variables
@@ -305,7 +305,7 @@ Required variables in `.env.local`:
 # Neo4j
 NEO4J_URI=neo4j://localhost:7687
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=factorybay123
+NEO4J_PASSWORD=ecommerce123
 
 # JWT
 JWT_SECRET=your-secure-random-string
@@ -313,8 +313,8 @@ JWT_SECRET=your-secure-random-string
 # MinIO
 MINIO_ENDPOINT=localhost
 MINIO_PORT=9000
-MINIO_ACCESS_KEY=factorybay
-MINIO_SECRET_KEY=factorybay123
+MINIO_ACCESS_KEY=ecommerce
+MINIO_SECRET_KEY=ecommerce123
 MINIO_BUCKET_NAME=product-images
 NEXT_PUBLIC_MINIO_URL=http://localhost:9000
 

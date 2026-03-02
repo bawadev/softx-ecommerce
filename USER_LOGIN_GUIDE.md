@@ -1,6 +1,6 @@
-# Factory Bay - User Login Guide
+# Ecom - User Login Guide
 
-This guide explains how to access Factory Bay including all services, test credentials, and account creation.
+This guide explains how to access Ecom including all services, test credentials, and account creation.
 
 ## Table of Contents
 - [Quick Start](#quick-start)
@@ -24,14 +24,14 @@ This guide explains how to access Factory Bay including all services, test crede
    ```
 
 2. **Verify services are running:**
-   - Factory Bay: http://localhost:3000
+   - Ecom: http://localhost:3000
    - Neo4j Browser: http://localhost:7474
    - MinIO Console: http://localhost:9001
 
 3. **Login with test credentials:**
-   - **Admin:** `testadmin@factorybay.com` / `Admin123!`
-   - **Neo4j:** `neo4j` / `factorybay123`
-   - **MinIO:** `factorybay` / `factorybay123`
+   - **Admin:** `testadmin@ecommerce.com` / `Admin123!`
+   - **Neo4j:** `neo4j` / `ecommerce123`
+   - **MinIO:** `ecommerce` / `ecommerce123`
 
 4. **Or create a new customer account:**
    - Navigate to: http://localhost:3000/en/signup
@@ -42,13 +42,13 @@ This guide explains how to access Factory Bay including all services, test crede
 
 ## Remote/Production Access
 
-### Production Factory Bay Application
+### Production Ecom Application
 
 Access the live production instance deployed on Dokploy:
 
 | Service | URL | Username/Email | Password | Status |
 |---------|-----|----------------|----------|--------|
-| **Factory Bay Production** | https://renfy.style/en | `testadmin@factorybay.com` | `Admin123!` | ✅ Live |
+| **Ecom Production** | https://renfy.style/en | `testadmin@ecommerce.com` | `Admin123!` | ✅ Live |
 | **Admin Dashboard** | https://renfy.style/en/admin/dashboard | Same as above | Same as above | ✅ Live |
 
 **Production URLs:**
@@ -83,7 +83,7 @@ Access the Dokploy deployment platform to manage the production application:
 **Access Instructions:**
 1. Navigate to: http://62.171.137.117:3000
 2. Login with Dokploy credentials
-3. Select "Factory Bay" project
+3. Select "Ecom" project
 4. Access application settings and deployments
 
 ### Production Infrastructure
@@ -109,7 +109,7 @@ Access the Neo4j graph database browser for direct database queries and visualiz
 
 | Service | URL | Username | Password | Status |
 |---------|-----|----------|----------|--------|
-| **Neo4j Browser** | http://localhost:7474 | `neo4j` | `factorybay123` | ✅ Verified |
+| **Neo4j Browser** | http://localhost:7474 | `neo4j` | `ecommerce123` | ✅ Verified |
 
 **Connection Details:**
 - Connect URL: `neo4j://localhost:7687`
@@ -134,7 +134,7 @@ Access the MinIO object storage console for managing uploaded images and files.
 
 | Service | URL | Access Key | Secret Key | Status |
 |---------|-----|------------|------------|--------|
-| **MinIO Console** | http://localhost:9001 | `factorybay` | `factorybay123` | ✅ Verified |
+| **MinIO Console** | http://localhost:9001 | `ecommerce` | `ecommerce123` | ✅ Verified |
 
 **Features:**
 - Object Browser: View and manage uploaded product images
@@ -157,7 +157,7 @@ For testing admin functionality:
 
 | Email | Password | Role | Status |
 |-------|----------|------|--------|
-| `testadmin@factorybay.com` | `Admin123!` | ADMIN | ✅ Verified Working |
+| `testadmin@ecommerce.com` | `Admin123!` | ADMIN | ✅ Verified Working |
 
 **Admin Panel URL:** http://localhost:3000/en/admin/dashboard
 
@@ -191,7 +191,7 @@ The following accounts exist but passwords are unknown (created via signup with 
 
 | Email | Role | Status |
 |-------|------|--------|
-| `admin@factorybay.com` | ADMIN | ⚠️ Password unknown |
+| `admin@ecommerce.com` | ADMIN | ⚠️ Password unknown |
 | `test@example.com` | CUSTOMER | ⚠️ Password unknown |
 
 **Note:** If you need to access these accounts, create new test accounts instead or manually reset passwords via Neo4j.
@@ -349,7 +349,7 @@ Once logged in as a customer, you have access to:
 - Admin panel requires `ADMIN` role
 - To upgrade an account to admin, use Neo4j:
   ```bash
-  docker exec factory-bay-neo4j cypher-shell -u neo4j -p factorybay123 \
+  docker exec softx-ecommerce-neo4j cypher-shell -u neo4j -p ecommerce123 \
     "MATCH (u:User {email: 'your-email@example.com'}) SET u.role = 'ADMIN' RETURN u.email, u.role"
   ```
 - Or create a script at `scripts/set-admin-role.ts` if needed
@@ -395,16 +395,16 @@ cat .env.local
 
 | Service | URL | Username/Email | Password | Status |
 |---------|-----|----------------|----------|--------|
-| **Factory Bay Production** | https://renfy.style/en/login | `testadmin@factorybay.com` | `Admin123!` | ✅ Live |
+| **Ecom Production** | https://renfy.style/en/login | `testadmin@ecommerce.com` | `Admin123!` | ✅ Live |
 | **Dokploy Dashboard** | http://62.171.137.117:3000 | [Your Dokploy email] | [Your Dokploy password] | ✅ Accessible |
 
 ### Local Development Service Credentials
 
 | Service | URL | Username/Email | Password | Status |
 |---------|-----|----------------|----------|--------|
-| **Factory Bay (Admin)** | http://localhost:3000/en/login | `testadmin@factorybay.com` | `Admin123!` | ✅ Working |
-| **Neo4j Browser** | http://localhost:7474 | `neo4j` | `factorybay123` | ✅ Working |
-| **MinIO Console** | http://localhost:9001 | `factorybay` | `factorybay123` | ✅ Working |
+| **Ecom (Admin)** | http://localhost:3000/en/login | `testadmin@ecommerce.com` | `Admin123!` | ✅ Working |
+| **Neo4j Browser** | http://localhost:7474 | `neo4j` | `ecommerce123` | ✅ Working |
+| **MinIO Console** | http://localhost:9001 | `ecommerce` | `ecommerce123` | ✅ Working |
 
 ### Customer URLs
 ```

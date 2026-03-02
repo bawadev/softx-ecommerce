@@ -1,7 +1,6 @@
 import { getSession } from '../db'
 import neo4j from 'neo4j-driver'
 import type { Product, ProductVariant, ProductCategory, ProductGender } from '../types'
-import { convertNeo4jIntegers } from '../neo4j-utils'
 
 export interface ProductFilters {
   /** @deprecated Use filter relationships (TAGGED_WITH) instead via custom filter system */
@@ -86,7 +85,7 @@ export async function getAllProducts(
     `
 
     const result = await session.run(query, params)
-    return result.records.map((record) => convertNeo4jIntegers(record.get('p')))
+    return result.records.map((record) => record.get('p'))
   } finally {
     await session.close()
   }
@@ -109,7 +108,7 @@ export async function getProductById(id: string): Promise<ProductWithVariants | 
     )
 
     const product = result.records[0]?.get('p')
-    return product ? convertNeo4jIntegers(product) : null
+    return product || null
   } finally {
     await session.close()
   }
@@ -173,7 +172,7 @@ export async function getVariantById(variantId: string): Promise<ProductVariant 
     )
 
     const variant = result.records[0]?.get('v')
-    return variant ? convertNeo4jIntegers(variant) : null
+    return variant || null
   } finally {
     await session.close()
   }
@@ -213,8 +212,8 @@ export async function getVariantWithProduct(variantId: string): Promise<{
 
     const record = result.records[0]
     return {
-      variant: convertNeo4jIntegers(record.get('variant')),
-      product: convertNeo4jIntegers(record.get('product')),
+      variant: record.get('variant'),
+      product: record.get('product'),
     }
   } finally {
     await session.close()
@@ -382,7 +381,7 @@ export async function updateProduct(
     if (!product) {
       throw new Error('Product not found')
     }
-    return convertNeo4jIntegers(product)
+    return product
   } finally {
     await session.close()
   }
@@ -413,7 +412,7 @@ export async function updateVariant(
     if (!variant) {
       throw new Error('Variant not found')
     }
-    return convertNeo4jIntegers(variant)
+    return variant
   } finally {
     await session.close()
   }
