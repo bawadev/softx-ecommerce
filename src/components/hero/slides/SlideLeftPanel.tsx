@@ -44,7 +44,7 @@ export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 sm:mb-4 leading-[1.2] tracking-tight"
           >
             <span
-              className="block bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
+              className="block text-white drop-shadow-2xl"
               style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
             >
               {title}
@@ -54,7 +54,7 @@ export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick
           {/* Subtitle */}
           <motion.p
             variants={shouldReduce ? undefined : leftPanelChildVariants}
-            className="text-base sm:text-lg md:text-xl text-gray-200 drop-shadow-md max-w-md leading-relaxed font-light"
+            className="text-base sm:text-lg md:text-xl text-white drop-shadow-md max-w-md leading-relaxed font-light"
           >
             {subtitle}
           </motion.p>

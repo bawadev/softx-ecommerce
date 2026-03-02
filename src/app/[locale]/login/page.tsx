@@ -46,11 +46,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-navy-50 via-white to-coral-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-navy-900 mb-2">{tCommon('appName')}</h1>
+          <h1 className="text-4xl font-bold text-black-900 mb-2">{tCommon('appName')}</h1>
           <p className="text-gray-600">{t('subtitle')}</p>
         </div>
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
               {t('noAccount')}{' '}
               <Link
                 href={`/${locale}/signup`}
-                className="font-semibold text-navy-600 hover:text-navy-700 transition-colors"
+                className="font-semibold text-black-700 hover:text-black-800 transition-colors"
               >
                 {t('signUp')}
               </Link>

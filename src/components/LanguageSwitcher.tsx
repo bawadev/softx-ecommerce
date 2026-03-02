@@ -25,8 +25,8 @@ export default function LanguageSwitcher() {
           onClick={() => switchLocale(loc)}
           className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-300 ${
             locale === loc
-              ? 'bg-gradient-to-r from-navy-600 to-navy-700 text-white shadow-md scale-105'
-              : 'bg-transparent text-gray-600 hover:bg-white/50 hover:text-navy-600 hover:backdrop-blur-sm'
+              ? 'bg-black-700 text-white shadow-md scale-105'
+              : 'bg-transparent text-gray-600 hover:bg-white/50 hover:text-black-700 hover:backdrop-blur-sm'
           }`}
         >
           {loc === 'en' ? 'EN' : 'සිං'}

@@ -9,36 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Navy Blue (Primary)
-        navy: {
-          50: '#f5f9fd',
-          100: '#e8f3fb',
-          200: '#c4dff0',
-          300: '#95c1e3',
-          400: '#6ba3d0',
-          500: '#4285b8',
-          600: '#2d6394',
-          700: '#234e78',
-          800: '#1a3a5c',
-          900: '#0f2540',
-          950: '#0a1628',
+        // Black scale (replaces Navy) - Pure monochrome theme
+        black: {
+          50: '#fafafa',
+          100: '#f5f5f5',
+          200: '#e5e5e5',
+          300: '#d4d4d4',
+          400: '#a3a3a3',
+          500: '#737373',
+          600: '#525252',
+          700: '#404040',
+          800: '#262626',
+          900: '#171717',
+          950: '#0a0a0a',
         },
-        // Gold (Accent)
-        gold: {
-          100: '#fdf7e3',
-          300: '#f7e6a9',
-          400: '#f0d77a',
-          500: '#e5c158',
-          600: '#d4af37',
-        },
-        // Coral (CTA)
-        coral: {
-          100: '#ffe9e9',
-          300: '#ffc4c4',
-          400: '#ffa5a5',
-          500: '#ff8787',
-          600: '#ff6b6b',
-        },
+        // Note: Gold and Coral removed for pure monochrome theme
+        // Gray scale uses Tailwind's default gray colors
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],

@@ -516,21 +516,21 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-navy-900">Product Management</h1>
+              <h1 className="text-3xl font-bold text-black-900">Product Management</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage your product catalog
               </p>
             </div>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="text-sm text-navy-600 hover:text-navy-700 font-medium"
+              className="text-sm text-black-700 hover:text-black-800 font-medium"
             >
               ← Back to Dashboard
             </Link>
           </div>
           <button
             onClick={() => setIsDialogOpen(true)}
-            className="mt-4 w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors flex items-center justify-center gap-2"
+            className="mt-4 w-full sm:w-auto px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 font-medium transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -637,7 +637,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                         <div className="text-xs text-gray-500">
                           {product.variants.length} variants &middot; {product.variants.map(v => v.size).join(', ')}
                         </div>
-                        <div className={`text-xs font-medium ${totalStock === 0 ? 'text-red-600' : totalStock < 10 ? 'text-yellow-600' : 'text-green-600'}`}>
+                        <div className={`text-xs font-medium ${totalStock === 0 ? 'text-red-600' : totalStock < 10 ? 'text-black-600' : 'text-green-600'}`}>
                           {totalStock} units
                         </div>
                       </div>
@@ -647,7 +647,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                     <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-100">
                       <Link
                         href={`/${locale}/product/${product.id}`}
-                        className="text-xs text-navy-600 hover:text-navy-700 font-medium flex items-center gap-1"
+                        className="text-xs text-black-700 hover:text-black-800 font-medium flex items-center gap-1"
                         target="_blank"
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -674,7 +674,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                           e.stopPropagation()
                           handleOpenSectionDialog(product)
                         }}
-                        className="text-xs text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                        className="text-xs text-black-600 hover:text-black-700 font-medium flex items-center gap-1"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -784,8 +784,8 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                         <tr
                           key={product.id}
                           onClick={() => loadProductIntoForm(product)}
-                          className={`hover:bg-blue-50 cursor-pointer transition-colors ${
-                            editingId === product.id ? 'bg-blue-100' : ''
+                          className={`hover:bg-gray-100 cursor-pointer transition-colors ${
+                            editingId === product.id ? 'bg-gray-100' : ''
                           }`}
                         >
                           <td className="px-6 py-4">
@@ -827,7 +827,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className={`text-sm font-medium ${totalStock === 0 ? 'text-red-600' : totalStock < 10 ? 'text-yellow-600' : 'text-green-600'}`}>
+                            <div className={`text-sm font-medium ${totalStock === 0 ? 'text-red-600' : totalStock < 10 ? 'text-black-600' : 'text-green-600'}`}>
                               {totalStock} units
                             </div>
                           </td>
@@ -835,7 +835,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                             <div className="flex items-center justify-end gap-2">
                               <Link
                                 href={`/${locale}/product/${product.id}`}
-                                className="text-navy-600 hover:text-navy-700 p-1"
+                                className="text-black-700 hover:text-black-800 p-1"
                                 target="_blank"
                                 onClick={(e) => e.stopPropagation()}
                                 title="View product"
@@ -1000,7 +1000,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                             [category.id]: value,
                           })
                         }}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none ml-4"
+                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none ml-4"
                       />
                     </div>
                   ))}
@@ -1009,12 +1009,12 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
 
               {/* Total Allocated Warning */}
               {Object.values(sectionQuantities).some((qty) => qty > 0) && (
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-800">
+                <div className="mt-4 p-3 bg-gray-100 border border-gray-200 rounded-lg">
+                  <p className="text-sm text-black-800">
                     <strong>Total to allocate:</strong>{' '}
                     {Object.values(sectionQuantities).reduce((sum, qty) => sum + qty, 0)} units
                   </p>
-                  <p className="text-xs text-blue-600 mt-1">
+                  <p className="text-xs text-black-600 mt-1">
                     Available stock: {selectedProductForSection.variants.reduce((sum, v) => sum + v.stockQuantity, 0)}{' '}
                     units
                   </p>
@@ -1037,7 +1037,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
               <button
                 onClick={handleAssignToSections}
                 disabled={assigningSections || Object.values(sectionQuantities).every((qty) => !qty || qty === 0)}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {assigningSections ? 'Assigning...' : 'Assign to Sections'}
               </button>

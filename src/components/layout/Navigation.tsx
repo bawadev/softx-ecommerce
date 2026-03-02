@@ -65,23 +65,18 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
       <nav className="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50 shadow-lg">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
-            {/* Enhanced Logo with Glass Effect */}
+            {/* Enhanced Logo */}
             <Link href={`/${locale}`} className="flex items-center gap-3 group">
               <div className="relative">
-                <div className="absolute inset-0 bg-navy-600/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
-                <div className="relative h-14 w-14 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+                <div className="relative flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                   <Image
-                    src="/favicon.svg"
+                    src="/favicon.png"
                     alt="Ecom Logo"
-                    width={48}
-                    height={48}
+                    width={80}
+                    height={80}
                     className="object-contain"
                   />
                 </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold text-navy-900 group-hover:text-navy-600 transition-colors">{tCommon('appName')}</span>
-                <span className="text-[10px] text-gold-600 font-semibold uppercase tracking-wider">{t('stockPrices')}</span>
               </div>
             </Link>
 
@@ -91,48 +86,47 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
 
               <Link
                 href={`/${locale}/shop`}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 rounded-none text-sm font-medium transition-all duration-200 ${
                   pathname.includes('/shop')
-                    ? 'bg-navy-600/10 text-navy-600 backdrop-blur-sm'
-                    : 'text-gray-700 hover:bg-navy-50/50 hover:text-navy-600 hover:backdrop-blur-sm'
+                    ? 'bg-black-700/10 text-black-700 backdrop-blur-sm'
+                    : 'text-gray-700 hover:bg-gray-50/50 hover:text-black-700 hover:backdrop-blur-sm'
                 }`}
               >
                 {t('shop')}
               </Link>
 
-              {/* Admin Panel - Glass Button */}
+              {/* Admin Panel - Sharp Button */}
               {isAdmin && (
                 <Link
                   href={`/${locale}/admin/dashboard`}
-                  className={`group relative px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 overflow-hidden ${
+                  className={`px-4 py-2.5 rounded-none text-sm font-semibold transition-all duration-200 ${
                     pathname.includes('/admin')
-                      ? 'bg-navy-600 text-white shadow-lg'
-                      : 'bg-navy-600/90 text-white hover:bg-navy-600 hover:shadow-xl hover:scale-105'
+                      ? 'bg-black-700 text-white shadow-lg'
+                      : 'bg-black-700/90 text-white hover:bg-black-700 hover:shadow-lg'
                   }`}
                 >
-                  <span className="relative z-10 flex items-center gap-2">
+                  <span className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     {t('admin')}
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-navy-700/0 via-white/10 to-navy-700/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
                 </Link>
               )}
 
-              {/* Cart Icon with Glass Badge */}
+              {/* Cart Icon */}
               <Link
                 href={`/${locale}/cart`}
-                className={`group relative p-2.5 rounded-lg transition-all duration-300 ${
+                className={`group relative p-2.5 rounded-none transition-all duration-200 ${
                   pathname.includes('/cart')
-                    ? 'bg-navy-600/10 text-navy-600 backdrop-blur-sm'
-                    : 'text-gray-700 hover:bg-navy-50/50 hover:text-navy-600 hover:backdrop-blur-sm hover:scale-110'
+                    ? 'bg-black-700/10 text-black-700 backdrop-blur-sm'
+                    : 'text-gray-700 hover:bg-gray-50/50 hover:text-black-700 hover:backdrop-blur-sm'
                 }`}
               >
                 <div className="relative">
                   <svg
-                    className="h-6 w-6 transition-transform duration-300 group-hover:scale-110"
+                    className="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -145,7 +139,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                     />
                   </svg>
                   {cartCount > 0 && (
-                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-coral-500 to-coral-600 text-xs font-bold text-white shadow-lg animate-pulse">
+                    <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-black-800 text-xs font-bold text-white shadow-lg animate-pulse">
                       {cartCount > 9 ? '9+' : cartCount}
                     </span>
                   )}
@@ -156,43 +150,36 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                 <>
                   <Link
                     href={`/${locale}/profile`}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    className={`px-4 py-2 rounded-none text-sm font-medium transition-all duration-200 ${
                       pathname.includes('/profile')
-                        ? 'bg-navy-600/10 text-navy-600 backdrop-blur-sm'
-                        : 'text-gray-700 hover:bg-navy-50/50 hover:text-navy-600 hover:backdrop-blur-sm'
+                        ? 'bg-black-700/10 text-black-700 backdrop-blur-sm'
+                        : 'text-gray-700 hover:bg-gray-50/50 hover:text-black-700 hover:backdrop-blur-sm'
                     }`}
                   >
                     {t('profile')}
                   </Link>
 
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-600 hidden lg:inline bg-gray-100/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                      {userEmail}
-                    </span>
-                    <button
-                      onClick={handleLogout}
-                      disabled={isLoggingOut}
-                      className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-red-50/50 hover:text-red-600 hover:backdrop-blur-sm transition-all duration-200 disabled:opacity-50"
-                    >
-                      {isLoggingOut ? tCommon('loggingOut') : tCommon('logout')}
-                    </button>
-                  </div>
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="px-4 py-2 rounded-none text-sm font-medium text-gray-700 hover:bg-red-50/50 hover:text-red-600 hover:backdrop-blur-sm transition-all duration-200 disabled:opacity-50"
+                  >
+                    {isLoggingOut ? tCommon('loggingOut') : tCommon('logout')}
+                  </button>
                 </>
               ) : (
                 <>
                   <Link
                     href={`/${locale}/login`}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-navy-50/50 hover:text-navy-600 hover:backdrop-blur-sm transition-all duration-200"
+                    className="px-4 py-2 rounded-none text-sm font-medium text-gray-700 hover:bg-gray-50/50 hover:text-black-700 hover:backdrop-blur-sm transition-all duration-200"
                   >
                     {t('signIn')}
                   </Link>
                   <Link
                     href={`/${locale}/signup`}
-                    className="group relative px-6 py-2.5 rounded-lg text-sm font-semibold text-white overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                    className="px-6 py-2.5 rounded-none text-sm font-semibold text-white bg-black-700 shadow-lg hover:shadow-lg transition-all duration-200"
                   >
-                    <span className="relative z-10">{t('getStarted')}</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-coral-600 to-coral-500 transition-transform duration-300 group-hover:scale-110"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-coral-600/0 via-white/20 to-coral-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                    {t('getStarted')}
                   </Link>
                 </>
               )}
@@ -203,11 +190,11 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
               {/* Cart Icon */}
               <Link
                 href={`/${locale}/cart`}
-                className="group relative p-2 rounded-lg transition-all duration-300 text-gray-700 hover:bg-navy-50/50 hover:text-navy-600 hover:backdrop-blur-sm"
+                className="group relative p-2 rounded-none transition-all duration-200 text-gray-700 hover:bg-gray-50/50 hover:text-black-700 hover:backdrop-blur-sm"
               >
                 <div className="relative">
                   <svg
-                    className="h-6 w-6 transition-transform duration-300 group-hover:scale-110"
+                    className="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -220,7 +207,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                     />
                   </svg>
                   {cartCount > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-coral-500 to-coral-600 text-xs font-bold text-white shadow-lg">
+                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black-800 text-xs font-bold text-white shadow-lg">
                       {cartCount > 9 ? '9+' : cartCount}
                     </span>
                   )}
@@ -230,7 +217,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
               {/* Hamburger Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-lg text-gray-700 hover:bg-navy-50/50 hover:text-navy-600 hover:backdrop-blur-sm transition-all duration-300"
+                className="p-2 rounded-none text-gray-700 hover:bg-gray-50/50 hover:text-black-700 hover:backdrop-blur-sm transition-all duration-200"
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? (
@@ -264,22 +251,22 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
       >
         <div className="flex flex-col h-full">
           {/* Mobile Menu Header - Glass Style */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50 backdrop-blur-sm bg-gradient-to-r from-navy-50/30 to-transparent">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50 backdrop-blur-sm bg-gray-50">
             <div className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-md overflow-hidden">
+              <div className="flex items-center justify-center">
                 <Image
-                  src="/favicon.svg"
+                  src="/favicon.png"
                   alt="Ecom Logo"
-                  width={36}
-                  height={36}
+                  width={40}
+                  height={40}
                   className="object-contain"
                 />
               </div>
-              <span className="text-lg font-bold text-navy-900">{t('menu')}</span>
+              <span className="text-lg font-bold text-black-900">{t('menu')}</span>
             </div>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 transition-all duration-200"
+              className="p-2 rounded-none text-gray-500 hover:text-gray-700 hover:bg-gray-100/50 transition-all duration-200"
               aria-label="Close menu"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -299,10 +286,10 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
               {/* Shop Link */}
               <Link
                 href={`/${locale}/shop`}
-                className={`block px-4 py-3.5 rounded-xl text-base font-medium transition-all duration-300 ${
+                className={`block px-4 py-3.5 rounded-none text-base font-medium transition-all duration-200 ${
                   pathname.includes('/shop')
-                    ? 'bg-navy-600/10 text-navy-600 backdrop-blur-sm shadow-sm'
-                    : 'text-gray-700 hover:bg-navy-50/50 hover:backdrop-blur-sm'
+                    ? 'bg-black-700/10 text-black-700 backdrop-blur-sm shadow-sm'
+                    : 'text-gray-700 hover:bg-gray-50/50 hover:backdrop-blur-sm'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -317,16 +304,15 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
               {isAdmin && (
                 <Link
                   href={`/${locale}/admin/dashboard`}
-                  className="group relative block px-4 py-3.5 rounded-xl text-base font-semibold text-center bg-gradient-to-r from-navy-600 to-navy-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="block px-4 py-3.5 rounded-none text-base font-semibold text-center bg-black-700 text-white shadow-lg hover:shadow-lg transition-all duration-200"
                 >
-                  <span className="relative z-10 flex items-center justify-center gap-2">
+                  <span className="flex items-center justify-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     {t('adminPanel')}
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-navy-700/0 via-white/10 to-navy-700/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                 </Link>
               )}
 
@@ -335,10 +321,10 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                   {/* Profile Link */}
                   <Link
                     href={`/${locale}/profile`}
-                    className={`block px-4 py-3.5 rounded-xl text-base font-medium transition-all duration-300 ${
+                    className={`block px-4 py-3.5 rounded-none text-base font-medium transition-all duration-200 ${
                       pathname.includes('/profile')
-                        ? 'bg-navy-600/10 text-navy-600 backdrop-blur-sm shadow-sm'
-                        : 'text-gray-700 hover:bg-navy-50/50 hover:backdrop-blur-sm'
+                        ? 'bg-black-700/10 text-black-700 backdrop-blur-sm shadow-sm'
+                        : 'text-gray-700 hover:bg-gray-50/50 hover:backdrop-blur-sm'
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -349,17 +335,11 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                     </div>
                   </Link>
 
-                  {/* User Email - Glass Card */}
-                  <div className="mx-2 my-2 px-4 py-3 rounded-xl bg-gradient-to-r from-navy-50/50 to-gray-50/50 backdrop-blur-sm border border-gray-200/50">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">{t('signedInAs')}</p>
-                    <p className="text-sm font-medium text-gray-900 truncate">{userEmail}</p>
-                  </div>
-
                   {/* Logout Button */}
                   <button
                     onClick={handleLogout}
                     disabled={isLoggingOut}
-                    className="w-full px-4 py-3.5 rounded-xl text-base font-medium text-red-600 hover:bg-red-50/50 hover:backdrop-blur-sm transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full px-4 py-3.5 rounded-none text-base font-medium text-red-600 hover:bg-red-50/50 hover:backdrop-blur-sm transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -372,7 +352,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                   {/* Sign In Link */}
                   <Link
                     href={`/${locale}/login`}
-                    className="block px-4 py-3.5 rounded-xl text-base font-medium text-gray-700 hover:bg-navy-50/50 hover:backdrop-blur-sm transition-all duration-300"
+                    className="block px-4 py-3.5 rounded-none text-base font-medium text-gray-700 hover:bg-gray-50/50 hover:backdrop-blur-sm transition-all duration-200"
                   >
                     <div className="flex items-center justify-center gap-2">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -382,19 +362,17 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                     </div>
                   </Link>
 
-                  {/* Get Started Button - Glass Coral */}
+                  {/* Get Started Button */}
                   <Link
                     href={`/${locale}/signup`}
-                    className="group relative block mt-4 px-4 py-4 rounded-xl text-base font-semibold text-center text-white overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="block mt-4 px-4 py-4 rounded-none text-base font-semibold text-center text-white bg-black-700 shadow-lg hover:shadow-lg transition-all duration-200"
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
+                    <span className="flex items-center justify-center gap-2">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                       </svg>
                       {t('getStarted')}
                     </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-coral-600 to-coral-500 transition-transform duration-300 group-hover:scale-110"></div>
-                    <div className="absolute inset-0 bg-gradient-to-r from-coral-600/0 via-white/20 to-coral-600/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                   </Link>
                 </>
               )}

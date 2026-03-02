@@ -100,11 +100,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-2 text-sm text-gray-600">
-            <Link href={`/${locale}`} className="hover:text-navy-600 transition-colors">
+            <Link href={`/${locale}`} className="hover:text-black-700 transition-colors">
               {t('home')}
             </Link>
             <span>/</span>
-            <Link href={`/${locale}/shop`} className="hover:text-navy-600 transition-colors">
+            <Link href={`/${locale}/shop`} className="hover:text-black-700 transition-colors">
               {tNav('shop')}
             </Link>
             <span>/</span>
@@ -137,7 +137,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
               {/* Discount Badge */}
               {discountPercent > 0 && (
-                <div className="absolute right-4 top-4 rounded-full bg-gold-600 px-4 py-2 text-sm font-bold text-navy-900 shadow-lg">
+                <div className="absolute right-4 top-4 rounded-full bg-gray-500 px-4 py-2 text-sm font-bold text-black-900 shadow-lg">
                   {t('discountBadge', { percent: discountPercent })}
                 </div>
               )}
@@ -181,7 +181,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     onClick={() => setCurrentImageIndex(index)}
                     className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                       currentImageIndex === index
-                        ? 'border-navy-600 ring-2 ring-navy-600 ring-offset-2'
+                        ? 'border-black-700 ring-2 ring-black-700 ring-offset-2'
                         : 'border-gray-200 hover:border-gray-400'
                     }`}
                   >
@@ -205,7 +205,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <p className="text-sm font-semibold uppercase tracking-wide text-gray-600">
                 {product.brand}
               </p>
-              <h1 className="mt-2 text-3xl font-bold text-navy-900">{product.name}</h1>
+              <h1 className="mt-2 text-3xl font-bold text-black-900">{product.name}</h1>
               <p className="mt-2 text-sm text-gray-600">
                 {product.gender}
               </p>
@@ -214,7 +214,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             {/* Price */}
             <div className="space-y-2 border-y border-gray-200 py-6">
               <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-bold text-navy-600">
+                <span className="text-4xl font-bold text-black-700">
                   Rs {product.stockPrice.toFixed(2)}
                 </span>
                 <span className="text-xl text-gray-400 line-through">
@@ -238,7 +238,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             {/* Size Selection */}
             <div>
               <h3 className="text-sm font-semibold text-gray-900">
-                {t('selectSize')} {selectedSize && <span className="text-navy-600">({selectedSize})</span>}
+                {t('selectSize')} {selectedSize && <span className="text-black-700">({selectedSize})</span>}
               </h3>
               <div className="mt-3 flex flex-wrap gap-2">
                 {sizes.map((size) => {
@@ -257,9 +257,9 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         px-6 py-3 rounded-md font-medium transition-all duration-200
                         ${
                           isSelected
-                            ? 'bg-navy-600 text-white border-2 border-navy-600'
+                            ? 'bg-black-700 text-white border-2 border-black-700'
                             : inStock && isAvailable
-                            ? 'bg-white border-2 border-gray-300 hover:border-navy-600 hover:bg-navy-50 cursor-pointer'
+                            ? 'bg-white border-2 border-gray-300 hover:border-black-700 hover:bg-gray-50 cursor-pointer'
                             : 'bg-gray-100 border-2 border-gray-200 text-gray-400 cursor-not-allowed line-through'
                         }
                       `}
@@ -274,7 +274,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             {/* Color Selection */}
             <div>
               <h3 className="text-sm font-semibold text-gray-900">
-                {t('selectColor')} {selectedColor && <span className="text-navy-600">({selectedColor})</span>}
+                {t('selectColor')} {selectedColor && <span className="text-black-700">({selectedColor})</span>}
               </h3>
               <div className="mt-3 flex flex-wrap gap-3">
                 {colors.map((color) => {
@@ -293,9 +293,9 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         flex items-center gap-2 px-4 py-2 rounded-md border-2 transition-all duration-200
                         ${
                           isSelected
-                            ? 'border-navy-600 bg-navy-50'
+                            ? 'border-black-700 bg-gray-50'
                             : inStock && isAvailable
-                            ? 'border-gray-300 hover:border-navy-600 hover:bg-navy-50 cursor-pointer'
+                            ? 'border-gray-300 hover:border-black-700 hover:bg-gray-50 cursor-pointer'
                             : 'border-gray-200 bg-gray-100 cursor-not-allowed opacity-50'
                         }
                       `}

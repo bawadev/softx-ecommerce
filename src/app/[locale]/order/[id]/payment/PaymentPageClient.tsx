@@ -81,7 +81,7 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
+          <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
           <p className="mt-2 text-gray-600">
             {t('orderNumber')}: <span className="font-semibold">{order.orderNumber}</span>
           </p>
@@ -103,7 +103,7 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                   </div>
                   <button
                     onClick={() => copyToClipboard('Bank of Ceylon')}
-                    className="text-sm text-navy-600 hover:text-navy-700"
+                    className="text-sm text-black-700 hover:text-black-800"
                   >
                     📋 {tCommon('copy')}
                   </button>
@@ -116,7 +116,7 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                   </div>
                   <button
                     onClick={() => copyToClipboard('1234567890')}
-                    className="text-sm text-navy-600 hover:text-navy-700"
+                    className="text-sm text-black-700 hover:text-black-800"
                   >
                     📋 {tCommon('copy')}
                   </button>
@@ -129,7 +129,7 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                   </div>
                   <button
                     onClick={() => copyToClipboard('Ecom (Pvt) Ltd')}
-                    className="text-sm text-navy-600 hover:text-navy-700"
+                    className="text-sm text-black-700 hover:text-black-800"
                   >
                     📋 {tCommon('copy')}
                   </button>
@@ -142,18 +142,18 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                   </div>
                   <button
                     onClick={() => copyToClipboard('Colombo Branch')}
-                    className="text-sm text-navy-600 hover:text-navy-700"
+                    className="text-sm text-black-700 hover:text-black-800"
                   >
                     📋 {tCommon('copy')}
                   </button>
                 </div>
 
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-900 font-medium">{t('paymentAmount')}</p>
-                  <p className="text-3xl font-bold text-blue-600 mt-1">
+                <div className="p-4 bg-gray-100 border border-gray-200 rounded-lg">
+                  <p className="text-sm text-black-900 font-medium">{t('paymentAmount')}</p>
+                  <p className="text-3xl font-bold text-black-600 mt-1">
                     Rs {order.totalAmount.toFixed(2)}
                   </p>
-                  <p className="text-xs text-blue-700 mt-2">{t('paymentNote')}</p>
+                  <p className="text-xs text-black-700 mt-2">{t('paymentNote')}</p>
                 </div>
               </div>
             </div>
@@ -201,7 +201,7 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-lg file:border-0
                         file:text-sm file:font-semibold
-                        file:bg-navy-50 file:text-navy-700
+                        file:bg-gray-50 file:text-black-800
                         hover:file:bg-navy-100
                         cursor-pointer"
                     />

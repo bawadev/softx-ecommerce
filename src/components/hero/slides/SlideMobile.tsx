@@ -24,7 +24,7 @@ export default function SlideMobile({ title, subtitle, linkUrl, slideDirection }
         {title}
       </h2>
       {subtitle && (
-        <p className="text-[11px] text-white/70 leading-snug line-clamp-2">
+        <p className="text-[11px] text-white leading-snug line-clamp-2">
           {subtitle}
         </p>
       )}

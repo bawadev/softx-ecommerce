@@ -76,9 +76,9 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
       case 'out':
         return 'bg-red-100 text-red-800 border-red-200'
       case 'low':
-        return 'bg-orange-100 text-orange-800 border-orange-200'
+        return 'bg-gray-100 text-black-800 border-gray-200'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
+        return 'bg-gray-100 text-black-800 border-black-200'
       case 'good':
         return 'bg-green-100 text-green-800 border-green-200'
     }
@@ -104,10 +104,10 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-navy-900">Inventory Dashboard</h1>
+              <h1 className="text-3xl font-bold text-black-900">Inventory Dashboard</h1>
               <p className="mt-1 text-sm text-gray-600">Monitor stock levels and manage inventory</p>
             </div>
-            <Link href={`/${locale}/admin/dashboard`} className="text-sm text-navy-600 hover:text-navy-700 font-medium">
+            <Link href={`/${locale}/admin/dashboard`} className="text-sm text-black-700 hover:text-black-800 font-medium">
               ← Back to Dashboard
             </Link>
           </div>
@@ -125,9 +125,9 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
             <p className="text-xs sm:text-sm font-medium text-gray-600">Total Units</p>
             <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-gray-900">{stats.totalUnits}</p>
           </div>
-          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-orange-200">
-            <p className="text-xs sm:text-sm font-medium text-orange-600">Low Stock</p>
-            <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-orange-600">{stats.lowStock}</p>
+          <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-gray-200">
+            <p className="text-xs sm:text-sm font-medium text-black-600">Low Stock</p>
+            <p className="mt-1 sm:mt-2 text-2xl sm:text-3xl font-bold text-black-600">{stats.lowStock}</p>
           </div>
           <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border border-red-200">
             <p className="text-xs sm:text-sm font-medium text-red-600">Out of Stock</p>
@@ -144,7 +144,7 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
               <span className="text-sm text-gray-700">Out of Stock: {stats.outOfStock}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-orange-500"></div>
+              <div className="w-3 h-3 rounded-full bg-black-700"></div>
               <span className="text-sm text-gray-700">Low (&lt;10): {stats.lowStock}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -168,7 +168,7 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value as FilterOption)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
               >
                 <option value="all">All Items</option>
                 <option value="out">Out of Stock</option>
@@ -185,7 +185,7 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
               >
                 <option value="stock-asc">Stock (Low to High)</option>
                 <option value="stock-desc">Stock (High to Low)</option>
@@ -232,8 +232,8 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                         <h3 className="text-sm font-semibold text-gray-900 truncate">{product.name}</h3>
                         <span className={`flex-shrink-0 inline-block px-2 py-0.5 text-[10px] font-bold rounded-full ${
                           product.stockLevel === 'out' ? 'bg-red-600 text-white' :
-                          product.stockLevel === 'low' ? 'bg-orange-600 text-white' :
-                          product.stockLevel === 'medium' ? 'bg-yellow-600 text-white' :
+                          product.stockLevel === 'low' ? 'bg-black-700 text-white' :
+                          product.stockLevel === 'medium' ? 'bg-black-700 text-white' :
                           'bg-green-600 text-white'
                         }`}>
                           {getStockLevelBadge(product.stockLevel)}
@@ -257,8 +257,8 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                         </span>
                         <span className={`font-semibold ml-1 ${
                           variant.stockQuantity === 0 ? 'text-red-600' :
-                          variant.stockQuantity < 5 ? 'text-orange-600' :
-                          variant.stockQuantity < 15 ? 'text-yellow-600' :
+                          variant.stockQuantity < 5 ? 'text-black-600' :
+                          variant.stockQuantity < 15 ? 'text-black-600' :
                           'text-green-600'
                         }`}>
                           {variant.stockQuantity}
@@ -273,8 +273,8 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                       <span className="font-medium text-gray-900">Total: </span>
                       <span className={`font-bold ${
                         product.totalStock === 0 ? 'text-red-600' :
-                        product.totalStock < 10 ? 'text-orange-600' :
-                        product.totalStock < 30 ? 'text-yellow-600' :
+                        product.totalStock < 10 ? 'text-black-600' :
+                        product.totalStock < 30 ? 'text-black-600' :
                         'text-green-600'
                       }`}>
                         {product.totalStock} units
@@ -282,7 +282,7 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                     </div>
                     <Link
                       href={`/${locale}/admin/products`}
-                      className="text-xs font-medium text-navy-600 hover:text-navy-700"
+                      className="text-xs font-medium text-black-700 hover:text-black-800"
                     >
                       Manage →
                     </Link>
@@ -322,8 +322,8 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                         <div className="flex-shrink-0">
                           <span className={`inline-block px-3 py-1 text-xs font-bold rounded-full ${
                             product.stockLevel === 'out' ? 'bg-red-600 text-white' :
-                            product.stockLevel === 'low' ? 'bg-orange-600 text-white' :
-                            product.stockLevel === 'medium' ? 'bg-yellow-600 text-white' :
+                            product.stockLevel === 'low' ? 'bg-black-700 text-white' :
+                            product.stockLevel === 'medium' ? 'bg-black-700 text-white' :
                             'bg-green-600 text-white'
                           }`}>
                             {getStockLevelBadge(product.stockLevel)}
@@ -344,8 +344,8 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                             </div>
                             <div className={`text-sm font-semibold ${
                               variant.stockQuantity === 0 ? 'text-red-600' :
-                              variant.stockQuantity < 5 ? 'text-orange-600' :
-                              variant.stockQuantity < 15 ? 'text-yellow-600' :
+                              variant.stockQuantity < 5 ? 'text-black-600' :
+                              variant.stockQuantity < 15 ? 'text-black-600' :
                               'text-green-600'
                             }`}>
                               {variant.stockQuantity} units
@@ -360,8 +360,8 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                           <span className="font-medium text-gray-900">Total Stock: </span>
                           <span className={`font-bold ${
                             product.totalStock === 0 ? 'text-red-600' :
-                            product.totalStock < 10 ? 'text-orange-600' :
-                            product.totalStock < 30 ? 'text-yellow-600' :
+                            product.totalStock < 10 ? 'text-black-600' :
+                            product.totalStock < 30 ? 'text-black-600' :
                             'text-green-600'
                           }`}>
                             {product.totalStock} units
@@ -369,7 +369,7 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                         </div>
                         <Link
                           href={`/${locale}/admin/products`}
-                          className="text-sm font-medium text-navy-600 hover:text-navy-700"
+                          className="text-sm font-medium text-black-700 hover:text-black-800"
                         >
                           Manage Products →
                         </Link>

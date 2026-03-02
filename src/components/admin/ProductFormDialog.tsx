@@ -11,7 +11,6 @@ import { uploadMultipleImages, deleteImage } from '@/app/actions/upload'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import SizeVariantCard from '@/components/admin/SizeVariantCard'
 import ColorPicker from '@/components/admin/ColorPicker'
-import type { ColorQty } from '@/components/admin/SizeVariantCard'
 
 interface ProductFormDialogProps {
   isOpen: boolean
@@ -82,7 +81,7 @@ export default function ProductFormDialog({
   })
 
   // Hierarchical variant state
-  const [sizeVariants, setSizeVariants] = useState<SizeVariants>({})
+  const [sizeVariants, setSizeVariants] = useState<SizeVariants>({} as SizeVariants)
   const [addingColorForSize, setAddingColorForSize] = useState<SizeOption | null>(null)
   const [newColorForm, setNewColorForm] = useState<ColorQty>({ color: '', quantity: 0 })
 
@@ -210,7 +209,7 @@ export default function ProductFormDialog({
         sku: '',
         images: [],
       })
-      setSizeVariants({})
+      setSizeVariants({} as SizeVariants)
       setProductImages([])
     }
   }, [isEditing, editingProduct, isOpen])
@@ -399,7 +398,7 @@ export default function ProductFormDialog({
 
   // Convert flat variants from DB to hierarchical UI state
   const convertToSizeVariants = (flatVariants: VariantFormData[]): SizeVariants => {
-    const hierarchical: SizeVariants = {}
+    const hierarchical: SizeVariants = {} as SizeVariants
 
     flatVariants.forEach((variant) => {
       if (!hierarchical[variant.size]) {
@@ -465,7 +464,7 @@ export default function ProductFormDialog({
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 placeholder="Enter product name"
                 required
               />
@@ -485,7 +484,7 @@ export default function ProductFormDialog({
                   setShowBrandSuggestions(true)
                 }}
                 onFocus={() => setShowBrandSuggestions(true)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 placeholder="Enter brand"
                 required
               />
@@ -522,7 +521,7 @@ export default function ProductFormDialog({
                 type="text"
                 value={formData.sku}
                 onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 placeholder="Enter SKU (optional)"
               />
             </div>
@@ -556,7 +555,7 @@ export default function ProductFormDialog({
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value as ProductGender })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 required
               >
                 {GENDERS.map((gen) => (
@@ -578,7 +577,7 @@ export default function ProductFormDialog({
                 min="0"
                 value={formData.stockPrice}
                 onChange={(e) => setFormData({ ...formData, stockPrice: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 placeholder="0.00"
                 required
               />
@@ -595,7 +594,7 @@ export default function ProductFormDialog({
                 min="0"
                 value={formData.retailPrice}
                 onChange={(e) => setFormData({ ...formData, retailPrice: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 placeholder="0.00"
                 required
               />
@@ -611,7 +610,7 @@ export default function ProductFormDialog({
               rows={3}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-navy-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none"
               placeholder="Enter product description"
             />
           </div>
@@ -626,7 +625,7 @@ export default function ProductFormDialog({
                   onClick={() => setUploadMode('file')}
                   className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                     uploadMode === 'file'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-black-700 text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
@@ -637,7 +636,7 @@ export default function ProductFormDialog({
                   onClick={() => setUploadMode('url')}
                   className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                     uploadMode === 'url'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-black-700 text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
                 >
@@ -740,16 +739,16 @@ export default function ProductFormDialog({
                       onClick={() => !uploadingImages && fileInputRef.current?.click()}
                       className={`flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-6 cursor-pointer transition-all ${
                         isDraggingOver
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'bg-gray-500 bg-gray-100'
                           : uploadingImages
                           ? 'border-gray-300 bg-gray-100 cursor-not-allowed'
-                          : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                          : 'border-gray-300 hover:border-black-400 hover:bg-gray-100'
                       }`}
                       style={{ minHeight: '120px' }}
                     >
                       {uploadingImages ? (
                         <>
-                          <svg className="w-10 h-10 text-blue-500 animate-spin mb-3" fill="none" viewBox="0 0 24 24">
+                          <svg className="w-10 h-10 text-black-500 animate-spin mb-3" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path
                               className="opacity-75"
@@ -775,7 +774,7 @@ export default function ProductFormDialog({
                           <p className="text-xs text-gray-500 mb-2">or</p>
                           <button
                             type="button"
-                            className="px-4 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                            className="px-4 py-1.5 text-xs font-medium text-white bg-black-700 hover:bg-black-800 rounded-lg transition-colors"
                             onClick={(e) => {
                               e.stopPropagation()
                               fileInputRef.current?.click()
@@ -809,7 +808,7 @@ export default function ProductFormDialog({
                         type="button"
                         onClick={handleUrlSubmit}
                         disabled={!urlInput.trim()}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 text-sm font-medium text-white bg-black-700 hover:bg-black-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Add
                       </button>
@@ -827,9 +826,9 @@ export default function ProductFormDialog({
               {selectedCategories.map((category) => {
                 const hierarchyColor =
                   category.hierarchy === 'ladies'
-                    ? 'bg-pink-100 text-pink-800'
+                    ? 'bg-gray-100 text-black-800'
                     : category.hierarchy === 'gents'
-                    ? 'bg-blue-100 text-blue-800'
+                    ? 'bg-gray-100 text-black-800'
                     : category.hierarchy === 'kids'
                     ? 'bg-green-100 text-green-800'
                     : 'bg-gray-100 text-gray-800'
@@ -904,10 +903,10 @@ export default function ProductFormDialog({
 
             {/* Grand Total Display */}
             {Object.keys(sizeVariants).length > 0 && (
-              <div className="mt-4 p-4 bg-navy-50 border border-navy-200 rounded-lg">
+              <div className="mt-4 p-4 bg-gray-50 border border-navy-200 rounded-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-navy-900">Total T-Shirts (All Sizes):</span>
-                  <span className="text-xl font-bold text-navy-600">
+                  <span className="text-sm font-medium text-black-900">Total T-Shirts (All Sizes):</span>
+                  <span className="text-xl font-bold text-black-700">
                     {Object.values(sizeVariants).reduce((sum, sizeVar) => sum + sizeVar.total, 0)}
                   </span>
                 </div>
@@ -926,7 +925,7 @@ export default function ProductFormDialog({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 font-medium"
+              className="px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 font-medium"
             >
               {isEditing ? 'Update Product' : 'Create Product'}
             </button>
@@ -989,7 +988,7 @@ export default function ProductFormDialog({
                 <button
                   type="button"
                   onClick={handleSaveColor}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm"
+                  className="px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 font-medium text-sm"
                 >
                   Add Color
                 </button>

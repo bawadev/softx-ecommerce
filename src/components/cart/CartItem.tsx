@@ -74,7 +74,7 @@ export default function CartItem({ item, onUpdate }: CartItemProps) {
           <div className="flex-1">
             <Link
               href={`/${locale}/product/${item.product.id}`}
-              className="text-sm font-semibold text-gray-900 hover:text-navy-600 transition-colors"
+              className="text-sm font-semibold text-gray-900 hover:text-black-700 transition-colors"
             >
               {item.product.name}
             </Link>
@@ -96,7 +96,7 @@ export default function CartItem({ item, onUpdate }: CartItemProps) {
 
           {/* Price */}
           <div className="text-right">
-            <p className="text-sm font-bold text-navy-600">
+            <p className="text-sm font-bold text-black-700">
               Rs {itemTotal.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500">
@@ -138,7 +138,7 @@ export default function CartItem({ item, onUpdate }: CartItemProps) {
 
         {/* Stock Warning */}
         {item.variant.stockQuantity < 5 && (
-          <p className="mt-2 text-xs text-orange-600">
+          <p className="mt-2 text-xs text-black-600">
             Only {item.variant.stockQuantity} left in stock
           </p>
         )}

@@ -60,9 +60,9 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-700'
+        return 'bg-gray-100 text-black-700'
       case 'CONFIRMED':
-        return 'bg-blue-100 text-blue-700'
+        return 'bg-gray-100 text-black-700'
       case 'FULFILLED':
         return 'bg-green-100 text-green-700'
       case 'CANCELLED':
@@ -84,10 +84,10 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-navy-900">Order Management</h1>
+              <h1 className="text-3xl font-bold text-black-900">Order Management</h1>
               <p className="mt-1 text-sm text-gray-600">Manage customer orders and fulfillment</p>
             </div>
-            <Link href={`/${locale}/admin/dashboard`} className="text-sm text-navy-600 hover:text-navy-700 font-medium">
+            <Link href={`/${locale}/admin/dashboard`} className="text-sm text-black-700 hover:text-black-800 font-medium">
               ← Back to Dashboard
             </Link>
           </div>
@@ -99,11 +99,11 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <p className="text-sm font-medium text-gray-600">Pending Orders</p>
-            <p className="mt-2 text-3xl font-bold text-yellow-600">{pendingCount}</p>
+            <p className="mt-2 text-3xl font-bold text-black-600">{pendingCount}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <p className="text-sm font-medium text-gray-600">Confirmed Orders</p>
-            <p className="mt-2 text-3xl font-bold text-blue-600">{confirmedCount}</p>
+            <p className="mt-2 text-3xl font-bold text-black-600">{confirmedCount}</p>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
             <p className="text-sm font-medium text-gray-600">Fulfilled Orders</p>
@@ -165,7 +165,7 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                       </span>
                       <Link
                         href={`/${locale}/order/${order.id}`}
-                        className="text-sm font-medium text-navy-600 hover:text-navy-700"
+                        className="text-sm font-medium text-black-700 hover:text-black-800"
                         target="_blank"
                       >
                         View Details →
@@ -232,7 +232,7 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                       <button
                         onClick={() => handleStatusUpdate(order.id, 'CONFIRMED')}
                         disabled={updatingId === order.id || order.status === 'CONFIRMED'}
-                        className="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-1 text-xs font-medium text-white bg-black-700 rounded hover:bg-black-800 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Confirm
                       </button>

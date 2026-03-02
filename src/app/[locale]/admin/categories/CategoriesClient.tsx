@@ -199,7 +199,7 @@ export default function CategoriesClient() {
                   setEditingCategory(category.id)
                   setEditingName(category.name)
                 }}
-                className="text-blue-600 hover:text-blue-800 text-xs"
+                className="text-black-600 hover:text-black-800 text-xs"
               >
                 ✏️
               </button>
@@ -216,7 +216,7 @@ export default function CategoriesClient() {
 
           {/* Featured Badge */}
           {category.isFeatured && (
-            <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+            <span className="text-xs bg-gray-100 text-black-800 px-2 py-1 rounded">
               ⭐ Featured
             </span>
           )}
@@ -232,7 +232,7 @@ export default function CategoriesClient() {
           <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={() => handleToggleFeatured(category.id, category.isFeatured)}
-              className="text-xs px-2 py-1 bg-yellow-100 hover:bg-yellow-200 rounded"
+              className="text-xs px-2 py-1 bg-gray-100 hover:bg-yellow-200 rounded"
               title={category.isFeatured ? 'Remove from featured' : 'Add to featured'}
             >
               {category.isFeatured ? '⭐' : '☆'}
@@ -252,7 +252,7 @@ export default function CategoriesClient() {
 
             <button
               onClick={() => openCreateModal(hierarchy, category.id)}
-              className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 rounded"
+              className="text-xs px-2 py-1 bg-gray-100 hover:bg-blue-200 rounded"
             >
               + Add Child
             </button>
@@ -332,7 +332,7 @@ export default function CategoriesClient() {
 
       {/* Statistics Panel */}
       {showStats && stats && (
-        <div className="bg-blue-50 rounded-lg p-6 mb-6">
+        <div className="bg-gray-100 rounded-lg p-6 mb-6">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-xl font-bold mb-4">Category Statistics</h3>

@@ -108,7 +108,7 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center gap-2 px-2 py-1.5 text-sm border rounded transition-colors ${
           isOpen
-            ? 'border-indigo-400 ring-2 ring-indigo-100'
+            ? 'border-gray-400 ring-2 ring-gray-200'
             : 'border-gray-300 hover:border-gray-400'
         }`}
       >
@@ -139,14 +139,14 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded bg-white focus:ring-2 focus:ring-indigo-500 focus:border-black-500"
               placeholder="Search colors..."
             />
             <button
               type="button"
               onClick={handleAPILookup}
               disabled={isLookingUp || (!search && !value)}
-              className="shrink-0 px-2.5 py-1.5 text-xs font-medium text-indigo-600 border border-indigo-300 rounded bg-white hover:bg-indigo-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="shrink-0 px-2.5 py-1.5 text-xs font-medium text-black-700 border border-gray-300 rounded bg-white hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               title="Look up color from thecolorapi.com"
             >
               {isLookingUp ? (
@@ -161,7 +161,7 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
             <button
               type="button"
               onClick={() => colorInputRef.current?.click()}
-              className="shrink-0 h-8 w-8 rounded border border-gray-300 bg-white hover:border-indigo-400 transition-colors overflow-hidden"
+              className="shrink-0 h-8 w-8 rounded border border-gray-300 bg-white hover:border-gray-400 transition-colors overflow-hidden"
               title="Pick custom color"
               style={{ backgroundColor: selectedHex }}
             />
@@ -203,7 +203,7 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
                       title={`${color.name} (${color.hex})${isFromDb ? ' - Active' : ''}`}
                       className={`h-6 w-6 rounded-full border-2 transition-all hover:scale-110 relative ${
                         value.toLowerCase() === color.name.toLowerCase()
-                          ? 'border-indigo-500 ring-2 ring-indigo-300'
+                          ? 'border-black-500 ring-2 ring-gray-300'
                           : 'border-white hover:border-gray-400'
                       }`}
                       style={{ backgroundColor: color.hex }}
@@ -237,7 +237,7 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
             <button
               type="button"
               onClick={() => { setIsOpen(false); setSearch('') }}
-              className="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+              className="text-xs font-medium text-black-700 hover:text-black-800 transition-colors"
             >
               Done
             </button>

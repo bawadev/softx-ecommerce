@@ -141,14 +141,14 @@ export default function ColorsClient() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-navy-900">Color Management</h1>
+              <h1 className="text-3xl font-bold text-black-900">Color Management</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage product color swatches for your catalog
               </p>
             </div>
             <Link
               href={`/${locale}/admin`}
-              className="text-sm text-navy-600 hover:text-navy-700 font-medium"
+              className="text-sm text-black-700 hover:text-black-800 font-medium"
             >
               &larr; Back to Dashboard
             </Link>
@@ -236,13 +236,13 @@ export default function ColorsClient() {
         {/* Color List */}
         {loading ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <div className="animate-spin h-8 w-8 border-4 border-rose-500 border-t-transparent rounded-full mx-auto mb-4" />
+            <div className="animate-spin h-8 w-8 border-4 border-black-500 border-t-transparent rounded-full mx-auto mb-4" />
             <p className="text-gray-500">Loading colors...</p>
           </div>
         ) : colors.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <div className="mx-auto h-16 w-16 rounded-full bg-rose-100 flex items-center justify-center mb-4">
-              <svg className="h-8 w-8 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="mx-auto h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+              <svg className="h-8 w-8 text-black-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
               </svg>
             </div>

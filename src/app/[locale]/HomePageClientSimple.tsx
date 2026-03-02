@@ -55,7 +55,7 @@ function ProductCard({ product }: { product: ProductWithVariants }) {
           </div>
         )}
         {discountPercent > 0 && (
-          <div className="absolute top-2 right-2 bg-coral-600 text-white px-2 py-1 rounded-full text-xs font-bold">
+          <div className="absolute top-2 right-2 bg-black-800 text-white px-2 py-1 rounded-full text-xs font-bold">
             {discountPercent}% OFF
           </div>
         )}
@@ -64,7 +64,7 @@ function ProductCard({ product }: { product: ProductWithVariants }) {
         <h3 className="font-semibold text-gray-900 md:line-clamp-2 text-xs sm:text-sm md:text-base break-words">{product.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">{product.brand}</p>
         <div className="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-0 sm:gap-1 min-w-0">
-          <span className="text-sm sm:text-base md:text-lg font-bold text-navy-900 truncate">Rs {product.stockPrice.toFixed(0)}</span>
+          <span className="text-sm sm:text-base md:text-lg font-bold text-black-900 truncate">Rs {product.stockPrice.toFixed(0)}</span>
           <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through truncate">Rs {product.retailPrice.toFixed(0)}</span>
         </div>
         <p className="text-xs text-gray-500 mt-1">
@@ -165,9 +165,9 @@ export default function HomePageClientSimple({
   const getHierarchyColor = (hierarchy: string) => {
     switch (hierarchy) {
       case 'ladies':
-        return 'bg-pink-100 text-pink-800 hover:bg-pink-200'
+        return 'bg-pink-100 text-pink-800 hover:bg-gray-200'
       case 'gents':
-        return 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+        return 'bg-gray-100 text-black-800 hover:bg-blue-200'
       case 'kids':
         return 'bg-green-100 text-green-800 hover:bg-green-200'
       default:
@@ -178,20 +178,20 @@ export default function HomePageClientSimple({
   const getHierarchyColorSelected = (hierarchy: string) => {
     switch (hierarchy) {
       case 'ladies':
-        return 'bg-pink-600 text-white'
+        return 'bg-black-700 text-white'
       case 'gents':
-        return 'bg-blue-600 text-white'
+        return 'bg-black-700 text-white'
       case 'kids':
         return 'bg-green-600 text-white'
       default:
-        return 'bg-navy-600 text-white'
+        return 'bg-black-700 text-white'
     }
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-navy-900 to-navy-700 text-white py-12">
+      <div className="bg-black-800 text-white py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Ecom</h1>
           <p className="text-xl mb-8">Branded Clothing at Stock Prices</p>
@@ -212,7 +212,7 @@ export default function HomePageClientSimple({
               {selectedCategoryIds.size > 0 && (
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-coral-600 hover:text-coral-700 font-medium"
+                  className="text-sm text-black-800 hover:text-coral-700 font-medium"
                 >
                   Clear All ({selectedCategoryIds.size})
                 </button>
@@ -334,7 +334,7 @@ export default function HomePageClientSimple({
                 </div>
                 <Link
                   href={`/${locale}/shop?promo=${category.slug}`}
-                  className="text-navy-600 hover:text-navy-800 font-medium"
+                  className="text-black-700 hover:text-black-950 font-medium"
                 >
                   View All →
                 </Link>
@@ -382,7 +382,7 @@ export default function HomePageClientSimple({
               <h2 className="text-2xl font-bold">New Arrivals</h2>
               <Link
                 href={`/${locale}/shop?sort=newest`}
-                className="text-navy-600 hover:text-navy-800 font-medium"
+                className="text-black-700 hover:text-black-950 font-medium"
               >
                 View All →
               </Link>
@@ -398,12 +398,12 @@ export default function HomePageClientSimple({
         )}
 
         {/* CTA Section */}
-        <section className="bg-gradient-to-r from-navy-900 to-navy-700 text-white rounded-lg p-8 text-center">
+        <section className="bg-black-800 text-white rounded-lg p-8 text-center">
           <h2 className="text-3xl font-bold mb-4">Start Exploring</h2>
           <p className="text-lg mb-6">Discover thousands of branded items at unbeatable prices</p>
           <Link
             href={`/${locale}/shop`}
-            className="inline-block bg-coral-600 hover:bg-coral-700 text-white font-bold px-8 py-3 rounded-lg transition-colors"
+            className="inline-block bg-black-800 hover:bg-coral-700 text-white font-bold px-8 py-3 rounded-lg transition-colors"
           >
             Browse All Products
           </Link>

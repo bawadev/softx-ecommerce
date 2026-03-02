@@ -108,7 +108,7 @@ export default function SizeVariantCard({
         <button
           type="button"
           onClick={() => onAddColor(size)}
-          className="w-full px-4 py-2.5 text-sm font-medium text-indigo-600 border border-indigo-300 rounded-lg hover:bg-indigo-50 transition-colors"
+          className="w-full px-4 py-2.5 text-sm font-medium text-black-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
         >
           + Add Color
         </button>

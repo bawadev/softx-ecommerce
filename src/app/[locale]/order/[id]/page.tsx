@@ -9,20 +9,20 @@ export default async function OrderConfirmationPage({
 }: {
   params: Promise<{ id: string; locale: string }>
 }) {
-  const { id } = await params
+  const { id, locale } = await params
 
   // Check authentication
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')
 
   if (!token) {
-    redirect('/login')
+    redirect(`/${locale}/login`)
   }
 
   try {
     await verifyToken(token.value)
   } catch {
-    redirect('/login')
+    redirect(`/${locale}/login`)
   }
 
   // Get order

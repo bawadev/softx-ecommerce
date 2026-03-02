@@ -4,18 +4,24 @@ import { getUserPreferencesAction, getUserMeasurementsAction } from '@/app/actio
 import { findUserById } from '@/lib/repositories/user.repository'
 import ProfileClient from './ProfileClient'
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+
   const currentUser = await getCurrentUser()
 
   if (!currentUser) {
-    redirect('/login?redirect=/profile')
+    redirect(`/${locale}/login?returnTo=/${locale}/profile`)
   }
 
   // Fetch full user data
   const user = await findUserById(currentUser.userId)
 
   if (!user) {
-    redirect('/login?redirect=/profile')
+    redirect(`/${locale}/login?returnTo=/${locale}/profile`)
   }
 
   const [preferencesResult, measurementsResult] = await Promise.all([
