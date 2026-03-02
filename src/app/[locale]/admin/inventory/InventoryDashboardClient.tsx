@@ -5,20 +5,18 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from 'next-intl'
 import type { ProductWithVariants } from '@/lib/repositories/product.repository'
-import type { ProductCategory } from '@/lib/types'
 
 interface InventoryDashboardClientProps {
   products: ProductWithVariants[]
 }
 
-type SortOption = 'stock-asc' | 'stock-desc' | 'name' | 'category'
+type SortOption = 'stock-asc' | 'stock-desc' | 'name'
 type FilterOption = 'all' | 'low' | 'medium' | 'good' | 'out'
 
 export default function InventoryDashboardClient({ products }: InventoryDashboardClientProps) {
   const locale = useLocale()
   const [sortBy, setSortBy] = useState<SortOption>('stock-asc')
   const [filterBy, setFilterBy] = useState<FilterOption>('all')
-  const [categoryFilter, setCategoryFilter] = useState<ProductCategory | 'all'>('all')
 
   // Calculate stock levels and stats
   const productsWithStock = useMemo(() => {
@@ -44,11 +42,6 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
       filtered = filtered.filter(p => p.stockLevel === filterBy)
     }
 
-    // Apply category filter
-    if (categoryFilter !== 'all') {
-      filtered = filtered.filter(p => p.category === categoryFilter)
-    }
-
     // Apply sorting
     const sorted = [...filtered].sort((a, b) => {
       switch (sortBy) {
@@ -58,15 +51,13 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
           return b.totalStock - a.totalStock
         case 'name':
           return a.name.localeCompare(b.name)
-        case 'category':
-          return (a.category || '').localeCompare(b.category || '')
         default:
           return 0
       }
     })
 
     return sorted
-  }, [productsWithStock, sortBy, filterBy, categoryFilter])
+  }, [productsWithStock, sortBy, filterBy])
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -105,8 +96,6 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
         return 'GOOD STOCK'
     }
   }
-
-  const categories: (ProductCategory | 'all')[] = ['all', 'SHIRT', 'PANTS', 'JACKET', 'DRESS', 'SHOES', 'ACCESSORIES']
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -186,21 +175,6 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                 <option value="low">Low Stock</option>
                 <option value="medium">Medium Stock</option>
                 <option value="good">Good Stock</option>
-              </select>
-            </div>
-
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Filter by Category
-              </label>
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value as ProductCategory | 'all')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
-              >
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat === 'all' ? 'All Categories' : cat}</option>
-                ))}
               </select>
             </div>
 

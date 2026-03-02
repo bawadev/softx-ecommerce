@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import type { CartItemWithDetails } from '@/lib/repositories/cart.repository'
 import { removeFromCartAction, updateCartItemAction } from '@/app/actions/cart'
+import { getColorHex } from '@/lib/color-utils'
 
 interface CartItemProps {
   item: CartItemWithDetails
@@ -78,10 +79,18 @@ export default function CartItem({ item, onUpdate }: CartItemProps) {
               {item.product.name}
             </Link>
             <p className="mt-1 text-xs text-gray-600">{item.product.brand}</p>
-            <div className="mt-2 flex gap-3 text-xs text-gray-600">
+            <div className="mt-2 flex items-center gap-3 text-xs text-gray-600">
               <span>Size: {item.variant.size}</span>
               <span>•</span>
-              <span>Color: {item.variant.color}</span>
+              <div className="flex items-center gap-1.5">
+                <span>Color:</span>
+                <span
+                  className="h-4 w-4 rounded-full border border-gray-300 inline-block"
+                  style={{ backgroundColor: getColorHex(item.variant.color) }}
+                  title={item.variant.color}
+                />
+                <span className="capitalize">{item.variant.color}</span>
+              </div>
             </div>
           </div>
 

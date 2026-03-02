@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import type { ProductWithVariants } from '@/lib/repositories/product.repository'
 import { addToCartAction } from '@/app/actions/cart'
 import { trackProductViewAction } from '@/app/actions/user-profile'
+import { getColorHex } from '@/lib/color-utils'
 
 interface ProductDetailClientProps {
   product: ProductWithVariants
@@ -206,7 +207,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               </p>
               <h1 className="mt-2 text-3xl font-bold text-navy-900">{product.name}</h1>
               <p className="mt-2 text-sm text-gray-600">
-                {product.category} • {product.gender}
+                {product.gender}
               </p>
             </div>
 
@@ -302,24 +303,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                       <div
                         className="h-6 w-6 rounded-full border border-gray-300"
                         style={{
-                          backgroundColor:
-                            color.toLowerCase() === 'white'
-                              ? '#ffffff'
-                              : color.toLowerCase() === 'black'
-                              ? '#000000'
-                              : color.toLowerCase() === 'navy'
-                              ? '#1e40af'
-                              : color.toLowerCase() === 'khaki'
-                              ? '#c3b091'
-                              : color.toLowerCase() === 'brown'
-                              ? '#8b4513'
-                              : color.toLowerCase() === 'cream'
-                              ? '#fffdd0'
-                              : color.toLowerCase().includes('blue')
-                              ? '#60a5fa'
-                              : color.toLowerCase().includes('red')
-                              ? '#ef4444'
-                              : '#e5e7eb',
+                          backgroundColor: getColorHex(color),
                         }}
                       />
                       <span className="text-sm font-medium">{color}</span>

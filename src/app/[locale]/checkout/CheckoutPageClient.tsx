@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import type { CartItemWithDetails } from '@/lib/repositories/cart.repository'
 import type { ShippingAddress, DeliveryMethod } from '@/lib/types'
 import { createOrderAction } from '@/app/actions/order'
+import { getColorHex } from '@/lib/color-utils'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 
@@ -317,9 +318,20 @@ export default function CheckoutPageClient({
                     <div className="flex-1 text-sm">
                       <p className="font-medium text-gray-900">{item.product.name}</p>
                       <p className="text-gray-600">{item.product.brand}</p>
-                      <p className="text-gray-600">
-                        {item.variant.size} • {item.variant.color} × {item.quantity}
-                      </p>
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <span>{item.variant.size}</span>
+                        <span>•</span>
+                        <div className="flex items-center gap-1">
+                          <span
+                            className="h-3 w-3 rounded-full border border-gray-300 inline-block"
+                            style={{ backgroundColor: getColorHex(item.variant.color) }}
+                            title={item.variant.color}
+                          />
+                          <span className="capitalize text-xs">{item.variant.color}</span>
+                        </div>
+                        <span>•</span>
+                        <span>× {item.quantity}</span>
+                      </div>
                     </div>
                     <div className="text-sm font-medium text-gray-900">
                       Rs {(item.product.stockPrice * item.quantity).toFixed(2)}

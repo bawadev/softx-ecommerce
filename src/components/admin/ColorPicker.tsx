@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import {
   FASHION_COLORS,
   getColorHex,
@@ -9,6 +9,7 @@ import {
   sortByHue,
   type FashionColor,
 } from '@/lib/color-utils'
+import { getColorsAction } from '@/app/actions/colors'
 
 interface ColorPickerProps {
   value: string
@@ -20,14 +21,53 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [isLookingUp, setIsLookingUp] = useState(false)
+  const [dbColors, setDbColors] = useState<FashionColor[]>([])
+  const [loadingDbColors, setLoadingDbColors] = useState(true)
   const colorInputRef = useRef<HTMLInputElement>(null)
 
   const selectedHex = getColorHex(value)
 
+  // Load active colors from database on mount
+  useEffect(() => {
+    const loadDbColors = async () => {
+      try {
+        const result = await getColorsAction()
+        if (result.success && result.data) {
+          const activeColors = result.data
+            .filter(c => c.isActive)
+            .map(c => ({ name: c.name, hex: c.hex }))
+          setDbColors(activeColors)
+        }
+      } catch (error) {
+        console.error('Failed to load database colors:', error)
+      } finally {
+        setLoadingDbColors(false)
+      }
+    }
+    loadDbColors()
+  }, [])
+
   const allColors = useMemo(() => {
-    const base = externalColors && externalColors.length > 0 ? externalColors : FASHION_COLORS
-    return sortByHue(base)
-  }, [externalColors])
+    // Start with database colors (active ones)
+    let colors = dbColors.length > 0 ? [...dbColors] : []
+
+    // Add external colors if provided
+    if (externalColors && externalColors.length > 0) {
+      const externalNames = new Set(colors.map(c => c.name))
+      externalColors.forEach(c => {
+        if (!externalNames.has(c.name)) {
+          colors.push(c)
+        }
+      })
+    }
+
+    // Fall back to FASHION_COLORS if no colors available
+    if (colors.length === 0) {
+      colors = [...FASHION_COLORS]
+    }
+
+    return sortByHue(colors)
+  }, [externalColors, dbColors])
 
   const filteredColors = useMemo(() => {
     if (!search) return allColors
@@ -137,22 +177,47 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
 
           {/* Swatch grid */}
           <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
-            {filteredColors.map((color) => (
-              <button
-                key={color.name}
-                type="button"
-                onClick={() => handleSelectColor(color.name)}
-                title={`${color.name} (${color.hex})`}
-                className={`h-6 w-6 rounded-full border-2 transition-all hover:scale-110 ${
-                  value.toLowerCase() === color.name.toLowerCase()
-                    ? 'border-indigo-500 ring-2 ring-indigo-300'
-                    : 'border-white hover:border-gray-400'
-                }`}
-                style={{ backgroundColor: color.hex }}
-              />
-            ))}
-            {filteredColors.length === 0 && (
-              <p className="text-xs text-gray-400 py-1">No colors match &ldquo;{search}&rdquo;</p>
+            {loadingDbColors ? (
+              <div className="flex items-center gap-2 text-xs text-gray-400 py-1">
+                <svg className="h-3 w-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Loading colors...
+              </div>
+            ) : (
+              <>
+                {dbColors.length > 0 && filteredColors.length > 0 && (
+                  <div className="w-full text-xs text-gray-500 mb-1 flex items-center gap-1">
+                    <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+                    Active colors from database
+                  </div>
+                )}
+                {filteredColors.map((color) => {
+                  const isFromDb = dbColors.some(db => db.name.toLowerCase() === color.name.toLowerCase())
+                  return (
+                    <button
+                      key={color.name}
+                      type="button"
+                      onClick={() => handleSelectColor(color.name)}
+                      title={`${color.name} (${color.hex})${isFromDb ? ' - Active' : ''}`}
+                      className={`h-6 w-6 rounded-full border-2 transition-all hover:scale-110 relative ${
+                        value.toLowerCase() === color.name.toLowerCase()
+                          ? 'border-indigo-500 ring-2 ring-indigo-300'
+                          : 'border-white hover:border-gray-400'
+                      }`}
+                      style={{ backgroundColor: color.hex }}
+                    >
+                      {isFromDb && (
+                        <span className="absolute -top-1 -right-1 h-2 w-2 bg-green-500 rounded-full border border-white" />
+                      )}
+                    </button>
+                  )
+                })}
+                {filteredColors.length === 0 && (
+                  <p className="text-xs text-gray-400 py-1">No colors match &ldquo;{search}&rdquo;</p>
+                )}
+              </>
             )}
           </div>
 

@@ -1,8 +1,10 @@
 import { getSession } from '../db'
 import neo4j from 'neo4j-driver'
 import type { Product, ProductVariant, ProductCategory, ProductGender } from '../types'
+import { convertNeo4jIntegers } from '../neo4j-utils'
 
 export interface ProductFilters {
+  /** @deprecated Use filter relationships (TAGGED_WITH) instead via custom filter system */
   category?: ProductCategory
   brand?: string
   gender?: ProductGender
@@ -23,6 +25,8 @@ function buildProductFilterQuery(filters?: ProductFilters): { conditions: string
   const conditions: string[] = []
 
   if (filters?.category) {
+    // @deprecated - Category field is deprecated, use filter relationships instead
+    console.warn('ProductFilters.category is deprecated. Use filter relationships (TAGGED_WITH) instead.')
     conditions.push('p.category = $category')
     params.category = filters.category
   }
@@ -82,7 +86,7 @@ export async function getAllProducts(
     `
 
     const result = await session.run(query, params)
-    return result.records.map((record) => record.get('p'))
+    return result.records.map((record) => convertNeo4jIntegers(record.get('p')))
   } finally {
     await session.close()
   }
@@ -105,7 +109,7 @@ export async function getProductById(id: string): Promise<ProductWithVariants | 
     )
 
     const product = result.records[0]?.get('p')
-    return product || null
+    return product ? convertNeo4jIntegers(product) : null
   } finally {
     await session.close()
   }
@@ -113,11 +117,14 @@ export async function getProductById(id: string): Promise<ProductWithVariants | 
 
 /**
  * Get products by category
+ * @deprecated Use filter-based querying via custom filter system instead. This function uses the deprecated category field.
+ * @example Replace with: getAllProducts({ filterIds: ['your-filter-id'] })
  */
 export async function getProductsByCategory(
   category: ProductCategory,
   limit: number = 50
 ): Promise<ProductWithVariants[]> {
+  console.warn(`getProductsByCategory is deprecated. Category field "${category}" should use filter relationships instead.`)
   return getAllProducts({ category }, limit)
 }
 
@@ -166,7 +173,7 @@ export async function getVariantById(variantId: string): Promise<ProductVariant 
     )
 
     const variant = result.records[0]?.get('v')
-    return variant || null
+    return variant ? convertNeo4jIntegers(variant) : null
   } finally {
     await session.close()
   }
@@ -206,8 +213,8 @@ export async function getVariantWithProduct(variantId: string): Promise<{
 
     const record = result.records[0]
     return {
-      variant: record.get('variant'),
-      product: record.get('product'),
+      variant: convertNeo4jIntegers(record.get('variant')),
+      product: convertNeo4jIntegers(record.get('product')),
     }
   } finally {
     await session.close()
@@ -375,7 +382,7 @@ export async function updateProduct(
     if (!product) {
       throw new Error('Product not found')
     }
-    return product
+    return convertNeo4jIntegers(product)
   } finally {
     await session.close()
   }
@@ -406,7 +413,7 @@ export async function updateVariant(
     if (!variant) {
       throw new Error('Variant not found')
     }
-    return variant
+    return convertNeo4jIntegers(variant)
   } finally {
     await session.close()
   }
