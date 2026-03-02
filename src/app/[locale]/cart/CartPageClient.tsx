@@ -83,7 +83,7 @@ export default function CartPageClient({
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
+              <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
               <p className="mt-2 text-gray-600">
                 {t('itemsInCart', { count: itemCount })}
               </p>
@@ -173,7 +173,7 @@ export default function CartPageClient({
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between">
                     <span className="text-base font-bold text-gray-900">{t('total')}</span>
-                    <span className="text-2xl font-bold text-navy-600">
+                    <span className="text-2xl font-bold text-black-700">
                       Rs {(total + (total >= 100 ? 0 : 9.99)).toFixed(2)}
                     </span>
                   </div>

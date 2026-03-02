@@ -339,7 +339,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   setEditingCategory(null)
                 }
               }}
-              className="flex-1 px-2 py-1 border border-blue-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-2 py-1 border border-black-500 rounded focus:outline-none focus:ring-2 focus:ring-black-500"
               autoFocus
             />
           ) : (
@@ -348,7 +348,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                 {category.name}
               </span>
               {category.isFeatured && (
-                <svg className="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 text-black-500 fill-current" viewBox="0 0 20 20">
                   <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                 </svg>
               )}
@@ -357,9 +357,9 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
           {/* Hierarchy Badge */}
           <span className={`text-xs px-2 py-1 rounded font-medium ${
-            category.hierarchy === 'ladies' ? 'bg-pink-100 text-pink-700' :
-            category.hierarchy === 'gents' ? 'bg-blue-100 text-blue-700' :
-            'bg-purple-100 text-purple-700'
+            category.hierarchy === 'ladies' ? 'bg-gray-100 text-black-700' :
+            category.hierarchy === 'gents' ? 'bg-gray-100 text-black-700' :
+            'bg-gray-100 text-black-700'
           }`}>
             {category.hierarchy.charAt(0).toUpperCase() + category.hierarchy.slice(1)}
           </span>
@@ -381,7 +381,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
             onClick={() => handleToggleFeatured(category.id, category.isFeatured)}
             className={`text-xs px-2 py-1 rounded ${
               category.isFeatured
-                ? 'bg-yellow-100 text-yellow-700'
+                ? 'bg-gray-100 text-black-700'
                 : 'bg-gray-100 text-gray-500'
             }`}
             title={category.isFeatured ? 'Featured' : 'Not Featured'}
@@ -428,7 +428,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
               <>
                 <button
                   onClick={() => handleViewProducts(category)}
-                  className="text-purple-600 hover:text-purple-700 p-1"
+                  className="text-black-600 hover:text-black-700 p-1"
                   title="View Products"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -440,7 +440,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                     setSelectedParentId(category.id)
                     setShowCreateModal(true)
                   }}
-                  className="text-blue-600 hover:text-blue-700 p-1"
+                  className="text-black-600 hover:text-black-700 p-1"
                   title="Add child category"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -510,14 +510,14 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                       setEditingCategory(null)
                     }
                   }}
-                  className="flex-1 px-2 py-1 border border-blue-500 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-2 py-1 border border-black-500 rounded text-sm focus:outline-none focus:ring-2 focus:ring-black-500"
                   autoFocus
                 />
               ) : (
                 <span className={`flex-1 font-medium text-sm ${category.isActive ? 'text-gray-900' : 'text-gray-400'}`}>
                   {category.name}
                   {category.isFeatured && (
-                    <svg className="w-3.5 h-3.5 text-yellow-500 fill-current inline ml-1" viewBox="0 0 20 20">
+                    <svg className="w-3.5 h-3.5 text-black-500 fill-current inline ml-1" viewBox="0 0 20 20">
                       <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                     </svg>
                   )}
@@ -528,9 +528,9 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
             {/* Badges Row */}
             <div className="flex flex-wrap gap-1.5 mt-2 ml-8">
               <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                category.hierarchy === 'ladies' ? 'bg-pink-100 text-pink-700' :
-                category.hierarchy === 'gents' ? 'bg-blue-100 text-blue-700' :
-                'bg-purple-100 text-purple-700'
+                category.hierarchy === 'ladies' ? 'bg-gray-100 text-black-700' :
+                category.hierarchy === 'gents' ? 'bg-gray-100 text-black-700' :
+                'bg-gray-100 text-black-700'
               }`}>
                 {category.hierarchy.charAt(0).toUpperCase() + category.hierarchy.slice(1)}
               </span>
@@ -546,7 +546,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                 onClick={() => handleToggleFeatured(category.id, category.isFeatured)}
                 className={`text-[10px] px-1.5 py-0.5 rounded ${
                   category.isFeatured
-                    ? 'bg-yellow-100 text-yellow-700'
+                    ? 'bg-gray-100 text-black-700'
                     : 'bg-gray-100 text-gray-500'
                 }`}
               >
@@ -585,7 +585,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                 <>
                   <button
                     onClick={() => handleViewProducts(category)}
-                    className="text-purple-600 text-xs font-medium"
+                    className="text-black-600 text-xs font-medium"
                   >
                     Products
                   </button>
@@ -594,7 +594,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                       setSelectedParentId(category.id)
                       setShowCreateModal(true)
                     }}
-                    className="text-blue-600 text-xs font-medium"
+                    className="text-black-600 text-xs font-medium"
                   >
                     + Child
                   </button>
@@ -633,14 +633,14 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-navy-900">Categories</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Categories</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage your product category hierarchy
               </p>
             </div>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="text-sm text-navy-600 hover:text-navy-700 font-medium hidden sm:inline"
+              className="text-sm text-black-700 hover:text-black-800 font-medium hidden sm:inline"
             >
               ← Back to Dashboard
             </Link>
@@ -650,7 +650,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
               onClick={() => setShowOnlyFeatured(!showOnlyFeatured)}
               className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
                 showOnlyFeatured
-                  ? 'bg-yellow-100 text-yellow-700'
+                  ? 'bg-gray-100 text-black-700'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -661,13 +661,13 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                 setSelectedParentId(null)
                 setShowCreateModal(true)
               }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+              className="px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 transition-colors font-medium text-sm"
             >
               + New Category
             </button>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="px-4 py-2 text-sm text-navy-600 hover:text-navy-700 font-medium sm:hidden"
+              className="px-4 py-2 text-sm text-black-700 hover:text-black-800 font-medium sm:hidden"
             >
               ← Dashboard
             </Link>
@@ -737,7 +737,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   }
                 }}
                 placeholder="e.g., Tops, Bottoms, Shoes"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black-500"
                 autoFocus
               />
             </div>
@@ -775,7 +775,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
               </button>
               <button
                 onClick={handleCreateCategory}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 transition-colors font-medium"
               >
                 Create Category
               </button>
@@ -866,7 +866,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   {!showAddProductsSection ? (
                     <button
                       onClick={handleLoadUnassignedProducts}
-                      className="w-full px-4 py-3 text-blue-600 border-2 border-dashed border-blue-300 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+                      className="w-full px-4 py-3 text-black-600 border-2 border-dashed border-blue-300 rounded-lg hover:bg-gray-100 transition-colors font-medium"
                     >
                       + Add Products to Category
                     </button>
@@ -896,7 +896,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search products..."
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-black-500"
                       />
 
                       {/* Unassigned Products */}

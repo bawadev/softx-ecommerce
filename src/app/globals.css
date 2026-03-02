@@ -54,13 +54,13 @@
   }
 
   .btn-primary {
-    @apply btn bg-coral-600 text-white hover:bg-coral-500 hover:scale-[1.02]
-           active:scale-[0.98] focus:ring-coral-300;
+    @apply btn bg-black-700 text-white hover:bg-black-800 hover:scale-[1.02]
+           active:scale-[0.98] focus:ring-black-300;
   }
 
   .btn-secondary {
-    @apply btn border-2 border-navy-600 text-navy-600 bg-transparent
-           hover:bg-navy-50 hover:scale-[1.02] active:scale-[0.98] focus:ring-navy-300;
+    @apply btn border-2 border-black-700 text-black-700 bg-transparent
+           hover:bg-gray-100 hover:scale-[1.02] active:scale-[0.98] focus:ring-black-300;
   }
 
   .btn-ghost {
@@ -72,8 +72,8 @@
   .input {
     @apply w-full px-4 py-3 rounded-md border border-gray-300 bg-white
            text-gray-900 placeholder-gray-400 transition-all duration-200
-           focus:outline-none focus:border-navy-600 focus:ring-2
-           focus:ring-navy-200 disabled:bg-gray-50 disabled:cursor-not-allowed;
+           focus:outline-none focus:border-black-700 focus:ring-2
+           focus:ring-black-200 disabled:bg-gray-50 disabled:cursor-not-allowed;
   }
 
   .input-error {

@@ -157,7 +157,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Discount Badge */}
           {discountPercent > 0 && (
-            <div className="absolute right-3 top-3 rounded-full bg-gold-600 px-3 py-1 text-xs font-bold text-navy-900 shadow-lg z-10">
+            <div className="absolute right-3 top-3 rounded-full bg-white px-3 py-1 text-xs font-bold text-black-900 shadow-lg z-10">
               -{discountPercent}%
             </div>
           )}
@@ -188,11 +188,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             onClick={handleCardClick}
             className="block"
           >
-            <h3 className="line-clamp-2 font-semibold text-gray-900 text-xs sm:text-sm md:text-base group-hover:text-navy-600 transition-colors break-words leading-tight">
+            <h3 className="line-clamp-2 font-semibold text-gray-900 text-xs sm:text-sm md:text-base group-hover:text-black-700 transition-colors break-words leading-tight">
               {product.name}
             </h3>
             <div className="mt-1 flex items-baseline gap-1 min-w-0">
-              <span className="text-xs sm:text-sm font-bold text-navy-600 truncate">
+              <span className="text-xs sm:text-sm font-bold text-black-700 truncate">
                 Rs {product.stockPrice.toFixed(0)}
               </span>
               <span className="text-[10px] sm:text-xs text-gray-400 line-through truncate">
@@ -227,7 +227,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     }}
                     className={`h-6 px-1.5 text-[10px] font-medium rounded transition-colors ${
                       selectedSize === size
-                        ? 'bg-navy-600 text-white'
+                        ? 'bg-black-700 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -255,7 +255,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                       }}
                       className={`h-5 w-5 rounded-full border-2 transition-all ${
                         selectedColor === color
-                          ? 'border-navy-600 ring-1 ring-navy-300'
+                          ? 'border-black-700 ring-1 ring-gray-300'
                           : 'border-gray-300 hover:border-gray-400'
                       }`}
                       style={{ backgroundColor: getColorHex(color) }}
@@ -270,7 +270,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     onClick={handleAddToCart}
                     disabled={isAdding || (selectedVariant !== null && !isVariantAvailable)}
                     title={t('addToCart')}
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-navy-600 text-white transition-colors hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-black-700 text-white transition-colors hover:bg-black-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isAdding ? (
                       <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -279,7 +279,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                       </svg>
                     ) : (
                       <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                       </svg>
                     )}
                   </button>
@@ -289,7 +289,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     onClick={handleQuickBuy}
                     disabled={isQuickBuying || (selectedVariant !== null && !isVariantAvailable)}
                     title={t('quickBuy')}
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-coral-600 text-white transition-colors hover:bg-coral-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-black-800 text-white transition-colors hover:bg-coral-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isQuickBuying ? (
                       <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
@@ -298,7 +298,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                       </svg>
                     ) : (
                       <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     )}
                   </button>

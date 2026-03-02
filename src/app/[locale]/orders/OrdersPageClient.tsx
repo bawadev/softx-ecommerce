@@ -20,7 +20,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
       <div className="min-h-screen bg-gray-50">
         <div className="bg-white border-b border-gray-200">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
+            <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
             <p className="mt-2 text-gray-600">{t('subtitle')}</p>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
+          <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
           <p className="mt-2 text-gray-600">{t('ordersPlaced', { count })}</p>
         </div>
       </div>
@@ -96,9 +96,9 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                       <span
                         className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
                           order.status === 'PENDING'
-                            ? 'bg-yellow-100 text-yellow-700'
+                            ? 'bg-gray-100 text-black-700'
                             : order.status === 'CONFIRMED'
-                            ? 'bg-blue-100 text-blue-700'
+                            ? 'bg-gray-100 text-black-700'
                             : order.status === 'FULFILLED'
                             ? 'bg-green-100 text-green-700'
                             : 'bg-red-100 text-red-700'
@@ -108,7 +108,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                       </span>
                       <Link
                         href={`/${locale}/order/${order.id}`}
-                        className="text-sm font-medium text-navy-600 hover:text-navy-700"
+                        className="text-sm font-medium text-black-700 hover:text-black-800"
                       >
                         {t('viewDetails')}
                       </Link>
@@ -143,7 +143,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                         <div className="flex-1">
                           <Link
                             href={`/${locale}/product/${item.product.id}`}
-                            className="text-sm font-semibold text-gray-900 hover:text-navy-600 transition-colors"
+                            className="text-sm font-semibold text-gray-900 hover:text-black-700 transition-colors"
                           >
                             {item.product.name}
                           </Link>

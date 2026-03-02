@@ -80,8 +80,8 @@ export default function SearchAutocomplete({
   }
 
   const inputClasses = large
-    ? 'w-full px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg rounded-full border-2 border-gray-200 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-gray-900'
-    : 'w-full px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg border border-gray-300 focus:border-navy-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-gray-900'
+    ? 'w-full px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg rounded-full border-2 border-gray-200 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-gray-900'
+    : 'w-full px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-gray-900'
 
   return (
     <div ref={wrapperRef} className={`relative`}>
@@ -98,7 +98,7 @@ export default function SearchAutocomplete({
             type="submit"
             className={`absolute right-1 sm:right-2 ${
               large ? 'top-1 sm:top-1.5 md:top-2' : 'top-1/2 -translate-y-1/2'
-            } bg-coral-600 text-white ${
+            } bg-black-800 text-white ${
               large ? 'px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 text-sm sm:text-base rounded-full' : 'px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg'
             } hover:bg-coral-700 transition-colors font-semibold`}
           >
@@ -113,7 +113,7 @@ export default function SearchAutocomplete({
         <div className="absolute z-50 w-full mt-2 bg-white rounded-lg shadow-xl border border-gray-200 max-h-96 overflow-y-auto">
           {isLoading && (
             <div className="p-4 text-center text-gray-500">
-              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-navy-600"></div>
+              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-black-700"></div>
             </div>
           )}
 
@@ -148,7 +148,7 @@ export default function SearchAutocomplete({
                   <h4 className="font-semibold text-gray-900 truncate">{product.name}</h4>
                   <p className="text-sm text-gray-600">{product.brand}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="font-bold text-navy-900">Rs {product.stockPrice.toFixed(2)}</span>
+                    <span className="font-bold text-black-900">Rs {product.stockPrice.toFixed(2)}</span>
                     <span className="text-xs text-gray-500 line-through">
                       Rs {product.retailPrice.toFixed(2)}
                     </span>

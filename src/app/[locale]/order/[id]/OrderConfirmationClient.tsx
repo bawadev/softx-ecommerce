@@ -58,7 +58,7 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">{t('orderNumber')}</p>
-                  <p className="text-2xl font-bold text-navy-900">{order.orderNumber}</p>
+                  <p className="text-2xl font-bold text-black-900">{order.orderNumber}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">{t('orderDate')}</p>
@@ -69,9 +69,9 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                 <span
                   className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${
                     order.status === 'PENDING'
-                      ? 'bg-yellow-100 text-yellow-700'
+                      ? 'bg-gray-100 text-black-700'
                       : order.status === 'CONFIRMED'
-                      ? 'bg-blue-100 text-blue-700'
+                      ? 'bg-gray-100 text-black-700'
                       : order.status === 'FULFILLED'
                       ? 'bg-green-100 text-green-700'
                       : 'bg-red-100 text-red-700'
@@ -110,7 +110,7 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                     <div className="flex-1">
                       <Link
                         href={`/${locale}/product/${item.product.id}`}
-                        className="text-sm font-semibold text-gray-900 hover:text-navy-600 transition-colors"
+                        className="text-sm font-semibold text-gray-900 hover:text-black-700 transition-colors"
                       >
                         {item.product.name}
                       </Link>
@@ -122,7 +122,7 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                     </div>
 
                     <div className="text-right">
-                      <p className="text-sm font-bold text-navy-600">
+                      <p className="text-sm font-bold text-black-700">
                         Rs {(item.priceAtPurchase * item.quantity).toFixed(2)}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -174,7 +174,7 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-3">
                   <span className="text-base font-bold text-gray-900">{t('total')}</span>
-                  <span className="text-2xl font-bold text-navy-600">
+                  <span className="text-2xl font-bold text-black-700">
                     Rs {order.totalAmount.toFixed(2)}
                   </span>
                 </div>

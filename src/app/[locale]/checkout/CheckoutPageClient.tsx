@@ -85,7 +85,7 @@ export default function CheckoutPageClient({
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
+          <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
           <p className="mt-2 text-gray-600">{t('subtitle')}</p>
         </div>
       </div>
@@ -106,19 +106,19 @@ export default function CheckoutPageClient({
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {!isAuthenticated && (
-                  <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="mb-6 p-4 bg-gray-100 border border-gray-200 rounded-lg">
                     <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 text-black-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-blue-900">
+                        <p className="text-sm font-medium text-black-900">
                           {t('guestCheckoutNotice')}
                         </p>
-                        <p className="mt-1 text-sm text-blue-700">
+                        <p className="mt-1 text-sm text-black-700">
                           {t('guestCheckoutBenefits')}
                         </p>
-                        <Link href={`/${locale}/signup`} className="mt-2 inline-block text-sm font-medium text-blue-600 hover:text-blue-700 underline">
+                        <Link href={`/${locale}/signup`} className="mt-2 inline-block text-sm font-medium text-black-600 hover:text-black-700 underline">
                           {t('createAccount')} →
                         </Link>
                       </div>
@@ -175,7 +175,7 @@ export default function CheckoutPageClient({
                         value="SHIP"
                         checked={deliveryMethod === 'SHIP'}
                         onChange={() => setDeliveryMethod('SHIP')}
-                        className="h-4 w-4 text-navy-600"
+                        className="h-4 w-4 text-black-700"
                       />
                       <div className="flex-1">
                         <div className="font-semibold text-gray-900">{t('ship')}</div>
@@ -194,7 +194,7 @@ export default function CheckoutPageClient({
                         value="COLLECT"
                         checked={deliveryMethod === 'COLLECT'}
                         onChange={() => setDeliveryMethod('COLLECT')}
-                        className="h-4 w-4 text-navy-600"
+                        className="h-4 w-4 text-black-700"
                       />
                       <div className="flex-1">
                         <div className="font-semibold text-gray-900">{t('collect')}</div>
@@ -354,7 +354,7 @@ export default function CheckoutPageClient({
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-3">
                   <span className="text-base font-bold text-gray-900">{t('total')}</span>
-                  <span className="text-2xl font-bold text-navy-600">
+                  <span className="text-2xl font-bold text-black-700">
                     Rs {finalTotal.toFixed(2)}
                   </span>
                 </div>
@@ -387,7 +387,7 @@ export default function CheckoutPageClient({
 
               <div className="text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-navy-100 mb-4">
-                  <svg className="h-6 w-6 text-navy-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-6 w-6 text-black-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
@@ -397,13 +397,13 @@ export default function CheckoutPageClient({
                 <div className="space-y-3">
                   <Link
                     href={`/${locale}/login?redirect=${encodeURIComponent(`/${locale}/checkout`)}`}
-                    className="block w-full bg-navy-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-navy-700 transition-colors"
+                    className="block w-full bg-black-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-black-800 transition-colors"
                   >
                     {t('signIn')}
                   </Link>
                   <Link
                     href={`/${locale}/signup?redirect=${encodeURIComponent(`/${locale}/checkout`)}`}
-                    className="block w-full bg-white border-2 border-navy-600 text-navy-600 px-6 py-3 rounded-lg font-semibold hover:bg-navy-50 transition-colors"
+                    className="block w-full bg-white border-2 border-black-700 text-black-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
                   >
                     {t('createAccount')}
                   </Link>

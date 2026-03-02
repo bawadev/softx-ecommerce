@@ -249,7 +249,7 @@ export default function ImageUpload({
               }}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                 uploadMode === 'file'
-                  ? 'bg-white text-navy-600 shadow-sm'
+                  ? 'bg-white text-black-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -264,7 +264,7 @@ export default function ImageUpload({
               }}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                 uploadMode === 'url'
-                  ? 'bg-white text-navy-600 shadow-sm'
+                  ? 'bg-white text-black-700 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -306,7 +306,7 @@ export default function ImageUpload({
                 <img
                   src={URL.createObjectURL(file)}
                   alt={`Preview ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg border-2 border-dashed border-blue-400"
+                  className="w-full h-32 object-cover rounded-lg border-2 border-dashed border-gray-400"
                 />
                 <button
                   type="button"
@@ -326,7 +326,7 @@ export default function ImageUpload({
             type="button"
             onClick={handleUpload}
             disabled={uploading}
-            className="w-full px-4 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
           >
             {uploading ? 'Uploading...' : `Upload ${previewFiles.length} Image(s)`}
           </button>
@@ -348,12 +348,12 @@ export default function ImageUpload({
                 }
               }}
               placeholder="https://example.com/image.jpg"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent text-sm"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
             />
             <button
               type="button"
               onClick={handleAddUrl}
-              className="px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700 transition-colors text-sm font-medium"
+              className="px-4 py-2 bg-black-700 text-white rounded-md hover:bg-black-800 transition-colors text-sm font-medium"
             >
               Add URL
             </button>
@@ -369,8 +369,8 @@ export default function ImageUpload({
         <div
           className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
             isDragging
-              ? 'border-navy-600 bg-navy-50'
-              : 'border-gray-300 hover:border-navy-500'
+              ? 'border-black-700 bg-gray-50'
+              : 'border-gray-300 hover:border-gray-500'
           }`}
           onClick={handleUploadAreaClick}
           onDragEnter={handleDragEnter}

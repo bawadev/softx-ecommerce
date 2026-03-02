@@ -413,10 +413,10 @@ export default function PromotionalCategoriesClient({
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-navy-900">Promotional Sections</h1>
+                <h1 className="text-3xl font-bold text-black-900">Promotional Sections</h1>
                 <Link
                   href={`/${locale}/admin/dashboard`}
-                  className="text-sm text-navy-600 hover:text-navy-700 font-medium flex items-center gap-1"
+                  className="text-sm text-black-700 hover:text-black-800 font-medium flex items-center gap-1"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -430,7 +430,7 @@ export default function PromotionalCategoriesClient({
             </div>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold"
+              className="bg-black-700 text-white px-4 py-2 rounded-lg hover:bg-black-800 transition-colors font-semibold"
             >
               + Create Section
             </button>
@@ -451,7 +451,7 @@ export default function PromotionalCategoriesClient({
                     key={category.id}
                     className={`p-3 rounded-lg border-2 cursor-pointer transition-colors ${
                       selectedCategory === category.id
-                        ? 'border-purple-600 bg-purple-50'
+                        ? 'border-black-600 bg-gray-100'
                         : 'border-gray-200 hover:border-purple-300'
                     }`}
                     onClick={() => loadCategoryProducts(category.id)}
@@ -497,7 +497,7 @@ export default function PromotionalCategoriesClient({
                               endDate: category.endDate || '',
                             })
                           }}
-                          className="text-navy-600 hover:text-navy-700 text-xs"
+                          className="text-black-700 hover:text-black-800 text-xs"
                         >
                           Edit
                         </button>
@@ -535,18 +535,18 @@ export default function PromotionalCategoriesClient({
                         value={searchQuery}
                         onChange={(e) => handleSearchInputChange(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleSearchProducts()}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none"
                       />
                       {loading && searchQuery.length >= 2 && (
                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                          <div className="animate-spin h-4 w-4 border-2 border-purple-600 rounded-full border-t-transparent"></div>
+                          <div className="animate-spin h-4 w-4 border-2 border-black-600 rounded-full border-t-transparent"></div>
                         </div>
                       )}
                     </div>
                     <button
                       onClick={() => handleSearchProducts()}
                       disabled={loading}
-                      className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+                      className="bg-black-700 text-white px-4 py-2 rounded-lg hover:bg-black-800 transition-colors disabled:opacity-50"
                     >
                       Search
                     </button>
@@ -599,7 +599,7 @@ export default function PromotionalCategoriesClient({
                                     <p className="text-xs text-gray-500 mt-1">SKU: {product.sku}</p>
                                   </div>
                                   {isInCurrentCategory && (
-                                    <span className="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded whitespace-nowrap">
+                                    <span className="px-2 py-1 bg-black-700 text-white text-xs font-medium rounded whitespace-nowrap">
                                       Already Added
                                     </span>
                                   )}
@@ -608,7 +608,7 @@ export default function PromotionalCategoriesClient({
                                 {/* Pricing */}
                                 <div className="flex items-center gap-3 mb-2">
                                   <div className="flex items-baseline gap-2">
-                                    <span className="text-lg font-bold text-navy-900">
+                                    <span className="text-lg font-bold text-black-900">
                                       Rs {product.stockPrice.toFixed(2)}
                                     </span>
                                     <span className="text-sm text-gray-500 line-through">
@@ -620,7 +620,7 @@ export default function PromotionalCategoriesClient({
                                       totalStock > 20
                                         ? 'bg-green-100 text-green-700'
                                         : totalStock > 0
-                                        ? 'bg-yellow-100 text-yellow-700'
+                                        ? 'bg-gray-100 text-black-700'
                                         : 'bg-red-100 text-red-700'
                                     }`}
                                   >
@@ -640,7 +640,7 @@ export default function PromotionalCategoriesClient({
                                           key={item.category.id}
                                           className={`px-2 py-0.5 rounded text-xs font-medium ${
                                             item.category.id === selectedCategory
-                                              ? 'bg-blue-600 text-white'
+                                              ? 'bg-black-700 text-white'
                                               : 'bg-gray-200 text-gray-700'
                                           }`}
                                         >
@@ -659,7 +659,7 @@ export default function PromotionalCategoriesClient({
                                     min="1"
                                     max={totalStock}
                                     defaultValue="1"
-                                    className="w-24 px-3 py-1.5 border border-gray-300 rounded text-sm focus:border-purple-500 focus:outline-none"
+                                    className="w-24 px-3 py-1.5 border border-gray-300 rounded text-sm focus:border-black-500 focus:outline-none"
                                     id={`qty-${product.id}`}
                                     disabled={isInCurrentCategory || totalStock === 0}
                                   />
@@ -729,7 +729,7 @@ export default function PromotionalCategoriesClient({
                           </div>
                           <p className="text-sm text-gray-600">{product.brand}</p>
                           <div className="flex items-center gap-4 mt-2 text-xs">
-                            <span className="text-navy-600 flex items-center gap-1 group relative">
+                            <span className="text-black-700 flex items-center gap-1 group relative">
                               <span>This Section: <strong>{allocatedQuantity}</strong></span>
                               <svg className="w-3 h-3 cursor-help" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -738,7 +738,7 @@ export default function PromotionalCategoriesClient({
                                 Quantity allocated to this promotional section
                               </span>
                             </span>
-                            <span className="text-orange-600 flex items-center gap-1 group relative">
+                            <span className="text-black-600 flex items-center gap-1 group relative">
                               <span>Sold: <strong>{soldQuantity}</strong></span>
                               <svg className="w-3 h-3 cursor-help" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -765,7 +765,7 @@ export default function PromotionalCategoriesClient({
                                 Total physical inventory in warehouse
                               </span>
                             </span>
-                            <span className={`${availableStock > 0 ? 'text-blue-600' : 'text-red-600'} flex items-center gap-1 group relative`}>
+                            <span className={`${availableStock > 0 ? 'text-black-600' : 'text-red-600'} flex items-center gap-1 group relative`}>
                               <span>Available: <strong>{availableStock}</strong></span>
                               <svg className="w-3 h-3 cursor-help" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -783,7 +783,7 @@ export default function PromotionalCategoriesClient({
                                 type="number"
                                 value={editQuantityValue}
                                 onChange={(e) => setEditQuantityValue(parseInt(e.target.value) || 0)}
-                                className="w-24 px-3 py-1.5 border border-purple-500 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                className="w-24 px-3 py-1.5 border border-black-500 rounded text-sm focus:outline-none focus:ring-2 focus:ring-black-500"
                                 min="0"
                                 autoFocus
                               />
@@ -819,7 +819,7 @@ export default function PromotionalCategoriesClient({
                               </button>
                               <button
                                 onClick={() => handleStartEditQuantity(product.id, allocatedQuantity)}
-                                className="px-3 py-1.5 bg-navy-600 text-white rounded text-sm font-medium hover:bg-navy-700 transition-colors"
+                                className="px-3 py-1.5 bg-black-700 text-white rounded text-sm font-medium hover:bg-black-800 transition-colors"
                               >
                                 Edit Qty
                               </button>
@@ -866,7 +866,7 @@ export default function PromotionalCategoriesClient({
               {multiSectionProducts.length > 6 && (
                 <button
                   onClick={() => setShowAllMultiSection(!showAllMultiSection)}
-                  className="text-purple-600 hover:text-purple-700 font-medium text-sm flex items-center gap-1"
+                  className="text-black-600 hover:text-black-700 font-medium text-sm flex items-center gap-1"
                 >
                   {showAllMultiSection ? 'Show Less' : 'See All'}
                   <svg className={`w-4 h-4 transition-transform ${showAllMultiSection ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -913,10 +913,10 @@ export default function PromotionalCategoriesClient({
                         {sections.map(({ category, allocatedQuantity }) => (
                           <span
                             key={category.id}
-                            className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700"
+                            className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-black-700"
                           >
                             {category.name}
-                            <span className="ml-1 text-purple-900 font-semibold">({allocatedQuantity})</span>
+                            <span className="ml-1 text-black-900 font-semibold">({allocatedQuantity})</span>
                           </span>
                         ))}
                       </div>
@@ -944,7 +944,7 @@ export default function PromotionalCategoriesClient({
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none"
                   placeholder="e.g., Christmas Deals 2025"
                 />
               </div>
@@ -955,7 +955,7 @@ export default function PromotionalCategoriesClient({
                   type="text"
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none"
                   placeholder="e.g., christmas-deals-2025"
                 />
               </div>
@@ -965,7 +965,7 @@ export default function PromotionalCategoriesClient({
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none"
                   rows={3}
                   placeholder="Optional description"
                 />
@@ -981,7 +981,7 @@ export default function PromotionalCategoriesClient({
                   onChange={(e) =>
                     setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none"
                 />
               </div>
 
@@ -1007,7 +1007,7 @@ export default function PromotionalCategoriesClient({
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -1018,7 +1018,7 @@ export default function PromotionalCategoriesClient({
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:border-black-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -1028,7 +1028,7 @@ export default function PromotionalCategoriesClient({
               <button
                 onClick={editingCategory ? handleUpdateCategory : handleCreateCategory}
                 disabled={loading}
-                className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold disabled:opacity-50"
+                className="flex-1 bg-black-700 text-white px-4 py-2 rounded-lg hover:bg-black-800 transition-colors font-semibold disabled:opacity-50"
               >
                 {loading ? 'Saving...' : editingCategory ? 'Update' : 'Create'}
               </button>

@@ -51,8 +51,8 @@ export default function CategoryFilterChips({
               flex items-center gap-2
               ${
                 isSelected
-                  ? 'bg-navy-600 text-white shadow-md transform scale-105'
-                  : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-navy-400 hover:text-navy-600'
+                  ? 'bg-black-700 text-white shadow-md transform scale-105'
+                  : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-navy-400 hover:text-black-700'
               }
             `}
           >

@@ -48,7 +48,7 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 leading-[1.2] tracking-tight"
         >
           <span
-            className="block bg-gradient-to-r from-gray-300 via-white to-white bg-clip-text text-transparent drop-shadow-2xl"
+            className="block text-white drop-shadow-2xl"
             style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
           >
             {title}
@@ -58,7 +58,7 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
         {/* Subtitle */}
         <motion.p
           variants={shouldReduce ? undefined : bottomSweepChildVariants}
-          className="text-sm sm:text-base md:text-lg text-gray-200 drop-shadow-md leading-relaxed font-light"
+          className="text-sm sm:text-base md:text-lg text-white drop-shadow-md leading-relaxed font-light"
         >
           {subtitle}
         </motion.p>

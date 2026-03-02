@@ -45,7 +45,7 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-[1.2] tracking-tight"
         >
           <span
-            className="block bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent drop-shadow-2xl"
+            className="block text-white drop-shadow-2xl"
             style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
           >
             {title}
@@ -55,7 +55,7 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
         {/* Subtitle */}
         <motion.p
           variants={shouldReduce ? undefined : topLeftRoundChildVariants}
-          className="text-sm sm:text-base md:text-lg text-gray-200 drop-shadow-md leading-relaxed font-light"
+          className="text-sm sm:text-base md:text-lg text-white drop-shadow-md leading-relaxed font-light"
         >
           {subtitle}
         </motion.p>

@@ -24,10 +24,10 @@ export default async function AdminDashboardPage() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
+              <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
               <p className="mt-1 text-sm text-gray-600">Manage your Ecom store</p>
             </div>
-            <Link href={`/${locale}`} className="text-sm text-navy-600 hover:text-navy-700 font-medium">
+            <Link href={`/${locale}`} className="text-sm text-black-700 hover:text-black-800 font-medium">
               ← Back to Store
             </Link>
           </div>
@@ -43,7 +43,7 @@ export default async function AdminDashboardPage() {
             className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
           >
             <div className="flex items-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-navy-600 group-hover:bg-navy-700 transition-colors">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black-700 group-hover:bg-black-800 transition-colors">
                 <svg
                   className="h-6 w-6 text-white"
                   fill="none"
@@ -63,7 +63,7 @@ export default async function AdminDashboardPage() {
             <p className="text-sm text-gray-600">
               Manage your product catalog, add new products, update inventory, and more.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-navy-600 group-hover:text-navy-700">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-black-800">
               {t('manageProducts')}
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
             className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
           >
             <div className="flex items-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-600 group-hover:bg-orange-700 transition-colors">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black-700 group-hover:bg-black-800 transition-colors">
                 <svg
                   className="h-6 w-6 text-white"
                   fill="none"
@@ -131,7 +131,7 @@ export default async function AdminDashboardPage() {
             <p className="text-sm text-gray-600">
               Track stock levels, view low inventory alerts, and manage product variants.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-orange-600 group-hover:text-orange-700">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-600 group-hover:text-black-700">
               {t('viewInventory')}
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -145,7 +145,7 @@ export default async function AdminDashboardPage() {
             className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
           >
             <div className="flex items-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-600 group-hover:bg-purple-700 transition-colors">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black-700 group-hover:bg-black-800 transition-colors">
                 <svg
                   className="h-6 w-6 text-white"
                   fill="none"
@@ -165,7 +165,7 @@ export default async function AdminDashboardPage() {
             <p className="text-sm text-gray-600">
               Create and manage promotional sections like &quot;Best Sellers&quot;, &quot;New Arrivals&quot;, and seasonal offers.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-purple-600 group-hover:text-purple-700">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-600 group-hover:text-black-700">
               Manage Sections
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -179,7 +179,7 @@ export default async function AdminDashboardPage() {
             className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
           >
             <div className="flex items-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-pink-600 group-hover:bg-pink-700 transition-colors">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black-700 group-hover:bg-black-800 transition-colors">
                 <svg
                   className="h-6 w-6 text-white"
                   fill="none"
@@ -199,7 +199,7 @@ export default async function AdminDashboardPage() {
             <p className="text-sm text-gray-600">
               Manage homepage hero slider images, animations, and text content.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-pink-600 group-hover:text-pink-700">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-600 group-hover:text-black-700">
               Manage Slides
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -213,7 +213,7 @@ export default async function AdminDashboardPage() {
             className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
           >
             <div className="flex items-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-600 group-hover:bg-indigo-700 transition-colors">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black-700 group-hover:bg-black-800 transition-colors">
                 <svg
                   className="h-6 w-6 text-white"
                   fill="none"
@@ -233,7 +233,7 @@ export default async function AdminDashboardPage() {
             <p className="text-sm text-gray-600">
               Define hierarchical filters to organize products by custom categories like &quot;Office Wares&quot; or &quot;Evening Dresses&quot;.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-indigo-600 group-hover:text-indigo-700">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-indigo-700">
               Manage Filters
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -252,7 +252,7 @@ export default async function AdminDashboardPage() {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm font-medium text-gray-600">{t('pendingOrders')}</p>
-              <p className="mt-2 text-3xl font-bold text-yellow-600">-</p>
+              <p className="mt-2 text-3xl font-bold text-black-600">-</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm font-medium text-gray-600">Low Stock Items</p>

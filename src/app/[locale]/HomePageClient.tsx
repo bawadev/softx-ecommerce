@@ -139,7 +139,7 @@ export default function HomePageClient({
               {selectedCategoryIds.size > 0 && (
                 <button
                   onClick={() => setSelectedCategoryIds(new Set())}
-                  className="text-sm text-navy-600 hover:text-navy-700 font-medium"
+                  className="text-sm text-black-700 hover:text-black-800 font-medium"
                 >
                   {t('clearAll')} ({selectedCategoryIds.size})
                 </button>
@@ -161,8 +161,8 @@ export default function HomePageClient({
                     flex items-center gap-2 text-base font-bold
                     ${
                       isExpanded
-                        ? 'bg-navy-600 text-white shadow-md transform scale-105'
-                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-navy-400 hover:text-navy-600'
+                        ? 'bg-black-700 text-white shadow-md transform scale-105'
+                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-navy-400 hover:text-black-700'
                     }
                   `}
                 >
@@ -172,8 +172,8 @@ export default function HomePageClient({
                   {category.productCount !== undefined && category.productCount > 0 && (
                     <span className={`text-xs px-1.5 py-0.5 rounded ${
                       isExpanded
-                        ? 'bg-navy-500 text-white'
-                        : 'bg-blue-100 text-blue-700'
+                        ? 'bg-gray-500 text-white'
+                        : 'bg-gray-100 text-black-700'
                     }`}>
                       {category.productCount}
                     </span>
@@ -195,7 +195,7 @@ export default function HomePageClient({
 
           {/* Subcategory Chips - Show when root category is expanded */}
           {expandedCategoryId && childCategories.length > 0 && (
-            <div className="mt-4 pl-6 border-l-4 border-navy-300">
+            <div className="mt-4 pl-6 border-l-4 border-gray-300">
               <h4 className="text-sm font-semibold text-gray-600 mb-3">
                 {t('subcategories')}:
               </h4>
@@ -212,8 +212,8 @@ export default function HomePageClient({
                         flex items-center gap-2 text-sm font-medium
                         ${
                           isSelected
-                            ? 'bg-navy-500 text-white shadow-sm'
-                            : 'bg-gray-100 text-gray-700 border border-gray-300 hover:border-navy-400 hover:text-navy-600'
+                            ? 'bg-gray-500 text-white shadow-sm'
+                            : 'bg-gray-100 text-gray-700 border border-gray-300 hover:border-navy-400 hover:text-black-700'
                         }
                       `}
                     >
@@ -250,7 +250,7 @@ export default function HomePageClient({
             </div>
             <Link
               href={`/${locale}/shop?category=${Array.from(selectedCategoryIds).join(',')}`}
-              className="text-sm font-medium text-navy-600 hover:text-navy-700"
+              className="text-sm font-medium text-black-700 hover:text-black-800"
             >
               {t('viewAll')}
             </Link>
@@ -271,7 +271,7 @@ export default function HomePageClient({
               <h2 className="text-2xl font-bold text-gray-900">{t('recentlyViewed')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('recentlyViewedSubtitle')}</p>
             </div>
-            <Link href={`/${locale}/shop`} className="text-sm font-medium text-navy-600 hover:text-navy-700">
+            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-800">
               {t('viewAll')}
             </Link>
           </div>
@@ -291,7 +291,7 @@ export default function HomePageClient({
               <h2 className="text-2xl font-bold text-gray-900">{t('recommendedForYou')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('recommendedSubtitle')}</p>
             </div>
-            <Link href={`/${locale}/shop`} className="text-sm font-medium text-navy-600 hover:text-navy-700">
+            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-800">
               {t('viewAll')}
             </Link>
           </div>
@@ -315,7 +315,7 @@ export default function HomePageClient({
             </div>
             <Link
               href={`/${locale}/shop?promo=${category.slug}`}
-              className="text-sm font-medium text-navy-600 hover:text-navy-700"
+              className="text-sm font-medium text-black-700 hover:text-black-800"
             >
               {t('viewAll')}
             </Link>
@@ -336,7 +336,7 @@ export default function HomePageClient({
               <h2 className="text-2xl font-bold text-gray-900">{t('newArrivals')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('newArrivalsSubtitle')}</p>
             </div>
-            <Link href={`/${locale}/shop`} className="text-sm font-medium text-navy-600 hover:text-navy-700">
+            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-800">
               {t('viewAll')}
             </Link>
           </div>
@@ -350,17 +350,17 @@ export default function HomePageClient({
 
       {/* Call to Action */}
       {!isAuthenticated && (
-        <section className="relative bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900 text-white py-20 sm:py-24 overflow-hidden">
+        <section className="relative bg-black-900 text-white py-20 sm:py-24 overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-1/4 w-96 h-96 bg-gold-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
-            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-coral-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
+            <div className="absolute top-0 left-1/4 w-96 h-96 bg-gray-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-black-700 rounded-full mix-blend-multiply filter blur-3xl"></div>
           </div>
 
           <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
             {/* Icon */}
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gold-500/20 rounded-full mb-6">
-              <svg className="w-8 h-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-400/20 rounded-full mb-6">
+              <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </div>
@@ -375,7 +375,7 @@ export default function HomePageClient({
             {/* CTA Button - Following Style Guide */}
             <Link
               href={`/${locale}/signup`}
-              className="inline-flex items-center gap-2 btn-primary text-lg px-8 py-4 shadow-2xl hover:shadow-coral-500/50"
+              className="inline-flex items-center gap-2 btn-primary text-lg px-8 py-4 shadow-2xl hover:shadow-black-700/50"
             >
               {t('cta.createAccount')}
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -386,15 +386,15 @@ export default function HomePageClient({
             {/* Features Grid */}
             <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-gold-400 mb-2">{t('stats.savingsValue')}</div>
+                <div className="text-3xl font-bold text-gray-300 mb-2">{t('stats.savingsValue')}</div>
                 <div className="text-sm text-gray-300">{t('stats.savingsLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gold-400 mb-2">{t('stats.productsValue')}</div>
+                <div className="text-3xl font-bold text-gray-300 mb-2">{t('stats.productsValue')}</div>
                 <div className="text-sm text-gray-300">{t('stats.productsLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gold-400 mb-2">{t('stats.supportValue')}</div>
+                <div className="text-3xl font-bold text-gray-300 mb-2">{t('stats.supportValue')}</div>
                 <div className="text-sm text-gray-300">{t('stats.supportLabel')}</div>
               </div>
             </div>

@@ -9,11 +9,11 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  new: 'bg-gold-500 text-white',
-  sale: 'bg-coral-500 text-white',
+  new: 'bg-gray-400 text-white',
+  sale: 'bg-black-700 text-white',
   'out-of-stock': 'bg-gray-300 text-gray-700',
-  'low-stock': 'bg-amber-500 text-white',
-  discount: 'bg-coral-600 text-white',
+  'low-stock': 'bg-black-800 text-white',
+  discount: 'bg-black-800 text-white',
 }
 
 export default function Badge({ variant, children, className = '' }: BadgeProps) {

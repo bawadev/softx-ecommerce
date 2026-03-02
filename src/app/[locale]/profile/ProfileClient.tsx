@@ -142,10 +142,10 @@ export default function ProfileClient({
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-navy-900">{t('title')}</h1>
+              <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
               <p className="mt-1 text-sm text-gray-600">{t('subtitle')}</p>
             </div>
-            <Link href="/" className="text-sm text-navy-600 hover:text-navy-700 font-medium">
+            <Link href="/" className="text-sm text-black-700 hover:text-black-800 font-medium">
               {t('backToHome')}
             </Link>
           </div>
@@ -160,7 +160,7 @@ export default function ProfileClient({
               onClick={() => setActiveTab('info')}
               className={`py-4 border-b-2 font-medium text-sm ${
                 activeTab === 'info'
-                  ? 'border-navy-600 text-navy-600'
+                  ? 'border-black-700 text-black-700'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -170,7 +170,7 @@ export default function ProfileClient({
               onClick={() => setActiveTab('preferences')}
               className={`py-4 border-b-2 font-medium text-sm ${
                 activeTab === 'preferences'
-                  ? 'border-navy-600 text-navy-600'
+                  ? 'border-black-700 text-black-700'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -180,7 +180,7 @@ export default function ProfileClient({
               onClick={() => setActiveTab('measurements')}
               className={`py-4 border-b-2 font-medium text-sm ${
                 activeTab === 'measurements'
-                  ? 'border-navy-600 text-navy-600'
+                  ? 'border-black-700 text-black-700'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -248,7 +248,7 @@ export default function ProfileClient({
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.role')}</label>
                 <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  user.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                  user.role === 'ADMIN' ? 'bg-gray-100 text-purple-800' : 'bg-gray-100 text-black-800'
                 }`}>
                   {user.role}
                 </span>
@@ -273,12 +273,12 @@ export default function ProfileClient({
                     onChange={(e) => setBrandInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addBrand())}
                     placeholder={t('preferences.brandsPlaceholder')}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                   />
                   <button
                     type="button"
                     onClick={addBrand}
-                    className="px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700"
+                    className="px-4 py-2 bg-black-700 text-white rounded-md hover:bg-black-800"
                   >
                     {tCommon('add')}
                   </button>
@@ -310,12 +310,12 @@ export default function ProfileClient({
                     onChange={(e) => setColorInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addColor())}
                     placeholder={t('preferences.colorsPlaceholder')}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                   />
                   <button
                     type="button"
                     onClick={addColor}
-                    className="px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700"
+                    className="px-4 py-2 bg-black-700 text-white rounded-md hover:bg-black-800"
                   >
                     {tCommon('add')}
                   </button>
@@ -348,7 +348,7 @@ export default function ProfileClient({
                       onClick={() => toggleCategory(category)}
                       className={`px-4 py-2 rounded-md border-2 text-sm font-medium ${
                         preferredCategories.includes(category)
-                          ? 'border-navy-600 bg-navy-50 text-navy-700'
+                          ? 'border-black-700 bg-gray-50 text-black-800'
                           : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                       }`}
                     >
@@ -370,7 +370,7 @@ export default function ProfileClient({
                       onChange={(e) => setPriceMin(e.target.value)}
                       min="0"
                       step="10"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -381,7 +381,7 @@ export default function ProfileClient({
                       onChange={(e) => setPriceMax(e.target.value)}
                       min="0"
                       step="10"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -390,7 +390,7 @@ export default function ProfileClient({
               <button
                 onClick={handleSavePreferences}
                 disabled={loading}
-                className="w-full px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700 disabled:opacity-50"
+                className="w-full px-4 py-2 bg-black-700 text-white rounded-md hover:bg-black-800 disabled:opacity-50"
               >
                 {loading ? tCommon('loading') : t('preferences.save')}
               </button>
@@ -412,7 +412,7 @@ export default function ProfileClient({
                   onClick={() => setUnit('METRIC')}
                   className={`px-4 py-2 rounded-md border-2 text-sm font-medium ${
                     unit === 'METRIC'
-                      ? 'border-navy-600 bg-navy-50 text-navy-700'
+                      ? 'border-black-700 bg-gray-50 text-black-800'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
@@ -423,7 +423,7 @@ export default function ProfileClient({
                   onClick={() => setUnit('IMPERIAL')}
                   className={`px-4 py-2 rounded-md border-2 text-sm font-medium ${
                     unit === 'IMPERIAL'
-                      ? 'border-navy-600 bg-navy-50 text-navy-700'
+                      ? 'border-black-700 bg-gray-50 text-black-800'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
@@ -442,7 +442,7 @@ export default function ProfileClient({
                   value={chest}
                   onChange={(e) => setChest(e.target.value)}
                   step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 />
               </div>
               <div>
@@ -454,7 +454,7 @@ export default function ProfileClient({
                   value={waist}
                   onChange={(e) => setWaist(e.target.value)}
                   step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 />
               </div>
               <div>
@@ -466,7 +466,7 @@ export default function ProfileClient({
                   value={hips}
                   onChange={(e) => setHips(e.target.value)}
                   step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 />
               </div>
               <div>
@@ -478,7 +478,7 @@ export default function ProfileClient({
                   value={shoulders}
                   onChange={(e) => setShoulders(e.target.value)}
                   step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 />
               </div>
               <div>
@@ -490,7 +490,7 @@ export default function ProfileClient({
                   value={inseam}
                   onChange={(e) => setInseam(e.target.value)}
                   step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 />
               </div>
               <div>
@@ -502,7 +502,7 @@ export default function ProfileClient({
                   value={height}
                   onChange={(e) => setHeight(e.target.value)}
                   step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 />
               </div>
               <div>
@@ -514,7 +514,7 @@ export default function ProfileClient({
                   value={weight}
                   onChange={(e) => setWeight(e.target.value)}
                   step="0.1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 />
               </div>
               <div>
@@ -522,7 +522,7 @@ export default function ProfileClient({
                 <select
                   value={preferredSize}
                   onChange={(e) => setPreferredSize(e.target.value as SizeOption)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-navy-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent"
                 >
                   <option value="">{t('measurements.notSpecified')}</option>
                   {sizes.map((size) => (
@@ -535,7 +535,7 @@ export default function ProfileClient({
             <button
               onClick={handleSaveMeasurements}
               disabled={loading}
-              className="w-full px-4 py-2 bg-navy-600 text-white rounded-md hover:bg-navy-700 disabled:opacity-50"
+              className="w-full px-4 py-2 bg-black-700 text-white rounded-md hover:bg-black-800 disabled:opacity-50"
             >
               {loading ? tCommon('loading') : t('measurements.save')}
             </button>

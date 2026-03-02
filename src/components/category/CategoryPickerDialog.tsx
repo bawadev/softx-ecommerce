@@ -96,9 +96,9 @@ export default function CategoryPickerDialog({
   const getHierarchyColor = (hierarchy: string) => {
     switch (hierarchy) {
       case 'ladies':
-        return 'text-pink-600 bg-pink-50'
+        return 'text-black-600 bg-gray-100'
       case 'gents':
-        return 'text-blue-600 bg-blue-50'
+        return 'text-black-600 bg-gray-100'
       case 'kids':
         return 'text-green-600 bg-green-50'
       default:
@@ -117,7 +117,7 @@ export default function CategoryPickerDialog({
         <div key={category.id} style={{ marginLeft: `${depth * 20}px` }}>
           <div
             className={`flex items-center gap-2 py-2 px-3 rounded cursor-pointer hover:bg-gray-100 ${
-              isSelected ? 'bg-indigo-50 border-l-4 border-indigo-600' : ''
+              isSelected ? 'bg-indigo-50 border-l-4 border-black-600' : ''
             }`}
             onClick={() => toggleCategory(category)}
           >
@@ -136,7 +136,7 @@ export default function CategoryPickerDialog({
                 checked={isSelected}
                 onChange={() => toggleCategory(category)}
                 onClick={(e) => e.stopPropagation()}
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                className="rounded border-gray-300 text-black-700 focus:ring-indigo-500"
               />
             )}
 
@@ -222,7 +222,7 @@ export default function CategoryPickerDialog({
           <button
             onClick={handleConfirm}
             disabled={selectedCategoryIds.size === 0}
-            className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm font-medium text-white bg-black-700 rounded-lg hover:bg-black-800 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Confirm Selection
           </button>

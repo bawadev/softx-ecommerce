@@ -4,12 +4,18 @@ import { verifyToken } from '@/lib/auth'
 import { getCartItemsAction } from '@/app/actions/cart'
 import CheckoutPageClient from './CheckoutPageClient'
 
-export default async function CheckoutPage() {
+export default async function CheckoutPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+
   // Get cart items (works for both authenticated and guest users)
   const result = await getCartItemsAction()
 
   if (!result.success || !result.data || result.data.items.length === 0) {
-    redirect('/cart')
+    redirect(`/${locale}/cart`)
   }
 
   const { items, total, itemCount } = result.data

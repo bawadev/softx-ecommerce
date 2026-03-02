@@ -90,7 +90,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
   }
 
   return (
-    <div className="relative overflow-hidden bg-navy-900 text-white">
+    <div className="relative overflow-hidden bg-black-900 text-white">
       {/* ── Desktop Background: opacity crossfade (all mounted) ── */}
       <div className="absolute inset-0 hidden md:block">
         {slides.map((slide, i) => (
@@ -112,7 +112,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
           </motion.div>
         ))}
         {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/70" />
+        <div className="absolute inset-0 bg-black/70" />
       </div>
 
       {/* ── Mobile Background: sliding images ── */}
@@ -139,7 +139,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
           </motion.div>
         </AnimatePresence>
         {/* Lighter overlay so image stays more visible on mobile */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/30 pointer-events-none" />
       </div>
 
       {/* ── Desktop Panels — one at a time ── */}
