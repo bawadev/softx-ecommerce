@@ -2,13 +2,13 @@
 
 // Jenkinsfile for SoftX Ecommerce
 // Type: E-commerce (Neo4j + MinIO) via Kamal
-// Uses deploySupabaseApp which handles:
+// Uses deployKamalApp which handles:
 // - Docker build with env-specific build args
 // - Push to GHCR
 // - Accessory boot (Neo4j, MinIO) via Kamal
 // - App deployment via Kamal deploy
 
-deploySupabaseApp(
+deployKamalApp(
     appName:       'ecommerce',
     sourceRepo:    'bawadev/softx-ecommerce',
     dockerImage:   'bawadev/ecommerce',
