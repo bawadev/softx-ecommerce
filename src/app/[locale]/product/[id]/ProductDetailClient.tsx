@@ -394,11 +394,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-12 flex justify-center gap-4">
-          <Link href={`/${locale}/shop`} className="btn-secondary">
+        <div className="mt-12 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+          <Link href={`/${locale}/shop`} className="btn-secondary text-center">
             {t('backToShop')}
           </Link>
-          <Link href={`/${locale}/cart`} className="btn-primary">
+          <Link href={`/${locale}/cart`} className="btn-primary text-center">
             {t('viewCart')}
           </Link>
         </div>

@@ -283,11 +283,11 @@ export default function CategoriesClient() {
   ) {
     return (
       <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">{title}</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+          <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
           <button
             onClick={() => openCreateModal(hierarchy, null)}
-            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 text-sm w-full sm:w-auto"
           >
             + Add Root Category
           </button>
@@ -312,18 +312,18 @@ export default function CategoriesClient() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Category Management</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold">Category Management</h1>
         <div className="flex gap-3">
           <button
             onClick={loadStats}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm"
           >
             📊 Statistics
           </button>
           <button
             onClick={loadDuplicates}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm"
           >
             🔍 Find Duplicates
           </button>

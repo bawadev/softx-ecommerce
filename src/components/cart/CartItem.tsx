@@ -53,9 +53,9 @@ export default function CartItem({ item }: CartItemProps) {
       </Link>
 
       {/* Product Details */}
-      <div className="flex flex-1 flex-col">
-        <div className="flex justify-between">
-          <div className="flex-1">
+      <div className="flex flex-1 flex-col min-w-0">
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
+          <div className="min-w-0">
             <Link
               href={`/${locale}/product/${item.product.id}`}
               className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
@@ -63,7 +63,7 @@ export default function CartItem({ item }: CartItemProps) {
               {item.product.name}
             </Link>
             <p className="mt-1 text-xs text-gray-600">{item.product.brand}</p>
-            <div className="mt-2 flex items-center gap-3 text-xs text-gray-600">
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-gray-600">
               <span>Size: {item.variant.size}</span>
               <span>•</span>
               <div className="flex items-center gap-1.5">
@@ -79,7 +79,7 @@ export default function CartItem({ item }: CartItemProps) {
           </div>
 
           {/* Price */}
-          <div className="text-right">
+          <div className="sm:text-right mt-2 sm:mt-0 flex-shrink-0">
             <p className="text-sm font-bold text-black-700">
               Rs {itemTotal.toFixed(2)}
             </p>
@@ -90,7 +90,7 @@ export default function CartItem({ item }: CartItemProps) {
         </div>
 
         {/* Quantity Controls and Remove Button */}
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex items-center justify-between gap-2">
           {/* Quantity Selector */}
           <div className="flex items-center gap-2">
             <button
@@ -114,7 +114,7 @@ export default function CartItem({ item }: CartItemProps) {
           <button
             onClick={handleRemove}
             disabled={isRemoving}
-            className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors"
+            className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50 transition-colors flex-shrink-0"
           >
             Remove
           </button>

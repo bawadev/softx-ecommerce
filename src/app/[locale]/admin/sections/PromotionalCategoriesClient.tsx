@@ -410,31 +410,29 @@ export default function PromotionalCategoriesClient({
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-black-700">Promotional Sections</h1>
-                <Link
-                  href={`/${locale}/admin/dashboard`}
-                  className="text-sm text-black-700 hover:text-black-700 font-medium flex items-center gap-1"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                  Back to Dashboard
-                </Link>
-              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-black-700">Promotional Sections</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage promotional sections and assign products
               </p>
             </div>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="bg-black-700 text-white px-4 py-2 rounded-lg hover:bg-black-800 transition-colors font-semibold"
+            <Link
+              href={`/${locale}/admin/dashboard`}
+              className="text-sm text-black-700 hover:text-black-700 font-medium flex items-center gap-1 flex-shrink-0"
             >
-              + Create Section
-            </button>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Dashboard
+            </Link>
           </div>
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className="mt-4 w-full sm:w-auto px-4 py-2 bg-black-700 text-white rounded-lg hover:bg-black-800 transition-colors font-semibold flex items-center justify-center gap-2"
+          >
+            + Create Section
+          </button>
         </div>
       </div>
 

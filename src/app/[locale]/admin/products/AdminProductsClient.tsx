@@ -514,16 +514,16 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-black-700">Product Management</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-black-700">Product Management</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage your product catalog
               </p>
             </div>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="text-sm text-black-700 hover:text-black-700 font-medium"
+              className="text-sm text-black-700 hover:text-black-700 font-medium flex-shrink-0"
             >
               ← Back to Dashboard
             </Link>

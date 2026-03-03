@@ -631,7 +631,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-black-700">Categories</h1>
               <p className="mt-1 text-sm text-gray-600">
@@ -640,7 +640,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
             </div>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="text-sm text-black-700 hover:text-black-700 font-medium hidden sm:inline"
+              className="text-sm text-black-700 hover:text-black-700 font-medium flex-shrink-0"
             >
               ← Back to Dashboard
             </Link>

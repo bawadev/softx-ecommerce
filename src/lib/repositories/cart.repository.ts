@@ -26,6 +26,7 @@ export interface CartItemWithDetails extends CartItem {
 
 /**
  * Add item to cart or update quantity if already exists
+ * Uses MERGE to prevent race condition duplicates
  */
 export async function addToCart(
   userId: string,
@@ -38,51 +39,24 @@ export async function addToCart(
 
   const session = getSession()
   try {
-    // Check if item already exists in cart
-    const existingItem = await session.run(
+    const cartItemId = uuidv4()
+    const now = new Date().toISOString()
+
+    const result = await session.run(
       `
-      MATCH (u:User {id: $userId})-[r:HAS_CART_ITEM]->(c:CartItem {variantId: $variantId})
+      MATCH (u:User {id: $userId})
+      MATCH (v:ProductVariant {id: $variantId})
+      MERGE (u)-[:HAS_CART_ITEM]->(c:CartItem {userId: $userId, variantId: $variantId})
+      ON CREATE SET c.id = $cartItemId, c.quantity = $quantity, c.addedAt = $addedAt
+      ON MATCH SET c.quantity = c.quantity + $quantity
+      WITH c, v
+      MERGE (c)-[:CART_ITEM_FOR]->(v)
       RETURN c {.*}
       `,
-      { userId, variantId }
+      { cartItemId, userId, variantId, quantity, addedAt: now }
     )
 
-    if (existingItem.records.length > 0) {
-      // Update quantity
-      const result = await session.run(
-        `
-        MATCH (u:User {id: $userId})-[r:HAS_CART_ITEM]->(c:CartItem {variantId: $variantId})
-        SET c.quantity = c.quantity + $quantity
-        RETURN c {.*}
-        `,
-        { userId, variantId, quantity }
-      )
-      return result.records[0].get('c')
-    } else {
-      // Create new cart item
-      const cartItemId = uuidv4()
-      const now = new Date().toISOString()
-
-      const result = await session.run(
-        `
-        MATCH (u:User {id: $userId})
-        MATCH (v:ProductVariant {id: $variantId})
-        CREATE (c:CartItem {
-          id: $cartItemId,
-          userId: $userId,
-          variantId: $variantId,
-          quantity: $quantity,
-          addedAt: $addedAt
-        })
-        CREATE (u)-[:HAS_CART_ITEM]->(c)
-        CREATE (c)-[:CART_ITEM_FOR]->(v)
-        RETURN c {.*}
-        `,
-        { cartItemId, userId, variantId, quantity, addedAt: now }
-      )
-
-      return result.records[0].get('c')
-    }
+    return result.records[0].get('c')
   } finally {
     await session.close()
   }
