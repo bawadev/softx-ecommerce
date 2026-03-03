@@ -12,6 +12,7 @@ import { getSession, closeDriver } from '../src/lib/db'
 import { uploadFile, initializeBucket } from '../src/lib/minio'
 import * as heroSlideRepo from '../src/lib/repositories/hero-slide.repository'
 import type { HeroAnimationType } from '../src/lib/types'
+import { shopConfig } from '../src/config/shop'
 
 // Load environment variables
 dotenv.config({ path: '.env.local' })
@@ -29,29 +30,29 @@ const DEFAULT_SLIDES: DefaultSlide[] = [
     imageFile: 'hero-bg.jpg',
     animationType: 'left-panel',
     badgeText: 'Premium Experience closer to You',
-    title: 'Ecom',
-    subtitle: 'Branded Clothing at Stock Prices',
+    title: shopConfig.name,
+    subtitle: shopConfig.tagline,
   },
   {
     imageFile: 'hero-bg-2.jpg',
     animationType: 'top-left-round',
     badgeText: 'Premium Experience closer to You',
-    title: 'Ecom',
-    subtitle: 'Branded Clothing at Stock Prices',
+    title: shopConfig.name,
+    subtitle: shopConfig.tagline,
   },
   {
     imageFile: 'hero-bg-3.jpg',
     animationType: 'top-right-panel',
     badgeText: 'Premium Experience closer to You',
-    title: 'Ecom',
-    subtitle: 'Branded Clothing at Stock Prices',
+    title: shopConfig.name,
+    subtitle: shopConfig.tagline,
   },
   {
     imageFile: 'hero-bg-4.jpg',
     animationType: 'bottom-right-quarter',
     badgeText: 'Premium Experience closer to You',
-    title: 'Ecom',
-    subtitle: 'Branded Clothing at Stock Prices',
+    title: shopConfig.name,
+    subtitle: shopConfig.tagline,
   },
 ]
 

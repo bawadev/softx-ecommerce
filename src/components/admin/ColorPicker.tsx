@@ -116,7 +116,7 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
           className="h-5 w-5 rounded-full border border-gray-200 shrink-0"
           style={{ backgroundColor: selectedHex }}
         />
-        <span className={`flex-1 text-left truncate ${value ? 'capitalize text-gray-900' : 'text-gray-400'}`}>
+        <span className={`flex-1 text-left truncate ${value ? 'capitalize text-black-700' : 'text-gray-400'}`}>
           {value || 'Select a color...'}
         </span>
         {value && (
@@ -237,7 +237,7 @@ export default function ColorPicker({ value, onChange, colors: externalColors }:
             <button
               type="button"
               onClick={() => { setIsOpen(false); setSearch('') }}
-              className="text-xs font-medium text-black-700 hover:text-black-800 transition-colors"
+              className="text-xs font-medium text-black-700 hover:text-black-700 transition-colors"
             >
               Done
             </button>

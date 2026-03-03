@@ -1,5 +1,5 @@
 import { Session } from 'neo4j-driver'
-import { HeroSlide, HeroAnimationType } from '@/lib/types'
+import { HeroSlide, HeroAnimationType, HeroColorTheme } from '@/lib/types'
 
 /**
  * Helper function to safely convert Neo4j integers to JavaScript numbers
@@ -19,6 +19,7 @@ function mapToHeroSlide(properties: any): HeroSlide {
     id: properties.id,
     imageUrl: properties.imageUrl,
     animationType: properties.animationType as HeroAnimationType,
+    colorTheme: (properties.colorTheme || 'light') as HeroColorTheme,
     badgeText: properties.badgeText,
     title: properties.title,
     subtitle: properties.subtitle,
@@ -83,6 +84,7 @@ export async function createHeroSlide(
   data: {
     imageUrl: string
     animationType: HeroAnimationType
+    colorTheme?: HeroColorTheme
     badgeText: string
     title: string
     subtitle: string
@@ -97,6 +99,7 @@ export async function createHeroSlide(
       id: randomUUID(),
       imageUrl: $imageUrl,
       animationType: $animationType,
+      colorTheme: $colorTheme,
       badgeText: $badgeText,
       title: $title,
       subtitle: $subtitle,
@@ -111,6 +114,7 @@ export async function createHeroSlide(
     {
       imageUrl: data.imageUrl,
       animationType: data.animationType,
+      colorTheme: data.colorTheme || 'light',
       badgeText: data.badgeText,
       title: data.title,
       subtitle: data.subtitle,
@@ -133,6 +137,7 @@ export async function updateHeroSlide(
   data: Partial<{
     imageUrl: string
     animationType: HeroAnimationType
+    colorTheme: HeroColorTheme
     badgeText: string
     title: string
     subtitle: string
@@ -151,6 +156,10 @@ export async function updateHeroSlide(
   if (data.animationType !== undefined) {
     updates.push('h.animationType = $animationType')
     params.animationType = data.animationType
+  }
+  if (data.colorTheme !== undefined) {
+    updates.push('h.colorTheme = $colorTheme')
+    params.colorTheme = data.colorTheme
   }
   if (data.badgeText !== undefined) {
     updates.push('h.badgeText = $badgeText')

@@ -181,7 +181,7 @@ export default function CategoryPickerDialog({
       <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">Select Categories</h2>
+          <h2 className="text-xl font-bold text-black-700">Select Categories</h2>
           <p className="text-sm text-gray-600 mt-1">
             Select leaf categories to assign to the product. Only categories without children can have products.
           </p>

@@ -159,11 +159,13 @@ export interface ProductView {
 
 // Hero slides
 export type HeroAnimationType = 'left-panel' | 'top-left-round' | 'top-right-panel' | 'bottom-right-quarter'
+export type HeroColorTheme = 'light' | 'dark'
 
 export interface HeroSlide {
   id: string
   imageUrl: string
   animationType: HeroAnimationType
+  colorTheme: HeroColorTheme
   badgeText: string
   title: string
   subtitle: string

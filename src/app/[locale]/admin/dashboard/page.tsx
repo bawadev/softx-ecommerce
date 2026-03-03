@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { isAdmin } from '@/lib/auth'
 import { getTranslations, getLocale } from 'next-intl/server'
 import Link from 'next/link'
+import { shopConfig } from '@/config/shop'
 
 export default async function AdminDashboardPage() {
   const adminAccess = await isAdmin()
@@ -20,10 +21,10 @@ export default async function AdminDashboardPage() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
-              <p className="mt-1 text-sm text-gray-600">Manage your Ecom store</p>
+              <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
+              <p className="mt-1 text-sm text-gray-600">Manage your {shopConfig.name} store</p>
             </div>
-            <Link href={`/${locale}`} className="text-sm text-black-700 hover:text-black-800 font-medium">
+            <Link href={`/${locale}`} className="text-sm text-black-700 hover:text-black-700 font-medium">
               ← Back to Store
             </Link>
           </div>
@@ -54,12 +55,12 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Products</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Products</h2>
             </div>
             <p className="text-sm text-gray-600">
               Manage your product catalog, add new products, update inventory, and more.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-black-800">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-black-700">
               {t('manageProducts')}
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -73,7 +74,7 @@ export default async function AdminDashboardPage() {
             className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
           >
             <div className="flex items-center mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-600 group-hover:bg-green-700 transition-colors">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black-700 group-hover:bg-black-800 transition-colors">
                 <svg
                   className="h-6 w-6 text-white"
                   fill="none"
@@ -88,12 +89,12 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Orders</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Orders</h2>
             </div>
             <p className="text-sm text-gray-600">
               View and manage customer orders, update order status, and track fulfillment.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-green-600 group-hover:text-green-700">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-black-700">
               {t('manageOrders')}
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -122,7 +123,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Inventory</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Inventory</h2>
             </div>
             <p className="text-sm text-gray-600">
               Track stock levels, view low inventory alerts, and manage product variants.
@@ -156,7 +157,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Promotional Sections</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Promotional Sections</h2>
             </div>
             <p className="text-sm text-gray-600">
               Create and manage promotional sections like &quot;Best Sellers&quot;, &quot;New Arrivals&quot;, and seasonal offers.
@@ -190,7 +191,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Hero Slides</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Hero Slides</h2>
             </div>
             <p className="text-sm text-gray-600">
               Manage homepage hero slider images, animations, and text content.
@@ -224,7 +225,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Custom Filters</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Custom Filters</h2>
             </div>
             <p className="text-sm text-gray-600">
               Define hierarchical filters to organize products by custom categories like &quot;Office Wares&quot; or &quot;Evening Dresses&quot;.
@@ -236,15 +237,49 @@ export default async function AdminDashboardPage() {
               </svg>
             </div>
           </Link>
+
+          {/* Colors Card */}
+          <Link
+            href={`/${locale}/admin/colors`}
+            className="group relative bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+          >
+            <div className="flex items-center mb-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-black-700 group-hover:bg-black-800 transition-colors">
+                <svg
+                  className="h-6 w-6 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                  />
+                </svg>
+              </div>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Colors</h2>
+            </div>
+            <p className="text-sm text-gray-600">
+              Manage product color swatches for your catalog. Add, edit, and enable/disable colors.
+            </p>
+            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-black-700">
+              Manage Colors
+              <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
         </div>
 
         {/* Quick Stats */}
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h2>
+          <h2 className="text-lg font-semibold text-black-700 mb-4">Quick Stats</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm font-medium text-gray-600">{t('totalProducts')}</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">10</p>
+              <p className="mt-2 text-3xl font-bold text-black-700">10</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm font-medium text-gray-600">{t('pendingOrders')}</p>
@@ -256,7 +291,7 @@ export default async function AdminDashboardPage() {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm font-medium text-gray-600">{t('totalRevenue')}</p>
-              <p className="mt-2 text-3xl font-bold text-green-600">Rs -</p>
+              <p className="mt-2 text-3xl font-bold text-black-700">Rs -</p>
             </div>
           </div>
         </div>

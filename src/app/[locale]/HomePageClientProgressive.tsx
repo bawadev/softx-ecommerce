@@ -9,6 +9,7 @@ import type { ProductWithVariants } from '@/lib/repositories/product.repository'
 import type { PromotionalCategory } from '@/lib/types'
 import type { Category } from '@/lib/repositories/category.repository'
 import SearchAutocomplete from '@/components/SearchAutocomplete'
+import { shopConfig } from '@/config/shop'
 import {
   getCategoryTreeAction,
   getFullProductsByCategoriesAction
@@ -60,10 +61,10 @@ function ProductCard({ product }: { product: ProductWithVariants }) {
         )}
       </div>
       <div className="p-2 sm:p-3 md:p-4">
-        <h3 className="font-semibold text-gray-900 md:line-clamp-2 text-xs sm:text-sm md:text-base break-words">{product.name}</h3>
+        <h3 className="font-semibold text-black-700 md:line-clamp-2 text-xs sm:text-sm md:text-base break-words">{product.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">{product.brand}</p>
         <div className="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-0 sm:gap-1 min-w-0">
-          <span className="text-sm sm:text-base md:text-lg font-bold text-black-900 truncate">Rs {product.stockPrice.toFixed(0)}</span>
+          <span className="text-sm sm:text-base md:text-lg font-bold text-black-700 truncate">Rs {product.stockPrice.toFixed(0)}</span>
           <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through truncate">Rs {product.retailPrice.toFixed(0)}</span>
         </div>
         <p className="text-xs text-gray-500 mt-1">
@@ -197,9 +198,9 @@ export default function HomePageClientProgressive({
     } else {
       switch (hierarchy) {
         case 'ladies': return 'bg-pink-100 text-pink-800 hover:bg-gray-200'
-        case 'gents': return 'bg-gray-100 text-black-800 hover:bg-blue-200'
+        case 'gents': return 'bg-gray-100 text-black-700 hover:bg-blue-200'
         case 'kids': return 'bg-green-100 text-green-800 hover:bg-green-200'
-        default: return 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+        default: return 'bg-gray-100 text-black-700 hover:bg-gray-200'
       }
     }
   }
@@ -228,7 +229,7 @@ export default function HomePageClientProgressive({
           {hasChildren && (
             <button
               onClick={() => toggleCategoryExpansion(category.id)}
-              className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors"
+              className="w-6 h-6 flex items-center justify-center text-gray-600 hover:text-black-700 transition-colors"
               aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
               {isExpanded ? '▼' : '▶'}
@@ -275,21 +276,20 @@ export default function HomePageClientProgressive({
               <svg className="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
-              <span className="text-sm font-semibold">Premium Brands at Wholesale Prices</span>
+              <span className="text-sm font-semibold">{shopConfig.taglines.premium}</span>
             </div>
 
             {/* Main Heading */}
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
               Welcome to{' '}
               <span className="bg-gray-600 bg-clip-text text-transparent">
-                Ecom
+                {shopConfig.name}
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto">
-              Discover authentic branded clothing at unbeatable stock prices.
-              Quality fashion shouldn&apos;t break the bank.
+              {shopConfig.taglines.discovery}. Quality fashion shouldn&apos;t break the bank.
             </p>
 
             {/* Search Bar */}
@@ -330,7 +330,7 @@ export default function HomePageClientProgressive({
               {selectedCategoryIds.size > 0 && (
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-black-800 hover:text-coral-700 font-medium"
+                  className="text-sm text-black-700 hover:text-coral-700 font-medium"
                 >
                   Clear All ({selectedCategoryIds.size})
                 </button>
@@ -483,7 +483,7 @@ export default function HomePageClientProgressive({
         {newArrivals.length > 0 && selectedCategoryIds.size === 0 && (
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">New Arrivals</h2>
+              <h2 className="text-2xl font-bold text-black-700">New Arrivals</h2>
               <Link
                 href={`/${locale}/shop?sort=newest`}
                 className="text-black-700 hover:text-black-950 font-medium"

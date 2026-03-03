@@ -8,11 +8,13 @@ import {
   leftPanelChildVariants,
   leftPanelStagger,
   reducedMotionVariants,
+  colorThemes,
 } from '../heroAnimationConfig'
 
-export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick }: HeroSlideProps) {
+export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick, colorTheme = 'light' }: HeroSlideProps) {
   const shouldReduce = useReducedMotion()
   const variants = shouldReduce ? reducedMotionVariants : leftPanelVariants
+  const theme = colorThemes[colorTheme]
 
   return (
     <motion.div
@@ -25,10 +27,10 @@ export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick
       <div
         className="relative h-full w-full flex items-center"
         style={{
-          background:
-            'linear-gradient(to right, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 60%, transparent 100%)',
+          background: `linear-gradient(to right, ${theme.bgGradient})`,
           backdropFilter: shouldReduce ? 'blur(8px)' : 'blur(12px)',
           WebkitBackdropFilter: shouldReduce ? 'blur(8px)' : 'blur(12px)',
+          border: `1px solid ${theme.border}`,
         }}
       >
         <motion.div
@@ -63,7 +65,18 @@ export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick
           <motion.div variants={shouldReduce ? undefined : leftPanelChildVariants} className="mt-4 sm:mt-6">
             <button
               onClick={onSearchClick}
-              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-white/70 cursor-pointer transition-colors"
+              className="inline-flex items-center gap-2 backdrop-blur-sm border rounded-full px-4 py-2 cursor-pointer transition-colors"
+              style={{
+                background: theme.buttonBg,
+                border: `1px solid ${theme.buttonBorder}`,
+                color: theme.textMuted,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = theme.buttonBgHover
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = theme.buttonBg
+              }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -75,7 +88,19 @@ export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick
           {/* See More link */}
           {linkUrl && (
             <motion.div variants={shouldReduce ? undefined : leftPanelChildVariants} className="mt-2">
-              <Link href={linkUrl} className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium transition-colors group">
+              <Link
+                href={linkUrl}
+                className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors group"
+                style={{
+                  color: theme.textLink,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = theme.text
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = theme.textLink
+                }}
+              >
                 <span>See More</span>
                 <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

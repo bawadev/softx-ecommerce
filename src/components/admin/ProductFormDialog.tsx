@@ -433,7 +433,7 @@ export default function ProductFormDialog({
         {/* Dialog Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-black-700">
               {isEditing ? 'Edit Product' : 'Add New Product'}
             </h2>
             <p className="text-sm text-gray-600 mt-1">
@@ -505,7 +505,7 @@ export default function ProductFormDialog({
                       }}
                       className="w-full px-4 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
                     >
-                      <div className="text-sm font-medium text-gray-900">{brand}</div>
+                      <div className="text-sm font-medium text-black-700">{brand}</div>
                     </button>
                   ))}
                 </div>
@@ -826,12 +826,12 @@ export default function ProductFormDialog({
               {selectedCategories.map((category) => {
                 const hierarchyColor =
                   category.hierarchy === 'ladies'
-                    ? 'bg-gray-100 text-black-800'
+                    ? 'bg-gray-100 text-black-700'
                     : category.hierarchy === 'gents'
-                    ? 'bg-gray-100 text-black-800'
+                    ? 'bg-gray-100 text-black-700'
                     : category.hierarchy === 'kids'
                     ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-800'
+                    : 'bg-gray-100 text-black-700'
 
                 return (
                   <div
@@ -905,7 +905,7 @@ export default function ProductFormDialog({
             {Object.keys(sizeVariants).length > 0 && (
               <div className="mt-4 p-4 bg-gray-50 border border-navy-200 rounded-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-black-900">Total T-Shirts (All Sizes):</span>
+                  <span className="text-sm font-medium text-black-700">Total T-Shirts (All Sizes):</span>
                   <span className="text-xl font-bold text-black-700">
                     {Object.values(sizeVariants).reduce((sum, sizeVar) => sum + sizeVar.total, 0)}
                   </span>
@@ -946,7 +946,7 @@ export default function ProductFormDialog({
       {addingColorForSize && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96 max-w-full shadow-xl">
-            <h3 className="text-lg font-semibold mb-4 text-gray-900">
+            <h3 className="text-lg font-semibold mb-4 text-black-700">
               Add Color to Size {addingColorForSize}
             </h3>
             <div className="space-y-4">

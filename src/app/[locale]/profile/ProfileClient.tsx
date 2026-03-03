@@ -142,10 +142,10 @@ export default function ProfileClient({
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
+              <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
               <p className="mt-1 text-sm text-gray-600">{t('subtitle')}</p>
             </div>
-            <Link href="/" className="text-sm text-black-700 hover:text-black-800 font-medium">
+            <Link href="/" className="text-sm text-black-700 hover:text-black-700 font-medium">
               {t('backToHome')}
             </Link>
           </div>
@@ -203,7 +203,7 @@ export default function ProfileClient({
         {/* Account Info Tab */}
         {activeTab === 'info' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('accountInfo.title')}</h2>
+            <h2 className="text-lg font-semibold text-black-700 mb-4">{t('accountInfo.title')}</h2>
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
@@ -248,7 +248,7 @@ export default function ProfileClient({
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.role')}</label>
                 <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  user.role === 'ADMIN' ? 'bg-gray-100 text-purple-800' : 'bg-gray-100 text-black-800'
+                  user.role === 'ADMIN' ? 'bg-gray-100 text-purple-800' : 'bg-gray-100 text-black-700'
                 }`}>
                   {user.role}
                 </span>
@@ -261,7 +261,7 @@ export default function ProfileClient({
         {activeTab === 'preferences' && (
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('preferences.title')}</h2>
+              <h2 className="text-lg font-semibold text-black-700 mb-4">{t('preferences.title')}</h2>
 
               {/* Preferred Brands */}
               <div className="mb-6">
@@ -348,7 +348,7 @@ export default function ProfileClient({
                       onClick={() => toggleCategory(category)}
                       className={`px-4 py-2 rounded-md border-2 text-sm font-medium ${
                         preferredCategories.includes(category)
-                          ? 'border-black-700 bg-gray-50 text-black-800'
+                          ? 'border-black-700 bg-gray-50 text-black-700'
                           : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                       }`}
                     >
@@ -401,7 +401,7 @@ export default function ProfileClient({
         {/* Measurements Tab */}
         {activeTab === 'measurements' && (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('measurements.title')}</h2>
+            <h2 className="text-lg font-semibold text-black-700 mb-4">{t('measurements.title')}</h2>
 
             {/* Unit Selection */}
             <div className="mb-6">
@@ -412,7 +412,7 @@ export default function ProfileClient({
                   onClick={() => setUnit('METRIC')}
                   className={`px-4 py-2 rounded-md border-2 text-sm font-medium ${
                     unit === 'METRIC'
-                      ? 'border-black-700 bg-gray-50 text-black-800'
+                      ? 'border-black-700 bg-gray-50 text-black-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >
@@ -423,7 +423,7 @@ export default function ProfileClient({
                   onClick={() => setUnit('IMPERIAL')}
                   className={`px-4 py-2 rounded-md border-2 text-sm font-medium ${
                     unit === 'IMPERIAL'
-                      ? 'border-black-700 bg-gray-50 text-black-800'
+                      ? 'border-black-700 bg-gray-50 text-black-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                   }`}
                 >

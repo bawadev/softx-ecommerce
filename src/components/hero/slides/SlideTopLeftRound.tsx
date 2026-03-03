@@ -8,11 +8,13 @@ import {
   topLeftRoundChildVariants,
   topLeftRoundStagger,
   reducedMotionVariants,
+  colorThemes,
 } from '../heroAnimationConfig'
 
-export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchClick }: HeroSlideProps) {
+export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchClick, colorTheme = 'light' }: HeroSlideProps) {
   const shouldReduce = useReducedMotion()
   const variants = shouldReduce ? reducedMotionVariants : topLeftRoundVariants
+  const theme = colorThemes[colorTheme]
 
   return (
     <motion.div
@@ -25,11 +27,10 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
         sm:w-[55vw] sm:h-[55vw]
         md:w-[40vw] md:h-[40vw] md:rounded-full md:max-w-[500px] md:max-h-[500px]"
       style={{
-        background:
-          'radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 60%, transparent 100%)',
+        background: `radial-gradient(circle, ${theme.bgGradientRadial})`,
         backdropFilter: shouldReduce ? 'blur(8px)' : 'blur(16px)',
         WebkitBackdropFilter: shouldReduce ? 'blur(8px)' : 'blur(16px)',
-        border: '1px solid rgba(255,255,255,0.15)',
+        border: `1px solid ${theme.border}`,
       }}
     >
       <motion.div
@@ -64,7 +65,18 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
         <motion.div variants={shouldReduce ? undefined : topLeftRoundChildVariants} className="mt-3 sm:mt-4">
           <button
             onClick={onSearchClick}
-            className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-white/70 cursor-pointer transition-colors"
+            className="inline-flex items-center gap-2 backdrop-blur-sm border rounded-full px-4 py-2 cursor-pointer transition-colors"
+            style={{
+              background: theme.buttonBg,
+              border: `1px solid ${theme.buttonBorder}`,
+              color: theme.textMuted,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = theme.buttonBgHover
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = theme.buttonBg
+            }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -76,7 +88,19 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
         {/* See More link */}
         {linkUrl && (
           <motion.div variants={shouldReduce ? undefined : topLeftRoundChildVariants} className="mt-2">
-            <Link href={linkUrl} className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium transition-colors group">
+            <Link
+              href={linkUrl}
+              className="inline-flex items-center gap-1.5 text-sm font-medium transition-colors group"
+              style={{
+                color: theme.textLink,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = theme.text
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = theme.textLink
+              }}
+            >
               <span>See More</span>
               <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />

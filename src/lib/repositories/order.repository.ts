@@ -9,6 +9,7 @@ export interface OrderWithItems extends Order {
       name: string
       brand: string
       sku: string
+      images: string[]
     }
     variant: {
       id: string
@@ -129,7 +130,7 @@ export async function getOrderById(orderId: string): Promise<OrderWithItems | nu
       OPTIONAL MATCH (o)-[:HAS_ITEM]->(oi:OrderItem)-[:ITEM_OF_VARIANT]->(v:ProductVariant)-[:VARIANT_OF]->(p:Product)
       WITH o, collect({
         orderItem: oi {.*},
-        product: p {.id, .name, .brand, .sku},
+        product: p {.id, .name, .brand, .sku, .images},
         variant: v {.*}
       }) as items
       RETURN o {.*, items: items}
@@ -170,7 +171,7 @@ export async function getUserOrders(userId: string): Promise<OrderWithItems[]> {
       OPTIONAL MATCH (o)-[:HAS_ITEM]->(oi:OrderItem)-[:ITEM_OF_VARIANT]->(v:ProductVariant)-[:VARIANT_OF]->(p:Product)
       WITH o, collect({
         orderItem: oi {.*},
-        product: p {.id, .name, .brand, .sku},
+        product: p {.id, .name, .brand, .sku, .images},
         variant: v {.*}
       }) as items
       RETURN o {.*, items: items}
@@ -264,7 +265,7 @@ export async function getAllOrders(): Promise<OrderWithItems[]> {
       OPTIONAL MATCH (o)-[:HAS_ITEM]->(oi:OrderItem)-[:ITEM_OF_VARIANT]->(v:ProductVariant)-[:VARIANT_OF]->(p:Product)
       WITH o, collect({
         orderItem: oi {.*},
-        product: p {.id, .name, .brand, .sku},
+        product: p {.id, .name, .brand, .sku, .images},
         variant: v {.*}
       }) as items
       RETURN o {.*, items: items}

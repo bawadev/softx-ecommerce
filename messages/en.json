@@ -1,7 +1,7 @@
 {
   "common": {
-    "appName": "Ecom",
-    "tagline": "Branded Clothing at Stock Prices",
+    "appName": "LOCKED",
+    "tagline": "LOCKED in with Life",
     "logout": "Logout",
     "loggingOut": "Logging out...",
     "save": "Save",
@@ -35,8 +35,8 @@
   "home": {
     "hero": {
       "badge": "Premium Experience closer to You",
-      "title": "Ecom",
-      "subtitle": "Branded Clothing at Stock Prices",
+      "title": "LOCKED",
+      "subtitle": "LOCKED in with Life",
       "shopNow": "Shop Now",
       "getStarted": "Get Started",
       "signIn": "Sign In"
@@ -61,15 +61,15 @@
       "supportLabel": "Customer Support"
     },
     "cta": {
-      "title": "Join Ecom Today",
-      "subtitle": "Get access to exclusive deals, personalized recommendations, and premium branded clothing at wholesale prices.",
+      "title": "Join LOCKED Today",
+      "subtitle": "Get access to exclusive deals, personalized recommendations, and premium fashion at wholesale prices.",
       "createAccount": "Create Account"
     }
   },
   "auth": {
     "login": {
       "title": "Sign In",
-      "subtitle": "Welcome back to Ecom",
+      "subtitle": "Welcome back to LOCKED",
       "email": "Email",
       "password": "Password",
       "rememberMe": "Remember me",
@@ -81,7 +81,7 @@
     },
     "signup": {
       "title": "Create Account",
-      "subtitle": "Join Ecom and start shopping",
+      "subtitle": "Join LOCKED and start shopping",
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
@@ -199,7 +199,7 @@
     "youSave": "You Save",
     "retailPrice": "Retail Price",
     "addMoreForFreeShipping": "Add ${amount} more for free shipping",
-    "secureCheckout": "Secure checkout powered by Ecom",
+    "secureCheckout": "Secure checkout powered by LOCKED",
     "failedToLoad": "Failed to load cart",
     "noImage": "No Image"
   },
@@ -244,7 +244,8 @@
     "ship": "Ship to Address",
     "shipDescription": "We'll deliver to your shipping address",
     "collect": "Collect in Person",
-    "collectDescription": "Pick up from our location"
+    "collectDescription": "Pick up from our location",
+    "paymentMethod": "Payment Method"
   },
   "order": {
     "confirmation": {

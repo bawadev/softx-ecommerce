@@ -58,11 +58,11 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">{t('orderNumber')}</p>
-                  <p className="text-2xl font-bold text-black-900">{order.orderNumber}</p>
+                  <p className="text-2xl font-bold text-black-700">{order.orderNumber}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-600">{t('orderDate')}</p>
-                  <p className="font-medium text-gray-900">{orderDate}</p>
+                  <p className="font-medium text-black-700">{orderDate}</p>
                 </div>
               </div>
               <div className="mt-4">
@@ -84,7 +84,7 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
 
             {/* Order Items */}
             <div className="rounded-lg bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">{t('items')}</h2>
+              <h2 className="text-lg font-bold text-black-700 mb-4">{t('items')}</h2>
               <div className="space-y-4">
                 {order.items.map((item) => (
                   <div key={item.id} className="flex gap-4 border-b border-gray-200 pb-4 last:border-0">
@@ -92,9 +92,9 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                       href={`/${locale}/product/${item.product.id}`}
                       className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
                     >
-                      {item.variant.images?.[0] ? (
+                      {(item.variant.images?.[0] || item.product.images?.[0]) ? (
                         <Image
-                          src={item.variant.images[0]}
+                          src={item.variant.images?.[0] || item.product.images[0]}
                           alt={item.product.name}
                           fill
                           className="object-cover"
@@ -110,7 +110,7 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                     <div className="flex-1">
                       <Link
                         href={`/${locale}/product/${item.product.id}`}
-                        className="text-sm font-semibold text-gray-900 hover:text-black-700 transition-colors"
+                        className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
                       >
                         {item.product.name}
                       </Link>
@@ -136,9 +136,9 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
 
             {/* Shipping Address */}
             <div className="rounded-lg bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">{t('shippingAddress')}</h2>
+              <h2 className="text-lg font-bold text-black-700 mb-4">{t('shippingAddress')}</h2>
               <div className="text-sm text-gray-600 space-y-1">
-                <p className="font-medium text-gray-900">{order.shippingAddress.fullName}</p>
+                <p className="font-medium text-black-700">{order.shippingAddress.fullName}</p>
                 <p>{order.shippingAddress.addressLine1}</p>
                 {order.shippingAddress.addressLine2 && (
                   <p>{order.shippingAddress.addressLine2}</p>
@@ -156,24 +156,24 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="rounded-lg bg-white p-6 shadow-sm sticky top-4">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">{t('orderSummary')}</h2>
+              <h2 className="text-lg font-bold text-black-700 mb-4">{t('orderSummary')}</h2>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('subtotal')}</span>
-                  <span className="font-medium text-gray-900">Rs {subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-black-700">Rs {subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('shipping')}</span>
                   <span
                     className={`font-medium ${
-                      shipping === 0 ? 'text-green-600' : 'text-gray-900'
+                      shipping === 0 ? 'text-green-600' : 'text-black-700'
                     }`}
                   >
                     {shipping === 0 ? t('free') : `$Rs {shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-3">
-                  <span className="text-base font-bold text-gray-900">{t('total')}</span>
+                  <span className="text-base font-bold text-black-700">{t('total')}</span>
                   <span className="text-2xl font-bold text-black-700">
                     Rs {order.totalAmount.toFixed(2)}
                   </span>

@@ -50,13 +50,13 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-black-900 mb-2">{tCommon('appName')}</h1>
+          <h1 className="text-4xl font-bold text-black-700 mb-2">{tCommon('appName')}</h1>
           <p className="text-gray-600">{t('subtitle')}</p>
         </div>
 
         {/* Login Form */}
         <div className="card p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-black-700 mb-6">
             {t('title')}
           </h2>
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
               {t('noAccount')}{' '}
               <Link
                 href={`/${locale}/signup`}
-                className="font-semibold text-black-700 hover:text-black-800 transition-colors"
+                className="font-semibold text-black-700 hover:text-black-700 transition-colors"
               >
                 {t('signUp')}
               </Link>

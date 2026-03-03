@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import CartItem from '@/components/cart/CartItem'
-import { getCartItemsAction, clearCartAction } from '@/app/actions/cart'
 import type { CartItemWithDetails } from '@/lib/repositories/cart.repository'
+import { useCartStore } from '@/stores/cartStore'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 interface CartPageClientProps {
@@ -21,9 +21,7 @@ export default function CartPageClient({
 }: CartPageClientProps) {
   const locale = useLocale()
   const t = useTranslations('cart')
-  const [items, setItems] = useState(initialItems)
-  const [total, setTotal] = useState(initialTotal)
-  const [itemCount, setItemCount] = useState(initialItemCount)
+  const { items, total, itemCount, isLoading, clearCart } = useCartStore()
   const [isClearing, setIsClearing] = useState(false)
 
   // Confirm dialog state
@@ -39,14 +37,10 @@ export default function CartPageClient({
     onConfirm: () => {},
   })
 
-  const refreshCart = async () => {
-    const result = await getCartItemsAction()
-    if (result.success && result.data) {
-      setItems(result.data.items)
-      setTotal(result.data.total)
-      setItemCount(result.data.itemCount)
-    }
-  }
+  // Load cart on mount to ensure fresh data
+  useEffect(() => {
+    // Store is already loaded by Navigation, but we can reload here if needed
+  }, [])
 
   const handleClearCart = async () => {
     setConfirmDialog({
@@ -56,14 +50,7 @@ export default function CartPageClient({
       onConfirm: async () => {
         setConfirmDialog({ ...confirmDialog, isOpen: false })
         setIsClearing(true)
-        const result = await clearCartAction()
-
-        if (result.success) {
-          setItems([])
-          setTotal(0)
-          setItemCount(0)
-        }
-
+        await clearCart()
         setIsClearing(false)
       }
     })
@@ -83,7 +70,7 @@ export default function CartPageClient({
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
+              <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
               <p className="mt-2 text-gray-600">
                 {t('itemsInCart', { count: itemCount })}
               </p>
@@ -108,7 +95,7 @@ export default function CartPageClient({
           <div className="lg:col-span-2">
             <div className="rounded-lg bg-white p-6 shadow-sm">
               {items.map((item) => (
-                <CartItem key={item.id} item={item} onUpdate={refreshCart} />
+                <CartItem key={item.id} item={item} />
               ))}
             </div>
 
@@ -123,13 +110,13 @@ export default function CartPageClient({
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="rounded-lg bg-white p-6 shadow-sm sticky top-4">
-              <h2 className="text-lg font-bold text-gray-900">{t('summary')}</h2>
+              <h2 className="text-lg font-bold text-black-700">{t('summary')}</h2>
 
               <div className="mt-6 space-y-4">
                 {/* Subtotal */}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('subtotal')}</span>
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-black-700">
                     Rs {total.toFixed(2)}
                   </span>
                 </div>
@@ -144,11 +131,11 @@ export default function CartPageClient({
 
                 {/* Savings */}
                 {savings > 0 && (
-                  <div className="flex justify-between rounded-lg bg-gold-50 px-3 py-2">
-                    <span className="text-sm font-semibold text-gold-700">
+                  <div className="flex justify-between rounded-lg bg-gray-100 px-3 py-2">
+                    <span className="text-sm font-semibold text-black-700">
                       {t('youSave')}
                     </span>
-                    <span className="text-sm font-bold text-gold-700">
+                    <span className="text-sm font-bold text-black-700">
                       Rs {savings.toFixed(2)}
                     </span>
                   </div>
@@ -157,7 +144,7 @@ export default function CartPageClient({
                 {/* Shipping */}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('shipping')}</span>
-                  <span className="font-medium text-green-600">
+                  <span className="font-medium text-black-700">
                     {total >= 100 ? t('free') : 'Rs 9.99'}
                   </span>
                 </div>
@@ -172,7 +159,7 @@ export default function CartPageClient({
                 {/* Total */}
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between">
-                    <span className="text-base font-bold text-gray-900">{t('total')}</span>
+                    <span className="text-base font-bold text-black-700">{t('total')}</span>
                     <span className="text-2xl font-bold text-black-700">
                       Rs {(total + (total >= 100 ? 0 : 9.99)).toFixed(2)}
                     </span>

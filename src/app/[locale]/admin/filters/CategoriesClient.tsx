@@ -344,7 +344,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
             />
           ) : (
             <div className="flex-1 flex items-center gap-2">
-              <span className={`font-medium ${category.isActive ? 'text-gray-900' : 'text-gray-400'}`}>
+              <span className={`font-medium ${category.isActive ? 'text-black-700' : 'text-gray-400'}`}>
                 {category.name}
               </span>
               {category.isFeatured && (
@@ -514,7 +514,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   autoFocus
                 />
               ) : (
-                <span className={`flex-1 font-medium text-sm ${category.isActive ? 'text-gray-900' : 'text-gray-400'}`}>
+                <span className={`flex-1 font-medium text-sm ${category.isActive ? 'text-black-700' : 'text-gray-400'}`}>
                   {category.name}
                   {category.isFeatured && (
                     <svg className="w-3.5 h-3.5 text-black-500 fill-current inline ml-1" viewBox="0 0 20 20">
@@ -631,16 +631,16 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-black-900">Categories</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-black-700">Categories</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage your product category hierarchy
               </p>
             </div>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="text-sm text-black-700 hover:text-black-800 font-medium hidden sm:inline"
+              className="text-sm text-black-700 hover:text-black-700 font-medium flex-shrink-0"
             >
               ← Back to Dashboard
             </Link>
@@ -667,7 +667,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
             </button>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="px-4 py-2 text-sm text-black-700 hover:text-black-800 font-medium sm:hidden"
+              className="px-4 py-2 text-sm text-black-700 hover:text-black-700 font-medium sm:hidden"
             >
               ← Dashboard
             </Link>
@@ -693,7 +693,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">
+              <h3 className="mt-2 text-sm font-medium text-black-700">
                 {showOnlyFeatured ? 'No featured categories' : 'No categories'}
               </h3>
               <p className="mt-1 text-sm text-gray-500">
@@ -715,7 +715,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+            <h2 className="text-xl font-bold text-black-700 mb-4">
               Create Category
             </h2>
 
@@ -769,7 +769,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   setNewCategoryName('')
                   setSelectedParentId(null)
                 }}
-                className="px-4 py-2 text-gray-700 hover:text-gray-900 font-medium"
+                className="px-4 py-2 text-gray-700 hover:text-black-700 font-medium"
               >
                 Cancel
               </button>
@@ -792,7 +792,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-xl font-bold text-black-700">
                     Products in &ldquo;{selectedCategory.name}&rdquo;
                   </h2>
                   <p className="text-sm text-gray-600 mt-1">
@@ -820,7 +820,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                 <>
                   {/* Assigned Products */}
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                    <h3 className="text-lg font-semibold text-black-700 mb-3">
                       Assigned Products ({categoryProducts.length})
                     </h3>
                     {categoryProducts.length === 0 ? (
@@ -842,7 +842,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                               />
                             )}
                             <div className="flex-1">
-                              <h4 className="font-medium text-gray-900">{product.name}</h4>
+                              <h4 className="font-medium text-black-700">{product.name}</h4>
                               <p className="text-sm text-gray-600">{product.brand}</p>
                               {product.variants && product.variants.length > 0 && (
                                 <p className="text-xs text-gray-500 mt-1">
@@ -873,7 +873,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                   ) : (
                     <div>
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-black-700">
                           Available Products ({unassignedProducts.filter(p =>
                             p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             p.brand.toLowerCase().includes(searchQuery.toLowerCase())
@@ -884,7 +884,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                             setShowAddProductsSection(false)
                             setSearchQuery('')
                           }}
-                          className="text-sm text-gray-600 hover:text-gray-800"
+                          className="text-sm text-gray-600 hover:text-black-700"
                         >
                           Cancel
                         </button>
@@ -919,7 +919,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
                                 />
                               )}
                               <div className="flex-1">
-                                <h4 className="font-medium text-gray-900">{product.name}</h4>
+                                <h4 className="font-medium text-black-700">{product.name}</h4>
                                 <p className="text-sm text-gray-600">{product.brand}</p>
                                 {product.variants && product.variants.length > 0 && (
                                   <p className="text-xs text-gray-500 mt-1">

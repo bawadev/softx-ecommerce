@@ -514,16 +514,16 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-black-900">Product Management</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-black-700">Product Management</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage your product catalog
               </p>
             </div>
             <Link
               href={`/${locale}/admin/dashboard`}
-              className="text-sm text-black-700 hover:text-black-800 font-medium"
+              className="text-sm text-black-700 hover:text-black-700 font-medium flex-shrink-0"
             >
               ← Back to Dashboard
             </Link>
@@ -558,7 +558,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
       {/* Products List */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Products</h2>
+          <h2 className="text-lg font-semibold text-black-700">Products</h2>
           <p className="hidden sm:block text-xs text-gray-500 italic">Tap on table headers to sort</p>
         </div>
 
@@ -577,7 +577,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No products</h3>
+            <h3 className="mt-2 text-sm font-medium text-black-700">No products</h3>
             <p className="mt-1 text-sm text-gray-500">Get started by creating a new product.</p>
           </div>
         ) : (
@@ -617,7 +617,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-semibold text-gray-900 truncate">{product.name}</h3>
+                          <h3 className="text-sm font-semibold text-black-700 truncate">{product.name}</h3>
                           <p className="text-xs text-gray-500">{product.brand} &middot; {product.sku}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
@@ -631,7 +631,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                       {/* Details row */}
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                         <div>
-                          <span className="text-sm font-semibold text-gray-900">Rs {product.stockPrice.toFixed(0)}</span>
+                          <span className="text-sm font-semibold text-black-700">Rs {product.stockPrice.toFixed(0)}</span>
                           <span className="text-xs text-gray-400 line-through ml-1">Rs {product.retailPrice.toFixed(0)}</span>
                         </div>
                         <div className="text-xs text-gray-500">
@@ -647,7 +647,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                     <div className="flex items-center justify-between px-3 py-2 bg-gray-50 border-t border-gray-100">
                       <Link
                         href={`/${locale}/product/${product.id}`}
-                        className="text-xs text-black-700 hover:text-black-800 font-medium flex items-center gap-1"
+                        className="text-xs text-black-700 hover:text-black-700 font-medium flex items-center gap-1"
                         target="_blank"
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -662,7 +662,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                           e.stopPropagation()
                           loadProductIntoForm(product)
                         }}
-                        className="text-xs text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1"
+                        className="text-xs text-gray-600 hover:text-black-700 font-medium flex items-center gap-1"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -806,22 +806,22 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                                 )}
                               </div>
                               <div className="ml-4 min-w-0 flex-1">
-                                <div className="text-sm font-semibold text-gray-900 break-words">{product.name}</div>
+                                <div className="text-sm font-semibold text-black-700 break-words">{product.name}</div>
                                 <div className="text-sm text-gray-500">{product.brand}</div>
                                 <div className="text-xs text-gray-400">{product.sku}</div>
                               </div>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{product.category}</div>
+                            <div className="text-sm text-black-700">{product.category}</div>
                             <div className="text-xs text-gray-500">{product.gender}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-semibold text-gray-900">Rs {product.stockPrice.toFixed(2)}</div>
+                            <div className="text-sm font-semibold text-black-700">Rs {product.stockPrice.toFixed(2)}</div>
                             <div className="text-xs text-gray-500 line-through">Rs {product.retailPrice.toFixed(2)}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">{product.variants.length} variants</div>
+                            <div className="text-sm text-black-700">{product.variants.length} variants</div>
                             <div className="text-xs text-gray-500">
                               {product.variants.map(v => v.size).join(', ')}
                             </div>
@@ -835,7 +835,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                             <div className="flex items-center justify-end gap-2">
                               <Link
                                 href={`/${locale}/product/${product.id}`}
-                                className="text-black-700 hover:text-black-800 p-1"
+                                className="text-black-700 hover:text-black-700 p-1"
                                 target="_blank"
                                 onClick={(e) => e.stopPropagation()}
                                 title="View product"
@@ -851,7 +851,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                                     e.stopPropagation()
                                     setOpenDropdownId(openDropdownId === product.id ? null : product.id)
                                   }}
-                                  className="text-gray-600 hover:text-gray-900 p-1 hover:bg-gray-100 rounded"
+                                  className="text-gray-600 hover:text-black-700 p-1 hover:bg-gray-100 rounded"
                                   title="More options"
                                 >
                                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -916,7 +916,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
             {/* Dialog Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Add to Homepage Sections</h2>
+                <h2 className="text-xl font-bold text-black-700">Add to Homepage Sections</h2>
                 <p className="text-sm text-gray-600 mt-1">
                   Assign &quot;{selectedProductForSection.name}&quot; to promotional sections
                 </p>
@@ -950,7 +950,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                   )}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">{selectedProductForSection.name}</h3>
+                  <h3 className="font-semibold text-black-700">{selectedProductForSection.name}</h3>
                   <p className="text-sm text-gray-600">{selectedProductForSection.brand}</p>
                   <p className="text-sm font-medium text-green-600 mt-1">
                     Total Stock: {selectedProductForSection.variants.reduce((sum, v) => sum + v.stockQuantity, 0)} units
@@ -961,7 +961,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
 
             {/* Section List */}
             <div className="px-6 py-4">
-              <h3 className="font-semibold text-gray-900 mb-4">Select Sections and Quantities</h3>
+              <h3 className="font-semibold text-black-700 mb-4">Select Sections and Quantities</h3>
               {promotionalCategories.length === 0 ? (
                 <p className="text-gray-500 text-center py-8">No promotional sections available</p>
               ) : (
@@ -973,7 +973,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-semibold text-gray-900">{category.name}</h4>
+                          <h4 className="font-semibold text-black-700">{category.name}</h4>
                           <span
                             className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                               category.isActive
@@ -1010,7 +1010,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
               {/* Total Allocated Warning */}
               {Object.values(sectionQuantities).some((qty) => qty > 0) && (
                 <div className="mt-4 p-3 bg-gray-100 border border-gray-200 rounded-lg">
-                  <p className="text-sm text-black-800">
+                  <p className="text-sm text-black-700">
                     <strong>Total to allocate:</strong>{' '}
                     {Object.values(sectionQuantities).reduce((sum, qty) => sum + qty, 0)} units
                   </p>

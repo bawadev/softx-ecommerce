@@ -20,7 +20,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
       <div className="min-h-screen bg-gray-50">
         <div className="bg-white border-b border-gray-200">
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
+            <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
             <p className="mt-2 text-gray-600">{t('subtitle')}</p>
           </div>
         </div>
@@ -40,7 +40,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <h2 className="mt-6 text-xl font-semibold text-gray-900">{t('noOrders')}</h2>
+            <h2 className="mt-6 text-xl font-semibold text-black-700">{t('noOrders')}</h2>
             <p className="mt-2 text-gray-600">{t('noOrdersMessage')}</p>
             <Link href={`/${locale}/shop`} className="btn-primary mt-8 inline-block">
               {t('startShopping')}
@@ -56,7 +56,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
+          <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
           <p className="mt-2 text-gray-600">{t('ordersPlaced', { count })}</p>
         </div>
       </div>
@@ -79,15 +79,15 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                     <div className="flex items-center gap-8">
                       <div>
                         <p className="text-xs text-gray-600">{t('orderNumber')}</p>
-                        <p className="font-semibold text-gray-900">{order.orderNumber}</p>
+                        <p className="font-semibold text-black-700">{order.orderNumber}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-600">{t('date')}</p>
-                        <p className="text-sm text-gray-900">{orderDate}</p>
+                        <p className="text-sm text-black-700">{orderDate}</p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-600">{t('total')}</p>
-                        <p className="text-sm font-semibold text-gray-900">
+                        <p className="text-sm font-semibold text-black-700">
                           Rs {order.totalAmount.toFixed(2)}
                         </p>
                       </div>
@@ -108,7 +108,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                       </span>
                       <Link
                         href={`/${locale}/order/${order.id}`}
-                        className="text-sm font-medium text-black-700 hover:text-black-800"
+                        className="text-sm font-medium text-black-700 hover:text-black-700"
                       >
                         {t('viewDetails')}
                       </Link>
@@ -125,9 +125,9 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                           href={`/${locale}/product/${item.product.id}`}
                           className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
                         >
-                          {item.variant.images?.[0] ? (
+                          {(item.variant.images?.[0] || item.product.images?.[0]) ? (
                             <Image
-                              src={item.variant.images[0]}
+                              src={item.variant.images?.[0] || item.product.images[0]}
                               alt={item.product.name}
                               fill
                               className="object-cover"
@@ -143,7 +143,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                         <div className="flex-1">
                           <Link
                             href={`/${locale}/product/${item.product.id}`}
-                            className="text-sm font-semibold text-gray-900 hover:text-black-700 transition-colors"
+                            className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
                           >
                             {item.product.name}
                           </Link>
@@ -155,7 +155,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                         </div>
 
                         <div className="text-right">
-                          <p className="text-sm font-bold text-gray-900">
+                          <p className="text-sm font-bold text-black-700">
                             Rs {(item.priceAtPurchase * item.quantity).toFixed(2)}
                           </p>
                         </div>

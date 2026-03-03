@@ -134,12 +134,12 @@ export default function HomePageClient({
       <section className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">{t('shopByCategory')}</h3>
+            <h3 className="text-lg font-semibold text-black-700">{t('shopByCategory')}</h3>
             <div className="flex items-center gap-3">
               {selectedCategoryIds.size > 0 && (
                 <button
                   onClick={() => setSelectedCategoryIds(new Set())}
-                  className="text-sm text-black-700 hover:text-black-800 font-medium"
+                  className="text-sm text-black-700 hover:text-black-700 font-medium"
                 >
                   {t('clearAll')} ({selectedCategoryIds.size})
                 </button>
@@ -243,14 +243,14 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{t('filteredProducts')}</h2>
+              <h2 className="text-2xl font-bold text-black-700">{t('filteredProducts')}</h2>
               <p className="text-sm text-gray-600 mt-1">
                 {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
               </p>
             </div>
             <Link
               href={`/${locale}/shop?category=${Array.from(selectedCategoryIds).join(',')}`}
-              className="text-sm font-medium text-black-700 hover:text-black-800"
+              className="text-sm font-medium text-black-700 hover:text-black-700"
             >
               {t('viewAll')}
             </Link>
@@ -268,10 +268,10 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{t('recentlyViewed')}</h2>
+              <h2 className="text-2xl font-bold text-black-700">{t('recentlyViewed')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('recentlyViewedSubtitle')}</p>
             </div>
-            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-800">
+            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-700">
               {t('viewAll')}
             </Link>
           </div>
@@ -288,10 +288,10 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{t('recommendedForYou')}</h2>
+              <h2 className="text-2xl font-bold text-black-700">{t('recommendedForYou')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('recommendedSubtitle')}</p>
             </div>
-            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-800">
+            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-700">
               {t('viewAll')}
             </Link>
           </div>
@@ -308,14 +308,14 @@ export default function HomePageClient({
         <section key={category.id} className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{category.name}</h2>
+              <h2 className="text-2xl font-bold text-black-700">{category.name}</h2>
               {category.description && (
                 <p className="text-sm text-gray-600 mt-1">{category.description}</p>
               )}
             </div>
             <Link
               href={`/${locale}/shop?promo=${category.slug}`}
-              className="text-sm font-medium text-black-700 hover:text-black-800"
+              className="text-sm font-medium text-black-700 hover:text-black-700"
             >
               {t('viewAll')}
             </Link>
@@ -333,10 +333,10 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{t('newArrivals')}</h2>
+              <h2 className="text-2xl font-bold text-black-700">{t('newArrivals')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('newArrivalsSubtitle')}</p>
             </div>
-            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-800">
+            <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-700">
               {t('viewAll')}
             </Link>
           </div>

@@ -250,7 +250,7 @@ export default function ImageUpload({
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                 uploadMode === 'file'
                   ? 'bg-white text-black-700 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-600 hover:text-black-700'
               }`}
             >
               <Upload className="w-3 h-3 inline mr-1" />
@@ -265,7 +265,7 @@ export default function ImageUpload({
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
                 uploadMode === 'url'
                   ? 'bg-white text-black-700 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-600 hover:text-black-700'
               }`}
             >
               <LinkIcon className="w-3 h-3 inline mr-1" />

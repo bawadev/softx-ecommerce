@@ -36,6 +36,7 @@ export default function CheckoutPageClient({
   const [email, setEmail] = useState(userEmail || '')
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('SHIP')
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod')
 
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
@@ -85,7 +86,7 @@ export default function CheckoutPageClient({
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
+          <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
           <p className="mt-2 text-gray-600">{t('subtitle')}</p>
         </div>
       </div>
@@ -96,7 +97,7 @@ export default function CheckoutPageClient({
           {/* Shipping Form */}
           <div className="lg:col-span-2">
             <div className="rounded-lg bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">{t('shippingInformation')}</h2>
+              <h2 className="text-xl font-bold text-black-700 mb-6">{t('shippingInformation')}</h2>
 
               {error && (
                 <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
@@ -112,7 +113,7 @@ export default function CheckoutPageClient({
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-black-900">
+                        <p className="text-sm font-medium text-black-700">
                           {t('guestCheckoutNotice')}
                         </p>
                         <p className="mt-1 text-sm text-black-700">
@@ -163,7 +164,7 @@ export default function CheckoutPageClient({
 
                 {/* Delivery Method Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-3">
+                  <label className="block text-sm font-medium text-black-700 mb-3">
                     {t('deliveryMethod')}
                   </label>
                   <div className="space-y-3">
@@ -178,10 +179,11 @@ export default function CheckoutPageClient({
                         className="h-4 w-4 text-black-700"
                       />
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-900">{t('ship')}</div>
+                        <div className="font-semibold text-black-700">{t('ship')}</div>
                         <div className="text-sm text-gray-600">{t('shipDescription')}</div>
+                        <div className="text-xs text-black-700 mt-1">📦 Delivery within 4-5 business days</div>
                       </div>
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-black-700">
                         {total >= 100 ? t('free') : 'Rs 9.99'}
                       </div>
                     </label>
@@ -197,87 +199,137 @@ export default function CheckoutPageClient({
                         className="h-4 w-4 text-black-700"
                       />
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-900">{t('collect')}</div>
+                        <div className="font-semibold text-black-700">{t('collect')}</div>
                         <div className="text-sm text-gray-600">{t('collectDescription')}</div>
+                        <div className="text-xs text-black-700 mt-1">🏪 Ready for pickup within 2-3 business days</div>
                       </div>
-                      <div className="text-sm font-medium text-green-600">{t('free')}</div>
+                      <div className="text-sm font-medium text-black-700">{t('free')}</div>
                     </label>
                   </div>
                 </div>
 
-                <Input
-                  id="addressLine1"
-                  type="text"
-                  label={t('addressLine1')}
-                  placeholder={t('addressLine1Placeholder')}
-                  value={shippingAddress.addressLine1}
-                  onChange={(e) =>
-                    setShippingAddress({ ...shippingAddress, addressLine1: e.target.value })
-                  }
-                  required
-                />
+                {/* Payment Method Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-black-700 mb-3">
+                    {t('paymentMethod')}
+                  </label>
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50"
+                      style={{ borderColor: paymentMethod === 'cod' ? '#1e3a8a' : '#d1d5db' }}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="cod"
+                        checked={paymentMethod === 'cod'}
+                        onChange={() => setPaymentMethod('cod')}
+                        className="h-4 w-4 text-black-700"
+                      />
+                      <div className="flex-1">
+                        <div className="font-semibold text-black-700">Cash on Delivery</div>
+                        <div className="text-sm text-gray-600">Pay when you receive your order</div>
+                      </div>
+                    </label>
 
-                <Input
-                  id="addressLine2"
-                  type="text"
-                  label={t('addressLine2')}
-                  placeholder={t('addressLine2Placeholder')}
-                  value={shippingAddress.addressLine2}
-                  onChange={(e) =>
-                    setShippingAddress({ ...shippingAddress, addressLine2: e.target.value })
-                  }
-                />
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    id="city"
-                    type="text"
-                    label={t('city')}
-                    placeholder={t('cityPlaceholder')}
-                    value={shippingAddress.city}
-                    onChange={(e) =>
-                      setShippingAddress({ ...shippingAddress, city: e.target.value })
-                    }
-                    required
-                  />
-
-                  <Input
-                    id="state"
-                    type="text"
-                    label={t('state')}
-                    placeholder={t('statePlaceholder')}
-                    value={shippingAddress.state}
-                    onChange={(e) =>
-                      setShippingAddress({ ...shippingAddress, state: e.target.value })
-                    }
-                    required
-                  />
+                    <label className="flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50 opacity-60 cursor-not-allowed"
+                      style={{ borderColor: paymentMethod === 'online' ? '#1e3a8a' : '#d1d5db' }}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="online"
+                        checked={paymentMethod === 'online'}
+                        onChange={() => setPaymentMethod('online')}
+                        className="h-4 w-4 text-black-700"
+                        disabled
+                      />
+                      <div className="flex-1">
+                        <div className="font-semibold text-black-700">Online Payment</div>
+                        <div className="text-sm text-gray-600">Credit/Debit Card, Mobile Banking (Coming Soon)</div>
+                      </div>
+                      <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Soon</span>
+                    </label>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                {/* Shipping Address - Only show for SHIP delivery */}
+                {deliveryMethod === 'SHIP' && (
+                <>
+                  <h3 className="text-lg font-bold text-black-700 mt-6 mb-4">{t('shippingAddress')}</h3>
+
                   <Input
-                    id="postalCode"
+                    id="addressLine1"
                     type="text"
-                    label={t('postalCode')}
-                    placeholder={t('postalCodePlaceholder')}
-                    value={shippingAddress.postalCode}
+                    label={t('addressLine1')}
+                    placeholder={t('addressLine1Placeholder')}
+                    value={shippingAddress.addressLine1}
                     onChange={(e) =>
-                      setShippingAddress({ ...shippingAddress, postalCode: e.target.value })
+                      setShippingAddress({ ...shippingAddress, addressLine1: e.target.value })
                     }
                     required
                   />
 
                   <Input
-                    id="country"
+                    id="addressLine2"
                     type="text"
-                    label={t('country')}
-                    value={shippingAddress.country}
+                    label={t('addressLine2')}
+                    placeholder={t('addressLine2Placeholder')}
+                    value={shippingAddress.addressLine2}
                     onChange={(e) =>
-                      setShippingAddress({ ...shippingAddress, country: e.target.value })
+                      setShippingAddress({ ...shippingAddress, addressLine2: e.target.value })
                     }
-                    required
                   />
-                </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      id="city"
+                      type="text"
+                      label={t('city')}
+                      placeholder={t('cityPlaceholder')}
+                      value={shippingAddress.city}
+                      onChange={(e) =>
+                        setShippingAddress({ ...shippingAddress, city: e.target.value })
+                      }
+                      required
+                    />
+
+                    <Input
+                      id="state"
+                      type="text"
+                      label={t('state')}
+                      placeholder={t('statePlaceholder')}
+                      value={shippingAddress.state}
+                      onChange={(e) =>
+                        setShippingAddress({ ...shippingAddress, state: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      id="postalCode"
+                      type="text"
+                      label={t('postalCode')}
+                      placeholder={t('postalCodePlaceholder')}
+                      value={shippingAddress.postalCode}
+                      onChange={(e) =>
+                        setShippingAddress({ ...shippingAddress, postalCode: e.target.value })
+                      }
+                      required
+                    />
+
+                    <Input
+                      id="country"
+                      type="text"
+                      label={t('country')}
+                      value={shippingAddress.country}
+                      onChange={(e) =>
+                        setShippingAddress({ ...shippingAddress, country: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+                </>
+                )}
 
                 <div className="flex gap-4 pt-4">
                   <Link href={`/${locale}/cart`} className="btn-secondary flex-1">
@@ -294,16 +346,16 @@ export default function CheckoutPageClient({
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="rounded-lg bg-white p-6 shadow-sm sticky top-4">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">{t('orderSummary')}</h2>
+              <h2 className="text-lg font-bold text-black-700 mb-4">{t('orderSummary')}</h2>
 
               {/* Items */}
               <div className="space-y-3 mb-6">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-3">
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                      {item.variant.images?.[0] ? (
+                      {(item.variant.images?.[0] || item.product.images?.[0]) ? (
                         <Image
-                          src={item.variant.images[0]}
+                          src={item.variant.images?.[0] || item.product.images[0]}
                           alt={item.product.name}
                           fill
                           className="object-cover"
@@ -316,7 +368,7 @@ export default function CheckoutPageClient({
                       )}
                     </div>
                     <div className="flex-1 text-sm">
-                      <p className="font-medium text-gray-900">{item.product.name}</p>
+                      <p className="font-medium text-black-700">{item.product.name}</p>
                       <p className="text-gray-600">{item.product.brand}</p>
                       <div className="flex items-center gap-2 text-gray-600">
                         <span>{item.variant.size}</span>
@@ -333,7 +385,7 @@ export default function CheckoutPageClient({
                         <span>× {item.quantity}</span>
                       </div>
                     </div>
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium text-black-700">
                       Rs {(item.product.stockPrice * item.quantity).toFixed(2)}
                     </div>
                   </div>
@@ -344,16 +396,24 @@ export default function CheckoutPageClient({
               <div className="space-y-3 border-t border-gray-200 pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('subtotalItems', { count: itemCount })}</span>
-                  <span className="font-medium text-gray-900">Rs {total.toFixed(2)}</span>
+                  <span className="font-medium text-black-700">Rs {total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t('shipping')}</span>
-                  <span className={`font-medium ${shipping === 0 ? 'text-green-600' : 'text-gray-900'}`}>
+                  <div>
+                    <span className="text-gray-600">{t('shipping')}</span>
+                    {deliveryMethod === 'SHIP' && (
+                      <div className="text-xs text-gray-500 mt-1">📦 Delivery within 4-5 business days</div>
+                    )}
+                    {deliveryMethod === 'COLLECT' && (
+                      <div className="text-xs text-gray-500 mt-1">🏪 Ready for pickup within 2-3 business days</div>
+                    )}
+                  </div>
+                  <span className={`font-medium ${shipping === 0 ? 'text-black-700' : 'text-black-700'}`}>
                     {shipping === 0 ? t('free') : `$Rs {shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-3">
-                  <span className="text-base font-bold text-gray-900">{t('total')}</span>
+                  <span className="text-base font-bold text-black-700">{t('total')}</span>
                   <span className="text-2xl font-bold text-black-700">
                     Rs {finalTotal.toFixed(2)}
                   </span>
@@ -391,7 +451,7 @@ export default function CheckoutPageClient({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{t('loginRequired')}</h3>
+                <h3 className="text-xl font-bold text-black-700 mb-2">{t('loginRequired')}</h3>
                 <p className="text-gray-600 mb-6">{t('loginRequiredMessage')}</p>
 
                 <div className="space-y-3">
@@ -409,7 +469,7 @@ export default function CheckoutPageClient({
                   </Link>
                   <button
                     onClick={() => setShowLoginModal(false)}
-                    className="w-full text-sm text-gray-600 hover:text-gray-800 py-2"
+                    className="w-full text-sm text-gray-600 hover:text-black-700 py-2"
                   >
                     {tCommon('cancel')}
                   </button>

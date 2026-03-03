@@ -139,16 +139,16 @@ export default function ColorsClient() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold text-black-900">Color Management</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-black-700">Color Management</h1>
               <p className="mt-1 text-sm text-gray-600">
                 Manage product color swatches for your catalog
               </p>
             </div>
             <Link
               href={`/${locale}/admin`}
-              className="text-sm text-black-700 hover:text-black-800 font-medium"
+              className="text-sm text-black-700 hover:text-black-700 font-medium flex-shrink-0"
             >
               &larr; Back to Dashboard
             </Link>
@@ -161,7 +161,7 @@ export default function ColorsClient() {
         <div className="mb-6 flex flex-wrap gap-3">
           <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
             <span className="text-sm font-medium text-gray-600">Total:</span>
-            <span className="text-lg font-bold text-gray-900">{colors.length}</span>
+            <span className="text-lg font-bold text-black-700">{colors.length}</span>
           </div>
           <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
             <span className="text-sm font-medium text-gray-600">Active:</span>
@@ -175,7 +175,7 @@ export default function ColorsClient() {
 
         {/* Add Color Form */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Add New Color</h2>
+          <h2 className="text-lg font-semibold text-black-700 mb-4">Add New Color</h2>
           <form onSubmit={handleCreate} className="flex flex-wrap items-end gap-4">
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -246,7 +246,7 @@ export default function ColorsClient() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
               </svg>
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No Colors Yet</h3>
+            <h3 className="text-lg font-semibold text-black-700 mb-2">No Colors Yet</h3>
             <p className="text-sm text-gray-500 mb-6">
               Get started by loading the default color palette or adding colors manually.
             </p>
@@ -328,7 +328,7 @@ export default function ColorsClient() {
                         />
                       </td>
                       <td className="px-6 py-3">
-                        <span className={`text-sm font-medium capitalize ${color.isActive ? 'text-gray-900' : 'text-gray-400 line-through'}`}>
+                        <span className={`text-sm font-medium capitalize ${color.isActive ? 'text-black-700' : 'text-gray-400 line-through'}`}>
                           {color.name}
                         </span>
                       </td>

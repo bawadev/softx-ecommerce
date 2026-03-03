@@ -3,6 +3,7 @@ import { isAdmin } from '@/lib/auth'
 import { getTranslations, getLocale } from 'next-intl/server'
 import Link from 'next/link'
 import { getProductCount } from '@/lib/repositories/product.repository'
+import { shopConfig } from '@/config/shop'
 
 export default async function AdminDashboardPage() {
   const adminAccess = await isAdmin()
@@ -24,10 +25,10 @@ export default async function AdminDashboardPage() {
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-black-900">{t('title')}</h1>
-              <p className="mt-1 text-sm text-gray-600">Manage your Ecom store</p>
+              <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
+              <p className="mt-1 text-sm text-gray-600">Manage your {shopConfig.name} store</p>
             </div>
-            <Link href={`/${locale}`} className="text-sm text-black-700 hover:text-black-800 font-medium">
+            <Link href={`/${locale}`} className="text-sm text-black-700 hover:text-black-700 font-medium">
               ← Back to Store
             </Link>
           </div>
@@ -58,12 +59,12 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Products</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Products</h2>
             </div>
             <p className="text-sm text-gray-600">
               Manage your product catalog, add new products, update inventory, and more.
             </p>
-            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-black-800">
+            <div className="mt-4 flex items-center text-sm font-medium text-black-700 group-hover:text-black-700">
               {t('manageProducts')}
               <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -92,7 +93,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Orders</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Orders</h2>
             </div>
             <p className="text-sm text-gray-600">
               View and manage customer orders, update order status, and track fulfillment.
@@ -126,7 +127,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Inventory</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Inventory</h2>
             </div>
             <p className="text-sm text-gray-600">
               Track stock levels, view low inventory alerts, and manage product variants.
@@ -160,7 +161,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Promotional Sections</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Promotional Sections</h2>
             </div>
             <p className="text-sm text-gray-600">
               Create and manage promotional sections like &quot;Best Sellers&quot;, &quot;New Arrivals&quot;, and seasonal offers.
@@ -194,7 +195,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Hero Slides</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Hero Slides</h2>
             </div>
             <p className="text-sm text-gray-600">
               Manage homepage hero slider images, animations, and text content.
@@ -228,7 +229,7 @@ export default async function AdminDashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="ml-4 text-xl font-semibold text-gray-900">Category Management</h2>
+              <h2 className="ml-4 text-xl font-semibold text-black-700">Category Management</h2>
             </div>
             <p className="text-sm text-gray-600">
               Define hierarchical filters to organize products by custom categories like &quot;Office Wares&quot; or &quot;Evening Dresses&quot;.
@@ -244,11 +245,11 @@ export default async function AdminDashboardPage() {
 
         {/* Quick Stats */}
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h2>
+          <h2 className="text-lg font-semibold text-black-700 mb-4">Quick Stats</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm font-medium text-gray-600">{t('totalProducts')}</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{totalProducts}</p>
+              <p className="mt-2 text-3xl font-bold text-black-700">{totalProducts}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
               <p className="text-sm font-medium text-gray-600">{t('pendingOrders')}</p>

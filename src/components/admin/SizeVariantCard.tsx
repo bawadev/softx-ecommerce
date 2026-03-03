@@ -31,7 +31,7 @@ export default function SizeVariantCard({
     <div className="border border-gray-200 rounded-lg bg-white mb-3">
       {/* Size Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-200">
-        <h4 className="text-sm font-semibold text-gray-900">Size: {size}</h4>
+        <h4 className="text-sm font-semibold text-black-700">Size: {size}</h4>
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-600">
             Total:{' '}
@@ -64,7 +64,7 @@ export default function SizeVariantCard({
                     className="h-5 w-5 rounded-full border border-gray-300 shrink-0"
                     style={{ backgroundColor: getColorHex(colorQty.color) }}
                   />
-                  <span className="text-sm text-gray-900 capitalize break-words">
+                  <span className="text-sm text-black-700 capitalize break-words">
                     {colorQty.color}
                   </span>
                 </div>

@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import type { ProductWithVariants } from '@/lib/repositories/product.repository'
-import { addToCartAction } from '@/app/actions/cart'
 import { trackProductViewAction } from '@/app/actions/user-profile'
 import { getColorHex } from '@/lib/color-utils'
+import { useCartStore } from '@/stores/cartStore'
 
 interface ProductDetailClientProps {
   product: ProductWithVariants
@@ -19,6 +19,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const locale = useLocale()
   const t = useTranslations('product')
   const tNav = useTranslations('nav')
+  const { addToCart, isAdding: isAddingToCart } = useCartStore()
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [isAdding, setIsAdding] = useState(false)
@@ -81,14 +82,14 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     setIsAdding(true)
     setMessage(null)
 
-    const result = await addToCartAction(selectedVariant.id, 1)
+    const success = await addToCart(selectedVariant.id, 1)
 
-    if (result.success) {
+    if (success) {
       setMessage({ type: 'success', text: t('addedToCart') })
       // Clear message after 3 seconds
       setTimeout(() => setMessage(null), 3000)
     } else {
-      setMessage({ type: 'error', text: result.message || t('failedToAddToCart') })
+      setMessage({ type: 'error', text: t('failedToAddToCart') })
     }
 
     setIsAdding(false)
@@ -108,7 +109,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               {tNav('shop')}
             </Link>
             <span>/</span>
-            <span className="text-gray-900">{product.name}</span>
+            <span className="text-black-700">{product.name}</span>
           </nav>
         </div>
       </div>
@@ -137,7 +138,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
               {/* Discount Badge */}
               {discountPercent > 0 && (
-                <div className="absolute right-4 top-4 rounded-full bg-gray-500 px-4 py-2 text-sm font-bold text-black-900 shadow-lg">
+                <div className="absolute right-4 top-4 rounded-full bg-gray-500 px-4 py-2 text-sm font-bold text-black-700 shadow-lg">
                   {t('discountBadge', { percent: discountPercent })}
                 </div>
               )}
@@ -150,7 +151,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                     aria-label="Previous image"
                   >
-                    <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-black-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
@@ -159,7 +160,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                     className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                     aria-label="Next image"
                   >
-                    <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-black-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -205,7 +206,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <p className="text-sm font-semibold uppercase tracking-wide text-gray-600">
                 {product.brand}
               </p>
-              <h1 className="mt-2 text-3xl font-bold text-black-900">{product.name}</h1>
+              <h1 className="mt-2 text-3xl font-bold text-black-700">{product.name}</h1>
               <p className="mt-2 text-sm text-gray-600">
                 {product.gender}
               </p>
@@ -222,7 +223,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-block rounded-full bg-gold-100 px-3 py-1 text-sm font-semibold text-gold-700">
+                <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold text-black-700">
                   {t('saveAmount', { amount: savings.toFixed(2), percent: discountPercent })}
                 </span>
                 <span className="text-sm text-gray-600">{t('stockPrice')}</span>
@@ -231,13 +232,13 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
             {/* Description */}
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">{t('description')}</h2>
+              <h2 className="text-lg font-semibold text-black-700">{t('description')}</h2>
               <p className="mt-2 text-gray-600 leading-relaxed">{product.description}</p>
             </div>
 
             {/* Size Selection */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">
+              <h3 className="text-sm font-semibold text-black-700">
                 {t('selectSize')} {selectedSize && <span className="text-black-700">({selectedSize})</span>}
               </h3>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -273,7 +274,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
             {/* Color Selection */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">
+              <h3 className="text-sm font-semibold text-black-700">
                 {t('selectColor')} {selectedColor && <span className="text-black-700">({selectedColor})</span>}
               </h3>
               <div className="mt-3 flex flex-wrap gap-3">
@@ -322,7 +323,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                       selectedVariant.stockQuantity > 0 ? 'bg-green-500' : 'bg-red-500'
                     }`}
                   />
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-black-700">
                     {selectedVariant.stockQuantity > 0
                       ? selectedVariant.stockQuantity < 10
                         ? t('onlyLeft', { count: selectedVariant.stockQuantity })
@@ -333,14 +334,14 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               ) : hasStock ? (
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-green-500" />
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-black-700">
                     {totalStock < 10 ? t('onlyLeft', { count: totalStock }) : t('inStock')}
                   </span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-red-500" />
-                  <span className="text-sm font-medium text-gray-900">{t('outOfStock')}</span>
+                  <span className="text-sm font-medium text-black-700">{t('outOfStock')}</span>
                 </div>
               )}
             </div>
@@ -360,10 +361,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             <div className="space-y-3">
               <button
                 onClick={handleAddToCart}
-                disabled={!selectedVariant || selectedVariant.stockQuantity === 0 || isAdding}
+                disabled={!selectedVariant || selectedVariant.stockQuantity === 0 || isAdding || isAddingToCart}
                 className="btn-primary w-full text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isAdding
+                {isAdding || isAddingToCart
                   ? t('adding')
                   : !selectedSize || !selectedColor
                   ? t('selectSizeAndColor')
@@ -378,26 +379,26 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             <div className="border-t border-gray-200 pt-6 space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">{t('sku')}</span>
-                <span className="font-medium text-gray-900">{product.sku}</span>
+                <span className="font-medium text-black-700">{product.sku}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">{t('category')}</span>
-                <span className="font-medium text-gray-900">{product.category}</span>
+                <span className="font-medium text-black-700">{product.category}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">{t('gender')}</span>
-                <span className="font-medium text-gray-900">{product.gender}</span>
+                <span className="font-medium text-black-700">{product.gender}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-12 flex justify-center gap-4">
-          <Link href={`/${locale}/shop`} className="btn-secondary">
+        <div className="mt-12 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+          <Link href={`/${locale}/shop`} className="btn-secondary text-center">
             {t('backToShop')}
           </Link>
-          <Link href={`/${locale}/cart`} className="btn-primary">
+          <Link href={`/${locale}/cart`} className="btn-primary text-center">
             {t('viewCart')}
           </Link>
         </div>

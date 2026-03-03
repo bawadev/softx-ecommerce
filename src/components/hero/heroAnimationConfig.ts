@@ -6,7 +6,36 @@ export interface HeroSlideProps {
   subtitle: string
   linkUrl?: string
   onSearchClick: () => void
+  colorTheme?: 'light' | 'dark'
 }
+
+// ── Color theme configurations ──
+export const colorThemes = {
+  light: {
+    bgGradient: 'rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.06) 60%, transparent 100%',
+    bgGradientRadial: 'rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 60%, transparent 100%',
+    border: 'rgba(255,255,255,0.15)',
+    borderHover: 'rgba(255,255,255,0.25)',
+    buttonBg: 'rgba(255,255,255,0.10)',
+    buttonBgHover: 'rgba(255,255,255,0.20)',
+    buttonBorder: 'rgba(255,255,255,0.20)',
+    text: 'white',
+    textMuted: 'rgba(255,255,255,0.70)',
+    textLink: 'rgba(255,255,255,0.80)',
+  },
+  dark: {
+    bgGradient: 'rgba(0,0,0,0.50) 0%, rgba(0,0,0,0.35) 60%, transparent 100%',
+    bgGradientRadial: 'rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.40) 60%, transparent 100%',
+    border: 'rgba(0,0,0,0.50)',
+    borderHover: 'rgba(0,0,0,0.70)',
+    buttonBg: 'rgba(0,0,0,0.30)',
+    buttonBgHover: 'rgba(0,0,0,0.50)',
+    buttonBorder: 'rgba(255,255,255,0.15)',
+    text: 'white',
+    textMuted: 'rgba(255,255,255,0.70)',
+    textLink: 'rgba(255,255,255,0.80)',
+  },
+} as const
 
 // ── Timing constants ──
 export const SLIDE_INTERVAL = 6000 // ms per full cycle

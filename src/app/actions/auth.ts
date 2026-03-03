@@ -14,6 +14,13 @@ import {
   findUserByEmail,
   emailExists,
 } from '@/lib/repositories/user.repository'
+import {
+  addToCart,
+} from '@/lib/repositories/cart.repository'
+import {
+  getGuestCart,
+  clearGuestCart,
+} from '@/lib/guest-cart'
 import type { AuthResponse, CreateUserInput, LoginInput } from '@/lib/types'
 
 /**
@@ -129,6 +136,22 @@ export async function loginAction(input: LoginInput): Promise<AuthResponse> {
 
     // Set auth cookie
     await setAuthCookie(token)
+
+    // Migrate guest cart to user cart
+    try {
+      const guestCart = await getGuestCart()
+      if (guestCart.length > 0) {
+        // Add each guest cart item to user's cart
+        for (const item of guestCart) {
+          await addToCart(user.id, item.variantId, item.quantity)
+        }
+        // Clear guest cart after migration
+        await clearGuestCart()
+      }
+    } catch (error) {
+      console.error('Cart migration error:', error)
+      // Don't fail login if cart migration fails
+    }
 
     return {
       success: true,

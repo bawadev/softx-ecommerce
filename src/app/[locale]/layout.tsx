@@ -8,6 +8,7 @@ import '../globals.css'
 import Navigation from '@/components/layout/Navigation'
 import { verifyToken } from '@/lib/auth'
 import { locales, type Locale } from '@/i18n/request'
+import { shopConfig } from '@/config/shop'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,8 +17,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Ecom - Branded Clothing at Stock Prices',
-  description: 'Shop premium branded clothing at wholesale stock prices. Modern fashion at unbeatable value.',
+  title: `${shopConfig.name} - ${shopConfig.tagline}`,
+  description: `Shop premium branded clothing at wholesale stock prices. Modern fashion at unbeatable value.`,
   keywords: ['clothing', 'fashion', 'stock price', 'wholesale', 'branded apparel'],
   icons: {
     icon: '/favicon.svg',

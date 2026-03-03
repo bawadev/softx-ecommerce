@@ -80,8 +80,8 @@ export default function SearchAutocomplete({
   }
 
   const inputClasses = large
-    ? 'w-full px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg rounded-full border-2 border-gray-200 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-gray-900'
-    : 'w-full px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-gray-900'
+    ? 'w-full px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-4 text-sm sm:text-base md:text-lg rounded-full border-2 border-gray-200 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-black-700'
+    : 'w-full px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-navy-200 transition-all bg-white text-black-700'
 
   return (
     <div ref={wrapperRef} className={`relative`}>
@@ -118,7 +118,8 @@ export default function SearchAutocomplete({
           )}
 
           {!isLoading && results.map((product) => {
-            const firstImage = product.variants.find((v) => v.images?.length > 0)?.images?.[0]
+            // Check variant images first, then fall back to product images
+            const firstImage = product.variants.find((v) => v.images?.length > 0)?.images?.[0] || product.images?.[0]
             const discountPercent = Math.round(
               ((product.retailPrice - product.stockPrice) / product.retailPrice) * 100
             )
@@ -145,10 +146,10 @@ export default function SearchAutocomplete({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-gray-900 truncate">{product.name}</h4>
+                  <h4 className="font-semibold text-black-700 truncate">{product.name}</h4>
                   <p className="text-sm text-gray-600">{product.brand}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="font-bold text-black-900">Rs {product.stockPrice.toFixed(2)}</span>
+                    <span className="font-bold text-black-700">Rs {product.stockPrice.toFixed(2)}</span>
                     <span className="text-xs text-gray-500 line-through">
                       Rs {product.retailPrice.toFixed(2)}
                     </span>

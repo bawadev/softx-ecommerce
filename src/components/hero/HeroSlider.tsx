@@ -87,6 +87,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
     subtitle: currentSlideData.subtitle,
     linkUrl: currentSlideData.linkUrl,
     onSearchClick: () => setSearchOpen(true),
+    colorTheme: currentSlideData.colorTheme,
   }
 
   return (
