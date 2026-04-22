@@ -18,6 +18,7 @@ function mapToHeroSlide(properties: any): HeroSlide {
   return {
     id: properties.id,
     imageUrl: properties.imageUrl,
+    mobileImageUrl: properties.mobileImageUrl || undefined,
     animationType: properties.animationType as HeroAnimationType,
     colorTheme: (properties.colorTheme || 'light') as HeroColorTheme,
     badgeText: properties.badgeText,
@@ -83,6 +84,7 @@ export async function createHeroSlide(
   session: Session,
   data: {
     imageUrl: string
+    mobileImageUrl?: string
     animationType: HeroAnimationType
     colorTheme?: HeroColorTheme
     badgeText: string
@@ -98,6 +100,7 @@ export async function createHeroSlide(
     CREATE (h:HeroSlide {
       id: randomUUID(),
       imageUrl: $imageUrl,
+      mobileImageUrl: $mobileImageUrl,
       animationType: $animationType,
       colorTheme: $colorTheme,
       badgeText: $badgeText,
@@ -113,6 +116,7 @@ export async function createHeroSlide(
     `,
     {
       imageUrl: data.imageUrl,
+      mobileImageUrl: data.mobileImageUrl || null,
       animationType: data.animationType,
       colorTheme: data.colorTheme || 'light',
       badgeText: data.badgeText,
@@ -136,6 +140,7 @@ export async function updateHeroSlide(
   id: string,
   data: Partial<{
     imageUrl: string
+    mobileImageUrl: string | null
     animationType: HeroAnimationType
     colorTheme: HeroColorTheme
     badgeText: string
@@ -152,6 +157,10 @@ export async function updateHeroSlide(
   if (data.imageUrl !== undefined) {
     updates.push('h.imageUrl = $imageUrl')
     params.imageUrl = data.imageUrl
+  }
+  if (data.mobileImageUrl !== undefined) {
+    updates.push('h.mobileImageUrl = $mobileImageUrl')
+    params.mobileImageUrl = data.mobileImageUrl || null
   }
   if (data.animationType !== undefined) {
     updates.push('h.animationType = $animationType')

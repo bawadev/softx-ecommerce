@@ -35,6 +35,7 @@ interface HeroSlidesClientProps {
 
 type FormData = {
   imageUrl: string
+  mobileImageUrl: string
   animationType: HeroAnimationType
   colorTheme: HeroColorTheme
   badgeText: string
@@ -46,6 +47,7 @@ type FormData = {
 
 const emptyForm: FormData = {
   imageUrl: '',
+  mobileImageUrl: '',
   animationType: 'left-panel',
   colorTheme: 'light',
   badgeText: '',
@@ -102,6 +104,7 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
     setEditingSlide(slide)
     setForm({
       imageUrl: slide.imageUrl,
+      mobileImageUrl: slide.mobileImageUrl || '',
       animationType: slide.animationType,
       colorTheme: slide.colorTheme,
       badgeText: slide.badgeText,
@@ -138,6 +141,7 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
         // Update existing
         const result = await updateHeroSlideAction(editingSlide.id, {
           imageUrl: form.imageUrl,
+          mobileImageUrl: form.mobileImageUrl || null,
           animationType: form.animationType,
           colorTheme: form.colorTheme,
           badgeText: form.badgeText,
@@ -152,6 +156,16 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
           if (editingSlide.imageUrl !== form.imageUrl && editingSlide.imageUrl) {
             try {
               await deleteImage(editingSlide.imageUrl)
+            } catch {
+              // Best effort
+            }
+          }
+          if (
+            editingSlide.mobileImageUrl &&
+            editingSlide.mobileImageUrl !== form.mobileImageUrl
+          ) {
+            try {
+              await deleteImage(editingSlide.mobileImageUrl)
             } catch {
               // Best effort
             }
@@ -569,14 +583,25 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
               </div>
 
               <div className="space-y-5">
-                {/* Image Upload */}
+                {/* Desktop Image Upload */}
                 <ImageUpload
-                  label="Slide Background Image"
+                  label="Desktop Background Image (landscape, ~1920×1080)"
                   multiple={false}
                   maxFiles={1}
                   initialImages={form.imageUrl ? [form.imageUrl] : []}
                   onUploadComplete={(urls) => {
                     setForm((prev) => ({ ...prev, imageUrl: urls[0] || '' }))
+                  }}
+                />
+
+                {/* Mobile Image Upload (optional) */}
+                <ImageUpload
+                  label="Mobile Background Image — optional (portrait, ~1080×1440). Falls back to desktop image if empty."
+                  multiple={false}
+                  maxFiles={1}
+                  initialImages={form.mobileImageUrl ? [form.mobileImageUrl] : []}
+                  onUploadComplete={(urls) => {
+                    setForm((prev) => ({ ...prev, mobileImageUrl: urls[0] || '' }))
                   }}
                 />
 

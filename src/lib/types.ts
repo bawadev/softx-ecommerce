@@ -164,6 +164,7 @@ export type HeroColorTheme = 'light' | 'dark'
 export interface HeroSlide {
   id: string
   imageUrl: string
+  mobileImageUrl?: string
   animationType: HeroAnimationType
   colorTheme: HeroColorTheme
   badgeText: string

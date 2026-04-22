@@ -129,13 +129,13 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
             className="absolute inset-0"
           >
             <Image
-              src={currentSlideData.imageUrl}
+              src={currentSlideData.mobileImageUrl || currentSlideData.imageUrl}
               alt={currentSlideData.title || `Fashion background ${currentSlide + 1}`}
               fill
               className="object-cover"
               priority={currentSlide === 0}
               quality={90}
-              unoptimized={currentSlideData.imageUrl.startsWith('http')}
+              unoptimized={(currentSlideData.mobileImageUrl || currentSlideData.imageUrl).startsWith('http')}
             />
           </motion.div>
         </AnimatePresence>

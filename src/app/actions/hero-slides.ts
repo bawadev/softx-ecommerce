@@ -34,6 +34,7 @@ export async function getAllHeroSlidesAction(
  */
 export async function createHeroSlideAction(data: {
   imageUrl: string
+  mobileImageUrl?: string
   animationType: HeroAnimationType
   colorTheme?: HeroColorTheme
   badgeText: string
@@ -73,6 +74,7 @@ export async function updateHeroSlideAction(
   id: string,
   data: Partial<{
     imageUrl: string
+    mobileImageUrl: string | null
     animationType: HeroAnimationType
     colorTheme: HeroColorTheme
     badgeText: string
@@ -136,13 +138,16 @@ export async function deleteHeroSlideAction(
       return { success: false, message: 'Failed to delete hero slide' }
     }
 
-    // Delete image from MinIO (best effort — don't fail if image deletion fails)
+    // Delete images from MinIO (best effort — don't fail if image deletion fails)
     try {
       if (slide.imageUrl) {
         await deleteFile(slide.imageUrl)
       }
+      if (slide.mobileImageUrl) {
+        await deleteFile(slide.mobileImageUrl)
+      }
     } catch (err) {
-      console.warn('Failed to delete hero slide image from MinIO:', err)
+      console.warn('Failed to delete hero slide images from MinIO:', err)
     }
 
     return {

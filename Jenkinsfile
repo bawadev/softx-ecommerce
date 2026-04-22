@@ -17,7 +17,7 @@ deployKamalApp(
             NEXT_PUBLIC_APP_URL:   'https://dev.locked.lk'
         ],
         prod: [
-            NEXT_PUBLIC_MINIO_URL: 'https://minio.locked.softx.world',
+            NEXT_PUBLIC_MINIO_URL: 'https://cdn.locked.lk',
             NEXT_PUBLIC_APP_URL:   'https://locked.lk'
         ]
     ]
