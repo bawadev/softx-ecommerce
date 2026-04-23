@@ -149,9 +149,12 @@ export async function getCartItems(userId: string): Promise<CartItemWithDetails[
 export async function getCartCount(userId: string): Promise<number> {
   const session = getSession()
   try {
+    // Walk the full chain (CartItem → ProductVariant → Product) so orphan
+    // items whose variant OR product was deleted don't inflate the badge.
+    // Mirrors the chain in getCartItems so the count and rendered list match.
     const result = await session.run(
       `
-      MATCH (u:User {id: $userId})-[:HAS_CART_ITEM]->(c:CartItem)
+      MATCH (u:User {id: $userId})-[:HAS_CART_ITEM]->(c:CartItem)-[:CART_ITEM_FOR]->(:ProductVariant)-[:VARIANT_OF]->(:Product)
       RETURN sum(c.quantity) as count
       `,
       { userId }
