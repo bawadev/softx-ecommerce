@@ -144,9 +144,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image - clickable link */}
       <Link href={productUrl} onClick={handleCardClick} className="relative z-0 block">
         <div className="relative aspect-[3/4] sm:aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-100">
-          {(firstVariant?.images?.[0] || product.images?.[0]) ? (
+          {(product.images?.[0] || firstVariant?.images?.[0]) ? (
             <Image
-              src={firstVariant?.images?.[0] || product.images[0]}
+              src={product.images?.[0] || firstVariant?.images?.[0] || ''}
               alt={product.name}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-110"
