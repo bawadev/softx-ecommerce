@@ -134,7 +134,7 @@ export default function HomePageClient({
       <section className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-black-700">{t('shopByCategory')}</h3>
+            <h3 className="font-sans text-label text-black-700 uppercase">{t('shopByCategory')}</h3>
             <div className="flex items-center gap-3">
               {selectedCategoryIds.size > 0 && (
                 <button
@@ -243,7 +243,7 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-black-700">{t('filteredProducts')}</h2>
+              <h2 className="font-heading text-heading-xl text-black-700">{t('filteredProducts')}</h2>
               <p className="text-sm text-gray-600 mt-1">
                 {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
               </p>
@@ -268,7 +268,7 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-black-700">{t('recentlyViewed')}</h2>
+              <h2 className="font-heading text-heading-xl text-black-700">{t('recentlyViewed')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('recentlyViewedSubtitle')}</p>
             </div>
             <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-700">
@@ -288,7 +288,7 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-black-700">{t('recommendedForYou')}</h2>
+              <h2 className="font-heading text-heading-xl text-black-700">{t('recommendedForYou')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('recommendedSubtitle')}</p>
             </div>
             <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-700">
@@ -308,7 +308,7 @@ export default function HomePageClient({
         <section key={category.id} className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-black-700">{category.name}</h2>
+              <h2 className="font-heading text-heading-xl text-black-700">{category.name}</h2>
               {category.description && (
                 <p className="text-sm text-gray-600 mt-1">{category.description}</p>
               )}
@@ -333,7 +333,7 @@ export default function HomePageClient({
         <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-black-700">{t('newArrivals')}</h2>
+              <h2 className="font-heading text-heading-xl text-black-700">{t('newArrivals')}</h2>
               <p className="text-sm text-gray-600 mt-1">{t('newArrivalsSubtitle')}</p>
             </div>
             <Link href={`/${locale}/shop`} className="text-sm font-medium text-black-700 hover:text-black-700">
@@ -365,10 +365,10 @@ export default function HomePageClient({
               </svg>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight tracking-tight">
+            <h2 className="font-display text-display-lg uppercase mb-6">
               {t('cta.title')}
             </h2>
-            <p className="text-lg sm:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-body-lg text-gray-200 mb-10 max-w-2xl mx-auto">
               {t('cta.subtitle')}
             </p>
 
@@ -386,15 +386,15 @@ export default function HomePageClient({
             {/* Features Grid */}
             <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-300 mb-2">{t('stats.savingsValue')}</div>
+                <div className="font-display text-display-sm uppercase text-gray-300 mb-2">{t('stats.savingsValue')}</div>
                 <div className="text-sm text-gray-300">{t('stats.savingsLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-300 mb-2">{t('stats.productsValue')}</div>
+                <div className="font-display text-display-sm uppercase text-gray-300 mb-2">{t('stats.productsValue')}</div>
                 <div className="text-sm text-gray-300">{t('stats.productsLabel')}</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-300 mb-2">{t('stats.supportValue')}</div>
+                <div className="font-display text-display-sm uppercase text-gray-300 mb-2">{t('stats.supportValue')}</div>
                 <div className="text-sm text-gray-300">{t('stats.supportLabel')}</div>
               </div>
             </div>
