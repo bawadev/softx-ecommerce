@@ -112,10 +112,3 @@ export async function clearGuestCart(): Promise<void> {
   await saveGuestCart([])
 }
 
-/**
- * Get guest cart item count
- */
-export async function getGuestCartCount(): Promise<number> {
-  const cart = await getGuestCart()
-  return cart.reduce((sum, item) => sum + item.quantity, 0)
-}

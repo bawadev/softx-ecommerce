@@ -16,39 +16,59 @@ import {
   removeFromGuestCart,
   updateGuestCartQuantity,
   getGuestCart,
+  saveGuestCart,
   clearGuestCart,
-  getGuestCartCount,
+  type GuestCartItem,
 } from '@/lib/guest-cart'
 import { getVariantWithProduct } from '@/lib/repositories/product.repository'
 import type { ActionResponse } from '@/lib/types'
 
 /**
- * Get guest cart items with full details
+ * Get guest cart items with full details.
+ * Also self-heals the cookie: any variant that no longer exists in the DB
+ * (e.g. was removed by a reseed) gets pruned so the nav badge and the cart
+ * page stay in agreement.
  */
 async function getGuestCartWithDetails(): Promise<CartItemWithDetails[]> {
   const guestCart = await getGuestCart()
   const items: CartItemWithDetails[] = []
+  const validEntries: GuestCartItem[] = []
 
   for (const item of guestCart) {
     try {
       const data = await getVariantWithProduct(item.variantId)
       if (data) {
         items.push({
-          id: item.variantId, // Use variantId as the unique ID for guest items
-          userId: 'guest', // Guest user identifier
+          id: item.variantId,
+          userId: 'guest',
           variantId: item.variantId,
           quantity: item.quantity,
-          addedAt: new Date().toISOString(), // Guest carts don't track add time
+          addedAt: new Date().toISOString(),
           product: data.product,
           variant: data.variant,
         })
+        validEntries.push(item)
       }
     } catch (error) {
       console.error(`Failed to get variant details for ${item.variantId}:`, error)
     }
   }
 
+  if (validEntries.length !== guestCart.length) {
+    try {
+      await saveGuestCart(validEntries)
+    } catch {
+      // Cookie writes are only allowed in Server Action / Route Handler
+      // contexts. When this runs during a Server Component render the write
+      // is rejected — ignore it; the next client-triggered call will heal.
+    }
+  }
+
   return items
+}
+
+function sumGuestItems(items: CartItemWithDetails[]): number {
+  return items.reduce((sum, item) => sum + item.quantity, 0)
 }
 
 /**
@@ -186,7 +206,7 @@ export async function getCartItemsAction(): Promise<
       // Guest user
       items = await getGuestCartWithDetails()
       total = calculateGuestCartTotal(items)
-      itemCount = await getGuestCartCount()
+      itemCount = sumGuestItems(items)
     }
 
     return {
@@ -215,8 +235,9 @@ export async function getCartCountAction(): Promise<ActionResponse<{ count: numb
       // Authenticated user
       count = await getCartCount(userId)
     } else {
-      // Guest user
-      count = await getGuestCartCount()
+      // Guest user — validate entries so orphaned variants don't inflate the badge
+      const validItems = await getGuestCartWithDetails()
+      count = sumGuestItems(validItems)
     }
 
     return {
