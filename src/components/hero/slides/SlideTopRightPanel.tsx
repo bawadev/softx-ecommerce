@@ -43,7 +43,7 @@ export default function SlideTopRightPanel({ title, subtitle, linkUrl, onSearchC
           {/* Title */}
           <motion.h1
             variants={shouldReduce ? undefined : topRightChildVariants}
-            className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl mb-3 sm:mb-4 leading-[0.95] tracking-wide uppercase"
+            className="font-display text-[clamp(2.25rem,5.5vw,5rem)] mb-3 sm:mb-4 leading-[0.95] tracking-wide uppercase break-words"
           >
             <span
               className="block drop-shadow-2xl"
