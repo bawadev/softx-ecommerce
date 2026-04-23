@@ -143,7 +143,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div ref={cardRef} className="card-hover group relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
       {/* Image - clickable link */}
       <Link href={productUrl} onClick={handleCardClick} className="relative z-0 block">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-t-lg bg-gray-100">
+        <div className="relative aspect-[3/4] sm:aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-100">
           {(firstVariant?.images?.[0] || product.images?.[0]) ? (
             <Image
               src={firstVariant?.images?.[0] || product.images[0]}
