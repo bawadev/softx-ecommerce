@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Anton } from 'next/font/google'
 import { cookies } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
@@ -13,6 +13,14 @@ import { shopConfig } from '@/config/shop'
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+})
+
+// Heavy condensed display font for hero titles — visual companion to the LOCKED wordmark.
+const anton = Anton({
+  subsets: ['latin'],
+  variable: '--font-display',
+  weight: '400',
   display: 'swap',
 })
 
@@ -68,7 +76,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} className={inter.variable}>
+    <html lang={locale} className={`${inter.variable} ${anton.variable}`}>
       <body className="min-h-screen bg-gray-50">
         <NextIntlClientProvider messages={messages}>
           <Navigation isAuthenticated={isAuthenticated} userEmail={userEmail} isAdmin={isAdmin} />

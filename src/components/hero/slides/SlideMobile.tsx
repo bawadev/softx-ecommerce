@@ -85,13 +85,13 @@ export default function SlideMobile({
   }
 
   const innerPad = cfg.shape === 'card' ? 'px-5 py-5' : cfg.shape === 'panel' ? 'px-5 py-4' : 'px-4 py-3'
-  const titleSize = cfg.shape === 'card' ? 'text-xl' : 'text-base'
+  const titleSize = cfg.shape === 'card' ? 'text-3xl' : 'text-xl'
   const subtitleSize = cfg.shape === 'card' ? 'text-sm' : 'text-[11px]'
 
   const content = (
     <div className="flex-1 min-w-0">
       <h2
-        className={`${titleSize} font-bold leading-tight line-clamp-2 mb-1`}
+        className={`${titleSize} font-display leading-[0.95] tracking-tight uppercase line-clamp-2 mb-1`}
         style={{ color: theme.text }}
       >
         {title}

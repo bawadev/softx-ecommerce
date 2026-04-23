@@ -46,7 +46,7 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
         {/* Title */}
         <motion.h1
           variants={shouldReduce ? undefined : bottomSweepChildVariants}
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 leading-[1.2] tracking-tight"
+          className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-2 sm:mb-3 leading-[0.95] tracking-tight uppercase"
         >
           <span
             className="block drop-shadow-2xl"

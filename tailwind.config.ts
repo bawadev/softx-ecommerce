@@ -29,6 +29,9 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains-mono)', 'monospace'],
+        // Heavy condensed display face for hero titles / campaign headers.
+        // Matches the compact, tall proportions of the LOCKED wordmark.
+        display: ['var(--font-display)', 'Impact', 'Arial Narrow Bold', 'sans-serif'],
       },
       borderRadius: {
         'sm': '4px',
