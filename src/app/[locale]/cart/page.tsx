@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { getCartItemsAction } from '@/app/actions/cart'
 import CartPageClient from './CartPageClient'
 
 export default async function CartPage() {
   const t = await getTranslations('cart')
+  const locale = await getLocale()
 
   // Get cart items (works for both authenticated and guest users)
   const result = await getCartItemsAction()
@@ -52,7 +53,7 @@ export default async function CartPage() {
               <p className="mt-2 text-gray-600">
                 {t('emptyMessage')}
               </p>
-              <Link href="/shop" className="btn-primary mt-8 inline-block">
+              <Link href={`/${locale}/shop`} className="btn-primary mt-8 inline-block">
                 {t('startShopping')}
               </Link>
             </div>
