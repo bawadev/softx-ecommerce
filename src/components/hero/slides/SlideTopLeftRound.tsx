@@ -25,7 +25,8 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
       className="absolute top-4 sm:top-8 md:top-12 left-4 sm:left-8 md:left-12 flex items-center justify-center
         w-[85vw] h-[70vw] rounded-3xl
         sm:w-[55vw] sm:h-[55vw]
-        md:w-[40vw] md:h-[40vw] md:rounded-full md:max-w-[500px] md:max-h-[500px]"
+        md:w-[40vw] md:h-[40vw] md:rounded-full md:max-w-[500px] md:max-h-[500px]
+        [container-type:inline-size]"
       style={{
         background: `radial-gradient(circle, ${theme.bgGradientRadial})`,
         backdropFilter: shouldReduce ? 'blur(8px)' : 'blur(16px)',
@@ -43,7 +44,7 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
         {/* Title */}
         <motion.h1
           variants={shouldReduce ? undefined : topLeftRoundChildVariants}
-          className="font-display text-[clamp(1.75rem,4.5vw,3.75rem)] mb-3 leading-[0.95] tracking-wide uppercase break-words"
+          className="font-display text-[clamp(2rem,11cqi,4.5rem)] mb-3 leading-[0.9] tracking-[-0.02em] uppercase break-words [text-wrap:balance] hyphens-manual"
         >
           <span
             className="block drop-shadow-2xl"

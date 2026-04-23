@@ -62,10 +62,10 @@ function ProductCard({ product }: { product: ProductWithVariants }) {
         )}
       </div>
       <div className="p-2 sm:p-3 md:p-4">
-        <h3 className="font-semibold text-black-700 md:line-clamp-2 text-xs sm:text-sm md:text-base break-words">{product.name}</h3>
+        <h3 className="font-heading text-heading-sm text-black-700 md:line-clamp-2 break-words">{product.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">{product.brand}</p>
         <div className="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-0 sm:gap-1 min-w-0">
-          <span className="text-sm sm:text-base md:text-lg font-bold text-black-700 truncate">Rs {product.stockPrice.toFixed(0)}</span>
+          <span className="font-heading text-price text-black-700 truncate">Rs {product.stockPrice.toFixed(0)}</span>
           <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through truncate">Rs {product.retailPrice.toFixed(0)}</span>
         </div>
         <p className="text-xs text-gray-500 mt-1">
@@ -209,7 +209,7 @@ export default function HomePageClientSimple({
         <div className="sticky top-0 z-10 bg-white shadow-md py-4">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold text-black-700">Shop by Category</h2>
+              <h2 className="font-sans text-label text-black-700 uppercase">Shop by Category</h2>
               {selectedCategoryIds.size > 0 && (
                 <button
                   onClick={clearFilters}
@@ -302,7 +302,7 @@ export default function HomePageClientSimple({
         {/* Filtered Products Section */}
         {selectedCategoryIds.size > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-black-700 mb-6">
+            <h2 className="font-heading text-heading-xl text-black-700 mb-6">
               Filtered Products ({filteredProducts.length})
             </h2>
             {loading ? (
@@ -328,7 +328,7 @@ export default function HomePageClientSimple({
             <section key={category.id} className="mb-12">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-black-700">{category.name}</h2>
+                  <h2 className="font-heading text-heading-xl text-black-700">{category.name}</h2>
                   {category.description && (
                     <p className="text-gray-600 mt-1">{category.description}</p>
                   )}
@@ -355,7 +355,7 @@ export default function HomePageClientSimple({
         {/* Recently Viewed */}
         {isAuthenticated && recentlyViewed.length > 0 && selectedCategoryIds.size === 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-black-700 mb-6">Recently Viewed</h2>
+            <h2 className="font-heading text-heading-xl text-black-700 mb-6">Recently Viewed</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filterProducts(recentlyViewed).map(product => (
                 <ProductCard key={product.id} product={product} />
@@ -367,7 +367,7 @@ export default function HomePageClientSimple({
         {/* Recommendations */}
         {isAuthenticated && recommendations.length > 0 && selectedCategoryIds.size === 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-black-700 mb-6">Recommended for You</h2>
+            <h2 className="font-heading text-heading-xl text-black-700 mb-6">Recommended for You</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filterProducts(recommendations).map(product => (
                 <ProductCard key={product.id} product={product} />
@@ -380,7 +380,7 @@ export default function HomePageClientSimple({
         {newArrivals.length > 0 && selectedCategoryIds.size === 0 && (
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-black-700">New Arrivals</h2>
+              <h2 className="font-heading text-heading-xl text-black-700">New Arrivals</h2>
               <Link
                 href={`/${locale}/shop?sort=newest`}
                 className="text-black-700 hover:text-black-950 font-medium"
@@ -400,7 +400,7 @@ export default function HomePageClientSimple({
 
         {/* CTA Section */}
         <section className="bg-black-800 text-white rounded-lg p-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Start Exploring</h2>
+          <h2 className="font-display text-display-sm uppercase mb-4">Start Exploring</h2>
           <p className="text-lg mb-6">Discover thousands of branded items at unbeatable prices</p>
           <Link
             href={`/${locale}/shop`}

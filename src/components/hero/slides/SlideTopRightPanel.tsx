@@ -22,7 +22,7 @@ export default function SlideTopRightPanel({ title, subtitle, linkUrl, onSearchC
       initial="initial"
       animate="animate"
       exit="exit"
-      className="absolute inset-y-0 right-0 flex items-center w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[38vw]"
+      className="absolute inset-y-0 right-0 flex items-center w-[85vw] sm:w-[60vw] md:w-[45vw] lg:w-[38vw] [container-type:inline-size]"
     >
       <div
         className="relative h-full w-full flex items-center md:[clip-path:polygon(15%_0,100%_0,100%_100%,0%_100%)]"
@@ -43,7 +43,7 @@ export default function SlideTopRightPanel({ title, subtitle, linkUrl, onSearchC
           {/* Title */}
           <motion.h1
             variants={shouldReduce ? undefined : topRightChildVariants}
-            className="font-display text-[clamp(2.25rem,5.5vw,5rem)] mb-3 sm:mb-4 leading-[0.95] tracking-wide uppercase break-words"
+            className="font-display text-[clamp(2.5rem,14cqi,8rem)] mb-3 sm:mb-4 leading-[0.9] tracking-[-0.02em] uppercase break-words [text-wrap:balance] hyphens-manual"
           >
             <span
               className="block drop-shadow-2xl"

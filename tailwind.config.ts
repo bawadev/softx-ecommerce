@@ -32,6 +32,32 @@ const config: Config = {
         // Heavy condensed display face for hero titles / campaign headers.
         // Matches the compact, tall proportions of the LOCKED wordmark.
         display: ['var(--font-display)', 'Impact', 'Arial Narrow Bold', 'sans-serif'],
+        // Humanist grotesque for all page headings / section titles / product names.
+        // Bridges Anton display and Inter body. Variable weight (100-900).
+        heading: ['var(--font-heading)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+      },
+      // Unified type scale — see internal-docs or research doc for rationale.
+      // Each token bundles font-size + line-height + letter-spacing + font-weight.
+      fontSize: {
+        // Display (Anton) — hero only
+        'display-hero': ['clamp(3.5rem, 9vw, 10rem)', { lineHeight: '0.9', letterSpacing: '-0.02em', fontWeight: '400' }],
+        'display-lg': ['clamp(2.5rem, 6vw, 4.5rem)', { lineHeight: '0.95', letterSpacing: '-0.02em', fontWeight: '400' }],
+        // Display-small (Archivo 600) — editorial sub-display / big feature headings
+        'display-sm': ['clamp(1.75rem, 4vw, 3rem)', { lineHeight: '1', letterSpacing: '-0.02em', fontWeight: '600' }],
+        // Headings (Archivo)
+        'heading-xl': ['clamp(1.75rem, 3.2vw, 2.5rem)', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'heading-lg': ['clamp(1.375rem, 2.2vw, 1.75rem)', { lineHeight: '1.15', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'heading-md': ['clamp(1.125rem, 1.6vw, 1.25rem)', { lineHeight: '1.2', letterSpacing: '0', fontWeight: '500' }],
+        'heading-sm': ['clamp(0.875rem, 1.2vw, 1rem)', { lineHeight: '1.25', letterSpacing: '0', fontWeight: '500' }],
+        // Uppercase eyebrow / nav / CTA — wide tracking
+        'label': ['clamp(0.6875rem, 0.9vw, 0.75rem)', { lineHeight: '1', letterSpacing: '0.12em', fontWeight: '500' }],
+        // Body (Inter)
+        'body-lg': ['clamp(1rem, 1.3vw, 1.125rem)', { lineHeight: '1.55', letterSpacing: '0', fontWeight: '400' }],
+        'body': ['clamp(0.875rem, 1.1vw, 1rem)', { lineHeight: '1.55', letterSpacing: '0', fontWeight: '400' }],
+        'body-sm': ['clamp(0.75rem, 0.9vw, 0.8125rem)', { lineHeight: '1.5', letterSpacing: '0.01em', fontWeight: '400' }],
+        'caption': ['0.6875rem', { lineHeight: '1.4', letterSpacing: '0.02em', fontWeight: '500' }],
+        // Price — uses heading weight for presence
+        'price': ['clamp(0.875rem, 1.1vw, 1rem)', { lineHeight: '1', letterSpacing: '0', fontWeight: '500' }],
       },
       borderRadius: {
         'sm': '4px',

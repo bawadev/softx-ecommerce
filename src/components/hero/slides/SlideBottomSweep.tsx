@@ -25,7 +25,8 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
       className="absolute bottom-0 right-0 flex items-end justify-end
         w-[85vw] h-[70vw] rounded-tl-full
         sm:w-[60vw] sm:h-[60vw]
-        md:w-[45vw] md:h-[45vw] md:max-w-[550px] md:max-h-[550px]"
+        md:w-[45vw] md:h-[45vw] md:max-w-[550px] md:max-h-[550px]
+        [container-type:inline-size]"
       style={{
         background: `radial-gradient(circle at bottom right, ${theme.bgGradientRadial})`,
         backdropFilter: shouldReduce ? 'blur(8px)' : 'blur(16px)',
@@ -46,7 +47,7 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
         {/* Title */}
         <motion.h1
           variants={shouldReduce ? undefined : bottomSweepChildVariants}
-          className="font-display text-[clamp(1.75rem,4.5vw,3.75rem)] mb-2 sm:mb-3 leading-[0.95] tracking-wide uppercase break-words"
+          className="font-display text-[clamp(2rem,11cqi,4.5rem)] mb-2 sm:mb-3 leading-[0.9] tracking-[-0.02em] uppercase break-words [text-wrap:balance] hyphens-manual"
         >
           <span
             className="block drop-shadow-2xl"

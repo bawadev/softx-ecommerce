@@ -203,11 +203,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           <div className="space-y-6">
             {/* Brand */}
             <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-gray-600">
+              <p className="text-label text-gray-600 uppercase">
                 {product.brand}
               </p>
-              <h1 className="mt-2 text-3xl font-bold text-black-700">{product.name}</h1>
-              <p className="mt-2 text-sm text-gray-600">
+              <h1 className="mt-2 font-display text-display-sm uppercase text-black-700">{product.name}</h1>
+              <p className="mt-2 text-body-sm text-gray-600">
                 {product.gender}
               </p>
             </div>
@@ -215,30 +215,30 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             {/* Price */}
             <div className="space-y-2 border-y border-gray-200 py-6">
               <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-bold text-black-700">
+                <span className="font-display text-display-sm text-black-700 leading-none">
                   Rs {product.stockPrice.toFixed(2)}
                 </span>
-                <span className="text-xl text-gray-400 line-through">
+                <span className="text-body-lg text-gray-400 line-through">
                   Rs {product.retailPrice.toFixed(2)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold text-black-700">
+                <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-label uppercase text-black-700">
                   {t('saveAmount', { amount: savings.toFixed(2), percent: discountPercent })}
                 </span>
-                <span className="text-sm text-gray-600">{t('stockPrice')}</span>
+                <span className="text-body-sm text-gray-600">{t('stockPrice')}</span>
               </div>
             </div>
 
             {/* Description */}
             <div>
-              <h2 className="text-lg font-semibold text-black-700">{t('description')}</h2>
-              <p className="mt-2 text-gray-600 leading-relaxed">{product.description}</p>
+              <h2 className="font-heading text-heading-md text-black-700">{t('description')}</h2>
+              <p className="mt-2 text-body text-gray-600">{product.description}</p>
             </div>
 
             {/* Size Selection */}
             <div>
-              <h3 className="text-sm font-semibold text-black-700">
+              <h3 className="text-label uppercase text-black-700">
                 {t('selectSize')} {selectedSize && <span className="text-black-700">({selectedSize})</span>}
               </h3>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -274,7 +274,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
             {/* Color Selection */}
             <div>
-              <h3 className="text-sm font-semibold text-black-700">
+              <h3 className="text-label uppercase text-black-700">
                 {t('selectColor')} {selectedColor && <span className="text-black-700">({selectedColor})</span>}
               </h3>
               <div className="mt-3 flex flex-wrap gap-3">

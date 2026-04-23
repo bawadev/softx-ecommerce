@@ -191,14 +191,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             onClick={handleCardClick}
             className="block"
           >
-            <h3 className="line-clamp-2 font-semibold text-black-700 text-xs sm:text-sm md:text-base group-hover:text-black-700 transition-colors break-words leading-tight">
+            <h3 className="font-heading text-heading-sm text-black-700 group-hover:text-black-950 transition-colors line-clamp-2 break-words">
               {product.name}
             </h3>
-            <div className="mt-1 flex items-baseline gap-1 min-w-0">
-              <span className="text-xs sm:text-sm font-bold text-black-700 truncate">
+            <div className="mt-1.5 flex items-baseline gap-1.5 min-w-0">
+              <span className="font-heading text-price text-black-700 truncate">
                 Rs {product.stockPrice.toFixed(0)}
               </span>
-              <span className="text-[10px] sm:text-xs text-gray-400 line-through truncate">
+              <span className="text-body-sm text-gray-400 line-through truncate">
                 Rs {product.retailPrice.toFixed(0)}
               </span>
             </div>

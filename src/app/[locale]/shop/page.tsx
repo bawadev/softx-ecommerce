@@ -70,10 +70,10 @@ export default async function ShopPage({
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-black-700">
+          <h1 className="font-display text-display-sm uppercase text-black-700">
             {headerTitle}
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-body text-gray-600">
             {headerSubtitle}
           </p>
         </div>

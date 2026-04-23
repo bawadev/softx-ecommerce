@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Anton } from 'next/font/google'
+import { Inter, Anton, Archivo } from 'next/font/google'
 import { cookies } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
@@ -21,6 +21,14 @@ const anton = Anton({
   subsets: ['latin'],
   variable: '--font-display',
   weight: '400',
+  display: 'swap',
+})
+
+// Humanist grotesque for all headings/sections/product names — bridges display (Anton)
+// and body (Inter) with a more architectural feel than Inter Bold.
+const archivo = Archivo({
+  subsets: ['latin'],
+  variable: '--font-heading',
   display: 'swap',
 })
 
@@ -76,7 +84,7 @@ export default async function LocaleLayout({
   }
 
   return (
-    <html lang={locale} className={`${inter.variable} ${anton.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${anton.variable} ${archivo.variable}`}>
       <body className="min-h-screen bg-gray-50">
         <NextIntlClientProvider messages={messages}>
           <Navigation isAuthenticated={isAuthenticated} userEmail={userEmail} isAdmin={isAdmin} />
