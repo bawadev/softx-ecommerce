@@ -88,6 +88,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
     linkUrl: currentSlideData.linkUrl,
     onSearchClick: () => setSearchOpen(true),
     colorTheme: currentSlideData.colorTheme,
+    customStyle: currentSlideData.customDesktopStyle,
   }
 
   return (
@@ -176,6 +177,9 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
               title={currentSlideData.title}
               subtitle={currentSlideData.subtitle}
               linkUrl={currentSlideData.linkUrl}
+              animationType={currentSlideData.mobileAnimationType || 'bottom-pill'}
+              colorTheme={currentSlideData.mobileColorTheme || currentSlideData.colorTheme}
+              customStyle={currentSlideData.customMobileStyle || currentSlideData.customDesktopStyle}
               slideIndex={currentSlide}
               slideDirection={slideDirection}
             />

@@ -3,7 +3,14 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
-import type { HeroSlide, HeroAnimationType, PromotionalCategory, HeroColorTheme } from '@/lib/types'
+import type {
+  HeroSlide,
+  HeroAnimationType,
+  HeroMobileAnimationType,
+  PromotionalCategory,
+  HeroColorTheme,
+  CustomPanelStyle,
+} from '@/lib/types'
 import {
   createHeroSlideAction,
   updateHeroSlideAction,
@@ -15,6 +22,7 @@ import ImageUpload from '@/components/ui/ImageUpload'
 import Notification from '@/components/ui/Notification'
 import { shopConfig } from '@/config/shop'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import PanelThemeEditor, { DEFAULT_CUSTOM_STYLE } from '@/components/admin/PanelThemeEditor'
 
 const ANIMATION_OPTIONS: { value: HeroAnimationType; label: string }[] = [
   { value: 'left-panel', label: 'Left Panel' },
@@ -23,9 +31,17 @@ const ANIMATION_OPTIONS: { value: HeroAnimationType; label: string }[] = [
   { value: 'bottom-right-quarter', label: 'Bottom Right Quarter' },
 ]
 
+const MOBILE_ANIMATION_OPTIONS: { value: HeroMobileAnimationType; label: string }[] = [
+  { value: 'bottom-pill', label: 'Bottom Pill (compact, right side)' },
+  { value: 'bottom-full-panel', label: 'Bottom Full Panel (slides up)' },
+  { value: 'top-banner', label: 'Top Banner (slides down)' },
+  { value: 'center-card', label: 'Center Card (scale-in)' },
+]
+
 const COLOR_THEME_OPTIONS: { value: HeroColorTheme; label: string; description: string }[] = [
   { value: 'light', label: 'Light', description: 'White/transparent panels' },
   { value: 'dark', label: 'Dark', description: 'Black/transparent panels' },
+  { value: 'custom', label: 'Custom', description: 'Pick your own colors' },
 ]
 
 interface HeroSlidesClientProps {
@@ -37,7 +53,11 @@ type FormData = {
   imageUrl: string
   mobileImageUrl: string
   animationType: HeroAnimationType
+  mobileAnimationType: HeroMobileAnimationType
   colorTheme: HeroColorTheme
+  mobileColorTheme: HeroColorTheme
+  customDesktopStyle: CustomPanelStyle
+  customMobileStyle: CustomPanelStyle
   badgeText: string
   title: string
   subtitle: string
@@ -49,7 +69,11 @@ const emptyForm: FormData = {
   imageUrl: '',
   mobileImageUrl: '',
   animationType: 'left-panel',
+  mobileAnimationType: 'bottom-pill',
   colorTheme: 'light',
+  mobileColorTheme: 'light',
+  customDesktopStyle: DEFAULT_CUSTOM_STYLE,
+  customMobileStyle: DEFAULT_CUSTOM_STYLE,
   badgeText: '',
   title: '',
   subtitle: '',
@@ -106,7 +130,11 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
       imageUrl: slide.imageUrl,
       mobileImageUrl: slide.mobileImageUrl || '',
       animationType: slide.animationType,
+      mobileAnimationType: slide.mobileAnimationType || 'bottom-pill',
       colorTheme: slide.colorTheme,
+      mobileColorTheme: slide.mobileColorTheme || slide.colorTheme,
+      customDesktopStyle: slide.customDesktopStyle || DEFAULT_CUSTOM_STYLE,
+      customMobileStyle: slide.customMobileStyle || slide.customDesktopStyle || DEFAULT_CUSTOM_STYLE,
       badgeText: slide.badgeText,
       title: slide.title,
       subtitle: slide.subtitle,
@@ -143,7 +171,11 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
           imageUrl: form.imageUrl,
           mobileImageUrl: form.mobileImageUrl || null,
           animationType: form.animationType,
+          mobileAnimationType: form.mobileAnimationType,
           colorTheme: form.colorTheme,
+          mobileColorTheme: form.mobileColorTheme,
+          customDesktopStyle: form.colorTheme === 'custom' ? form.customDesktopStyle : null,
+          customMobileStyle: form.mobileColorTheme === 'custom' ? form.customMobileStyle : null,
           badgeText: form.badgeText,
           title: form.title,
           subtitle: form.subtitle,
@@ -182,8 +214,19 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
         // Create new
         const displayOrder = slides.length
         const result = await createHeroSlideAction({
-          ...form,
+          imageUrl: form.imageUrl,
+          mobileImageUrl: form.mobileImageUrl || undefined,
+          animationType: form.animationType,
+          mobileAnimationType: form.mobileAnimationType,
+          colorTheme: form.colorTheme,
+          mobileColorTheme: form.mobileColorTheme,
+          customDesktopStyle: form.colorTheme === 'custom' ? form.customDesktopStyle : undefined,
+          customMobileStyle: form.mobileColorTheme === 'custom' ? form.customMobileStyle : undefined,
+          badgeText: form.badgeText,
+          title: form.title,
+          subtitle: form.subtitle,
           linkUrl: sanitizedLinkUrl,
+          isActive: form.isActive,
           displayOrder,
         })
 
@@ -582,99 +625,203 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
                 </button>
               </div>
 
-              <div className="space-y-5">
-                {/* Desktop Image Upload */}
-                <ImageUpload
-                  label="Desktop Background Image (landscape, ~1920×1080)"
-                  multiple={false}
-                  maxFiles={1}
-                  initialImages={form.imageUrl ? [form.imageUrl] : []}
-                  onUploadComplete={(urls) => {
-                    setForm((prev) => ({ ...prev, imageUrl: urls[0] || '' }))
-                  }}
-                />
-
-                {/* Mobile Image Upload (optional) */}
-                <ImageUpload
-                  label="Mobile Background Image — optional (portrait, ~1080×1440). Falls back to desktop image if empty."
-                  multiple={false}
-                  maxFiles={1}
-                  initialImages={form.mobileImageUrl ? [form.mobileImageUrl] : []}
-                  onUploadComplete={(urls) => {
-                    setForm((prev) => ({ ...prev, mobileImageUrl: urls[0] || '' }))
-                  }}
-                />
-
-                {/* Animation Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Animation Type
-                  </label>
-                  <select
-                    value={form.animationType}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        animationType: e.target.value as HeroAnimationType,
-                      }))
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
-                  >
-                    {ANIMATION_OPTIONS.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Color Theme */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Panel Color Theme
-                  </label>
-                  <div className="space-y-2">
-                    {COLOR_THEME_OPTIONS.map((opt) => (
-                      <label
-                        key={opt.value}
-                        className={`flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${
-                          form.colorTheme === opt.value
-                            ? 'border-black-700 bg-gray-50'
-                            : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="colorTheme"
-                          value={opt.value}
-                          checked={form.colorTheme === opt.value}
-                          onChange={(e) =>
-                            setForm((prev) => ({
-                              ...prev,
-                              colorTheme: e.target.value as HeroColorTheme,
-                            }))
-                          }
-                          className="h-4 w-4 text-black-700 focus:ring-black-700"
-                        />
-                        <div className="flex-1">
-                          <div className="font-medium text-sm text-black-700">{opt.label}</div>
-                          <div className="text-xs text-gray-500">{opt.description}</div>
-                        </div>
-                        <div
-                          className={`w-16 h-10 rounded ${
-                            opt.value === 'light'
-                              ? 'bg-gradient-to-br from-white/80 to-transparent border border-gray-300'
-                              : 'bg-gradient-to-br from-black/80 to-transparent border border-gray-600'
-                          }`}
-                          title="Preview"
-                        />
-                      </label>
-                    ))}
+              <div className="space-y-6">
+                {/* ── Desktop Section ── */}
+                <section className="border border-gray-200 rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Desktop Slide
+                    </h3>
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Choose the panel color based on your background image contrast
-                  </p>
-                </div>
+
+                  <ImageUpload
+                    label="Desktop Background Image (landscape, ~1920×1080)"
+                    multiple={false}
+                    maxFiles={1}
+                    initialImages={form.imageUrl ? [form.imageUrl] : []}
+                    onUploadComplete={(urls) => {
+                      setForm((prev) => ({ ...prev, imageUrl: urls[0] || '' }))
+                    }}
+                  />
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Desktop Animation Type
+                    </label>
+                    <select
+                      value={form.animationType}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          animationType: e.target.value as HeroAnimationType,
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
+                    >
+                      {ANIMATION_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Desktop Panel Color Theme
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {COLOR_THEME_OPTIONS.map((opt) => (
+                        <label
+                          key={opt.value}
+                          className={`flex flex-col items-center gap-1 p-2 border rounded-lg cursor-pointer transition-colors ${
+                            form.colorTheme === opt.value
+                              ? 'border-black-700 bg-gray-50 ring-2 ring-black-700/20'
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="colorTheme"
+                            value={opt.value}
+                            checked={form.colorTheme === opt.value}
+                            onChange={(e) =>
+                              setForm((prev) => ({
+                                ...prev,
+                                colorTheme: e.target.value as HeroColorTheme,
+                              }))
+                            }
+                            className="sr-only"
+                          />
+                          <div
+                            className={`w-full h-10 rounded ${
+                              opt.value === 'light'
+                                ? 'bg-gradient-to-br from-white/80 to-transparent border border-gray-300'
+                                : opt.value === 'dark'
+                                ? 'bg-gradient-to-br from-black/80 to-transparent border border-gray-600'
+                                : 'bg-gradient-to-br from-purple-400 via-pink-400 to-orange-300 border border-gray-300'
+                            }`}
+                            title="Preview"
+                          />
+                          <span className="text-xs font-medium text-gray-900">{opt.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {form.colorTheme === 'custom' && (
+                    <PanelThemeEditor
+                      label="Desktop Custom Theme"
+                      value={form.customDesktopStyle}
+                      onChange={(style) => setForm((prev) => ({ ...prev, customDesktopStyle: style }))}
+                      previewTitle={form.title || 'Hero title preview'}
+                      previewSubtitle={form.subtitle || 'Subtitle preview'}
+                    />
+                  )}
+                </section>
+
+                {/* ── Mobile Section ── */}
+                <section className="border border-gray-200 rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      Mobile Slide
+                    </h3>
+                    <span className="text-xs text-gray-500">
+                      Falls back to desktop when a field is empty
+                    </span>
+                  </div>
+
+                  <ImageUpload
+                    label="Mobile Background Image — optional (portrait, ~1080×1440)"
+                    multiple={false}
+                    maxFiles={1}
+                    initialImages={form.mobileImageUrl ? [form.mobileImageUrl] : []}
+                    onUploadComplete={(urls) => {
+                      setForm((prev) => ({ ...prev, mobileImageUrl: urls[0] || '' }))
+                    }}
+                  />
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Mobile Animation Type
+                    </label>
+                    <select
+                      value={form.mobileAnimationType}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          mobileAnimationType: e.target.value as HeroMobileAnimationType,
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
+                    >
+                      {MOBILE_ANIMATION_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Mobile Panel Color Theme
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {COLOR_THEME_OPTIONS.map((opt) => (
+                        <label
+                          key={opt.value}
+                          className={`flex flex-col items-center gap-1 p-2 border rounded-lg cursor-pointer transition-colors ${
+                            form.mobileColorTheme === opt.value
+                              ? 'border-black-700 bg-gray-50 ring-2 ring-black-700/20'
+                              : 'border-gray-300 hover:border-gray-400'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="mobileColorTheme"
+                            value={opt.value}
+                            checked={form.mobileColorTheme === opt.value}
+                            onChange={(e) =>
+                              setForm((prev) => ({
+                                ...prev,
+                                mobileColorTheme: e.target.value as HeroColorTheme,
+                              }))
+                            }
+                            className="sr-only"
+                          />
+                          <div
+                            className={`w-full h-10 rounded ${
+                              opt.value === 'light'
+                                ? 'bg-gradient-to-br from-white/80 to-transparent border border-gray-300'
+                                : opt.value === 'dark'
+                                ? 'bg-gradient-to-br from-black/80 to-transparent border border-gray-600'
+                                : 'bg-gradient-to-br from-purple-400 via-pink-400 to-orange-300 border border-gray-300'
+                            }`}
+                            title="Preview"
+                          />
+                          <span className="text-xs font-medium text-gray-900">{opt.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {form.mobileColorTheme === 'custom' && (
+                    <PanelThemeEditor
+                      label="Mobile Custom Theme"
+                      value={form.customMobileStyle}
+                      onChange={(style) => setForm((prev) => ({ ...prev, customMobileStyle: style }))}
+                      previewTitle={form.title || 'Hero title preview'}
+                      previewSubtitle={form.subtitle || 'Subtitle preview'}
+                    />
+                  )}
+                </section>
 
                 {/* Title */}
                 <div>

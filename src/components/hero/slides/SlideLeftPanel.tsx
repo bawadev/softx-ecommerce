@@ -8,13 +8,13 @@ import {
   leftPanelChildVariants,
   leftPanelStagger,
   reducedMotionVariants,
-  colorThemes,
+  resolveTheme,
 } from '../heroAnimationConfig'
 
-export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick, colorTheme = 'light' }: HeroSlideProps) {
+export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick, colorTheme = 'light', customStyle }: HeroSlideProps) {
   const shouldReduce = useReducedMotion()
   const variants = shouldReduce ? reducedMotionVariants : leftPanelVariants
-  const theme = colorThemes[colorTheme]
+  const theme = resolveTheme(colorTheme, customStyle)
 
   return (
     <motion.div
@@ -46,8 +46,8 @@ export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 sm:mb-4 leading-[1.2] tracking-tight"
           >
             <span
-              className="block text-white drop-shadow-2xl"
-              style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
+              className="block drop-shadow-2xl"
+              style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone', color: theme.text }}
             >
               {title}
             </span>
@@ -56,7 +56,8 @@ export default function SlideLeftPanel({ title, subtitle, linkUrl, onSearchClick
           {/* Subtitle */}
           <motion.p
             variants={shouldReduce ? undefined : leftPanelChildVariants}
-            className="text-base sm:text-lg md:text-xl text-white drop-shadow-md max-w-md leading-relaxed font-light"
+            className="text-base sm:text-lg md:text-xl drop-shadow-md max-w-md leading-relaxed font-light"
+            style={{ color: theme.text }}
           >
             {subtitle}
           </motion.p>

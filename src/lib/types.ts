@@ -159,14 +159,29 @@ export interface ProductView {
 
 // Hero slides
 export type HeroAnimationType = 'left-panel' | 'top-left-round' | 'top-right-panel' | 'bottom-right-quarter'
-export type HeroColorTheme = 'light' | 'dark'
+export type HeroMobileAnimationType = 'bottom-pill' | 'bottom-full-panel' | 'top-banner' | 'center-card'
+export type HeroColorTheme = 'light' | 'dark' | 'custom'
+
+export interface CustomPanelStyle {
+  textColor: string          // e.g. '#ffffff'
+  panelColor: string         // e.g. '#000000'
+  panelOpacity: number       // 0-100
+  borderEnabled: boolean
+  borderColor: string        // e.g. '#ffffff'
+  borderOpacity: number      // 0-100
+  borderWidth: number        // px, typically 0-4
+}
 
 export interface HeroSlide {
   id: string
   imageUrl: string
   mobileImageUrl?: string
   animationType: HeroAnimationType
+  mobileAnimationType?: HeroMobileAnimationType
   colorTheme: HeroColorTheme
+  mobileColorTheme?: HeroColorTheme      // falls back to desktop colorTheme if empty
+  customDesktopStyle?: CustomPanelStyle  // required when colorTheme === 'custom'
+  customMobileStyle?: CustomPanelStyle   // required when mobileColorTheme === 'custom'
   badgeText: string
   title: string
   subtitle: string

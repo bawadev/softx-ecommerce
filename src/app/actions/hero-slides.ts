@@ -3,7 +3,7 @@
 import { getSession } from '@/lib/db'
 import { getCurrentUser } from '@/lib/auth'
 import { deleteFile } from '@/lib/minio'
-import { ActionResponse, HeroSlide, HeroAnimationType, HeroColorTheme } from '@/lib/types'
+import { ActionResponse, HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@/lib/types'
 import * as heroSlideRepo from '@/lib/repositories/hero-slide.repository'
 
 /**
@@ -36,7 +36,11 @@ export async function createHeroSlideAction(data: {
   imageUrl: string
   mobileImageUrl?: string
   animationType: HeroAnimationType
+  mobileAnimationType?: HeroMobileAnimationType
   colorTheme?: HeroColorTheme
+  mobileColorTheme?: HeroColorTheme
+  customDesktopStyle?: CustomPanelStyle
+  customMobileStyle?: CustomPanelStyle
   badgeText: string
   title: string
   subtitle: string
@@ -76,7 +80,11 @@ export async function updateHeroSlideAction(
     imageUrl: string
     mobileImageUrl: string | null
     animationType: HeroAnimationType
+    mobileAnimationType: HeroMobileAnimationType | null
     colorTheme: HeroColorTheme
+    mobileColorTheme: HeroColorTheme | null
+    customDesktopStyle: CustomPanelStyle | null
+    customMobileStyle: CustomPanelStyle | null
     badgeText: string
     title: string
     subtitle: string

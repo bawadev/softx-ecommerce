@@ -1,5 +1,5 @@
 import { Session } from 'neo4j-driver'
-import { HeroSlide, HeroAnimationType, HeroColorTheme } from '@/lib/types'
+import { HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@/lib/types'
 
 /**
  * Helper function to safely convert Neo4j integers to JavaScript numbers
@@ -11,6 +11,25 @@ function toNumber(value: any): number {
   return Number(value)
 }
 
+function parseCustomStyle(raw: any): CustomPanelStyle | undefined {
+  if (!raw) return undefined
+  try {
+    const v = typeof raw === 'string' ? JSON.parse(raw) : raw
+    if (!v || typeof v !== 'object') return undefined
+    return {
+      textColor: v.textColor || '#ffffff',
+      panelColor: v.panelColor || '#000000',
+      panelOpacity: typeof v.panelOpacity === 'number' ? v.panelOpacity : toNumber(v.panelOpacity ?? 35),
+      borderEnabled: !!v.borderEnabled,
+      borderColor: v.borderColor || '#ffffff',
+      borderOpacity: typeof v.borderOpacity === 'number' ? v.borderOpacity : toNumber(v.borderOpacity ?? 15),
+      borderWidth: typeof v.borderWidth === 'number' ? v.borderWidth : toNumber(v.borderWidth ?? 1),
+    }
+  } catch {
+    return undefined
+  }
+}
+
 /**
  * Map a Neo4j record to a HeroSlide object
  */
@@ -20,7 +39,11 @@ function mapToHeroSlide(properties: any): HeroSlide {
     imageUrl: properties.imageUrl,
     mobileImageUrl: properties.mobileImageUrl || undefined,
     animationType: properties.animationType as HeroAnimationType,
+    mobileAnimationType: (properties.mobileAnimationType || undefined) as HeroMobileAnimationType | undefined,
     colorTheme: (properties.colorTheme || 'light') as HeroColorTheme,
+    mobileColorTheme: (properties.mobileColorTheme || undefined) as HeroColorTheme | undefined,
+    customDesktopStyle: parseCustomStyle(properties.customDesktopStyle),
+    customMobileStyle: parseCustomStyle(properties.customMobileStyle),
     badgeText: properties.badgeText,
     title: properties.title,
     subtitle: properties.subtitle,
@@ -86,7 +109,11 @@ export async function createHeroSlide(
     imageUrl: string
     mobileImageUrl?: string
     animationType: HeroAnimationType
+    mobileAnimationType?: HeroMobileAnimationType
     colorTheme?: HeroColorTheme
+    mobileColorTheme?: HeroColorTheme
+    customDesktopStyle?: CustomPanelStyle
+    customMobileStyle?: CustomPanelStyle
     badgeText: string
     title: string
     subtitle: string
@@ -102,7 +129,11 @@ export async function createHeroSlide(
       imageUrl: $imageUrl,
       mobileImageUrl: $mobileImageUrl,
       animationType: $animationType,
+      mobileAnimationType: $mobileAnimationType,
       colorTheme: $colorTheme,
+      mobileColorTheme: $mobileColorTheme,
+      customDesktopStyle: $customDesktopStyle,
+      customMobileStyle: $customMobileStyle,
       badgeText: $badgeText,
       title: $title,
       subtitle: $subtitle,
@@ -118,7 +149,11 @@ export async function createHeroSlide(
       imageUrl: data.imageUrl,
       mobileImageUrl: data.mobileImageUrl || null,
       animationType: data.animationType,
+      mobileAnimationType: data.mobileAnimationType || null,
       colorTheme: data.colorTheme || 'light',
+      mobileColorTheme: data.mobileColorTheme || null,
+      customDesktopStyle: data.customDesktopStyle ? JSON.stringify(data.customDesktopStyle) : null,
+      customMobileStyle: data.customMobileStyle ? JSON.stringify(data.customMobileStyle) : null,
       badgeText: data.badgeText,
       title: data.title,
       subtitle: data.subtitle,
@@ -142,7 +177,11 @@ export async function updateHeroSlide(
     imageUrl: string
     mobileImageUrl: string | null
     animationType: HeroAnimationType
+    mobileAnimationType: HeroMobileAnimationType | null
     colorTheme: HeroColorTheme
+    mobileColorTheme: HeroColorTheme | null
+    customDesktopStyle: CustomPanelStyle | null
+    customMobileStyle: CustomPanelStyle | null
     badgeText: string
     title: string
     subtitle: string
@@ -166,9 +205,25 @@ export async function updateHeroSlide(
     updates.push('h.animationType = $animationType')
     params.animationType = data.animationType
   }
+  if (data.mobileAnimationType !== undefined) {
+    updates.push('h.mobileAnimationType = $mobileAnimationType')
+    params.mobileAnimationType = data.mobileAnimationType || null
+  }
   if (data.colorTheme !== undefined) {
     updates.push('h.colorTheme = $colorTheme')
     params.colorTheme = data.colorTheme
+  }
+  if (data.mobileColorTheme !== undefined) {
+    updates.push('h.mobileColorTheme = $mobileColorTheme')
+    params.mobileColorTheme = data.mobileColorTheme || null
+  }
+  if (data.customDesktopStyle !== undefined) {
+    updates.push('h.customDesktopStyle = $customDesktopStyle')
+    params.customDesktopStyle = data.customDesktopStyle ? JSON.stringify(data.customDesktopStyle) : null
+  }
+  if (data.customMobileStyle !== undefined) {
+    updates.push('h.customMobileStyle = $customMobileStyle')
+    params.customMobileStyle = data.customMobileStyle ? JSON.stringify(data.customMobileStyle) : null
   }
   if (data.badgeText !== undefined) {
     updates.push('h.badgeText = $badgeText')

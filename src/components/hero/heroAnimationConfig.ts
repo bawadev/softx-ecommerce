@@ -1,4 +1,18 @@
 import type { Variants, Transition } from 'framer-motion'
+import type { CustomPanelStyle, HeroColorTheme } from '@/lib/types'
+
+export interface ResolvedTheme {
+  bgGradient: string
+  bgGradientRadial: string
+  border: string
+  borderHover: string
+  buttonBg: string
+  buttonBgHover: string
+  buttonBorder: string
+  text: string
+  textMuted: string
+  textLink: string
+}
 
 // ── Props interface shared by all slide components ──
 export interface HeroSlideProps {
@@ -6,11 +20,12 @@ export interface HeroSlideProps {
   subtitle: string
   linkUrl?: string
   onSearchClick: () => void
-  colorTheme?: 'light' | 'dark'
+  colorTheme?: HeroColorTheme
+  customStyle?: CustomPanelStyle
 }
 
 // ── Color theme configurations ──
-export const colorThemes = {
+export const colorThemes: Record<'light' | 'dark', ResolvedTheme> = {
   light: {
     bgGradient: 'rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.06) 60%, transparent 100%',
     bgGradientRadial: 'rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 60%, transparent 100%',
@@ -35,7 +50,53 @@ export const colorThemes = {
     textMuted: 'rgba(255,255,255,0.70)',
     textLink: 'rgba(255,255,255,0.80)',
   },
-} as const
+}
+
+/** Parse hex (#rrggbb or #rgb) into {r,g,b}. Falls back to black. */
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const h = (hex || '').trim().replace('#', '')
+  if (h.length === 3) {
+    return { r: parseInt(h[0] + h[0], 16), g: parseInt(h[1] + h[1], 16), b: parseInt(h[2] + h[2], 16) }
+  }
+  if (h.length === 6) {
+    return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) }
+  }
+  return { r: 0, g: 0, b: 0 }
+}
+
+function rgba(hex: string, alpha: number): string {
+  const { r, g, b } = hexToRgb(hex)
+  const a = Math.max(0, Math.min(1, alpha))
+  return `rgba(${r},${g},${b},${a})`
+}
+
+/** Convert a CustomPanelStyle into the same ResolvedTheme shape slide components expect. */
+function customThemeFromStyle(style: CustomPanelStyle): ResolvedTheme {
+  const panelAlpha = Math.max(0, Math.min(1, style.panelOpacity / 100))
+  const borderAlpha = Math.max(0, Math.min(1, style.borderOpacity / 100))
+  const panelAt = (mult: number) => rgba(style.panelColor, panelAlpha * mult)
+  const borderRgba = style.borderEnabled ? rgba(style.borderColor, borderAlpha) : 'transparent'
+
+  return {
+    bgGradient: `${panelAt(1)} 0%, ${panelAt(0.75)} 60%, transparent 100%`,
+    bgGradientRadial: `${panelAt(1.1)} 0%, ${panelAt(0.8)} 60%, transparent 100%`,
+    border: borderRgba,
+    borderHover: style.borderEnabled ? rgba(style.borderColor, Math.min(1, borderAlpha * 1.5)) : 'transparent',
+    buttonBg: panelAt(0.7),
+    buttonBgHover: panelAt(1.1),
+    buttonBorder: borderRgba,
+    text: style.textColor,
+    textMuted: rgba(style.textColor, 0.7),
+    textLink: rgba(style.textColor, 0.85),
+  }
+}
+
+/** Pick the right resolved theme for a slide context. */
+export function resolveTheme(colorTheme: HeroColorTheme | undefined, customStyle: CustomPanelStyle | undefined): ResolvedTheme {
+  if (colorTheme === 'custom' && customStyle) return customThemeFromStyle(customStyle)
+  if (colorTheme === 'dark') return colorThemes.dark
+  return colorThemes.light
+}
 
 // ── Timing constants ──
 export const SLIDE_INTERVAL = 6000 // ms per full cycle
@@ -199,4 +260,49 @@ export const mobilePillVariants: Variants = {
     opacity: 0,
     transition: { duration: 0.3, ease: 'easeIn' },
   }),
+}
+
+// ── Mobile: Full-width bottom panel (slides up from below) ──
+export const mobileBottomPanelVariants: Variants = {
+  initial: { y: '100%', opacity: 0 },
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 90, damping: 18 },
+  },
+  exit: {
+    y: '100%',
+    opacity: 0,
+    transition: { duration: 0.35, ease: 'easeIn' },
+  },
+}
+
+// ── Mobile: Top banner (slides down from top) ──
+export const mobileTopBannerVariants: Variants = {
+  initial: { y: '-100%', opacity: 0 },
+  animate: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 100, damping: 18 },
+  },
+  exit: {
+    y: '-100%',
+    opacity: 0,
+    transition: { duration: 0.35, ease: 'easeIn' },
+  },
+}
+
+// ── Mobile: Center card (scale-in) ──
+export const mobileCenterCardVariants: Variants = {
+  initial: { scale: 0.8, opacity: 0 },
+  animate: {
+    scale: 1,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 140, damping: 18 },
+  },
+  exit: {
+    scale: 0.9,
+    opacity: 0,
+    transition: { duration: 0.3, ease: 'easeIn' },
+  },
 }

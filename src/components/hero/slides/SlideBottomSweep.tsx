@@ -8,13 +8,13 @@ import {
   bottomSweepChildVariants,
   bottomSweepStagger,
   reducedMotionVariants,
-  colorThemes,
+  resolveTheme,
 } from '../heroAnimationConfig'
 
-export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchClick, colorTheme = 'light' }: HeroSlideProps) {
+export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchClick, colorTheme = 'light', customStyle }: HeroSlideProps) {
   const shouldReduce = useReducedMotion()
   const variants = shouldReduce ? reducedMotionVariants : bottomSweepVariants
-  const theme = colorThemes[colorTheme]
+  const theme = resolveTheme(colorTheme, customStyle)
 
   return (
     <motion.div
@@ -49,8 +49,8 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
           className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 leading-[1.2] tracking-tight"
         >
           <span
-            className="block text-white drop-shadow-2xl"
-            style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone' }}
+            className="block drop-shadow-2xl"
+            style={{ WebkitBoxDecorationBreak: 'clone', boxDecorationBreak: 'clone', color: theme.text }}
           >
             {title}
           </span>
@@ -59,7 +59,8 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
         {/* Subtitle */}
         <motion.p
           variants={shouldReduce ? undefined : bottomSweepChildVariants}
-          className="text-sm sm:text-base md:text-lg text-white drop-shadow-md leading-relaxed font-light"
+          className="text-sm sm:text-base md:text-lg drop-shadow-md leading-relaxed font-light"
+          style={{ color: theme.text }}
         >
           {subtitle}
         </motion.p>
