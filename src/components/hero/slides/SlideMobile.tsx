@@ -91,7 +91,7 @@ export default function SlideMobile({
   const content = (
     <div className="flex-1 min-w-0">
       <h2
-        className={`${titleSize} font-display leading-[0.95] tracking-tight uppercase line-clamp-2 mb-1`}
+        className={`${titleSize} font-display leading-[0.95] tracking-wide uppercase line-clamp-2 mb-1`}
         style={{ color: theme.text }}
       >
         {title}

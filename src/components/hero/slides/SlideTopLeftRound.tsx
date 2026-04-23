@@ -43,7 +43,7 @@ export default function SlideTopLeftRound({ title, subtitle, linkUrl, onSearchCl
         {/* Title */}
         <motion.h1
           variants={shouldReduce ? undefined : topLeftRoundChildVariants}
-          className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3 leading-[0.95] tracking-tight uppercase"
+          className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-3 leading-[0.95] tracking-wide uppercase"
         >
           <span
             className="block drop-shadow-2xl"
