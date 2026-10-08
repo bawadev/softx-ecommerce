@@ -18,6 +18,6 @@ deployKamalApp(
     accessories:   ['neo4j', 'minio'],
     buildArgs: [
         dev:  [NEXT_PUBLIC_MINIO_URL: 'http://95.111.252.20:9000', NEXT_PUBLIC_APP_URL: 'https://dev.locked.lk'],
-        prod: [NEXT_PUBLIC_MINIO_URL: 'https://minio.locked.softx.world', NEXT_PUBLIC_APP_URL: 'https://locked-demo.softx.world']
+        prod: [NEXT_PUBLIC_MINIO_URL: 'https://cdn.locked-demo.softx.world', NEXT_PUBLIC_APP_URL: 'https://locked-demo.softx.world']
     ]
 )
