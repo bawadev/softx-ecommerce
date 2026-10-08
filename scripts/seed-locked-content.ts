@@ -14,7 +14,7 @@ dotenv.config({ path: '.env.local' })
 
 const IMAGES_DIR = '/tmp/locked-images'
 const BUCKET = process.env.MINIO_BUCKET_NAME || 'product-images'
-const MINIO_PUBLIC_URL = process.env.NEXT_PUBLIC_MINIO_URL || 'https://cdn.locked.lk'
+const MINIO_PUBLIC_URL = process.env.NEXT_PUBLIC_MINIO_URL || 'https://minio.locked.softx.world'
 
 const minioClient = new Minio.Client({
   endPoint: process.env.MINIO_ENDPOINT || 'localhost',
