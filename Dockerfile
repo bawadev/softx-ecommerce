@@ -4,9 +4,8 @@ FROM node:22-alpine AS base
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json ./
-RUN if [ -f package-lock.json ]; then cp package-lock.json .; fi
-RUN npm install --force
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Build the application
 FROM base AS builder
