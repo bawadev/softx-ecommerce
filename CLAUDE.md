@@ -123,11 +123,10 @@ apps/factorybay/src/
 │       └── recommendation.repository.ts
 ├── i18n/
 │   └── request.ts             # i18n configuration
-├── middleware.ts              # next-intl locale handling
-└── messages/
-    ├── en.json                # English translations
-    └── si.json                # Sinhala translations
+└── middleware.ts              # next-intl locale handling
 ```
+
+(`messages/` lives at `apps/factorybay/messages/` — a sibling of `src/`, not inside it.)
 
 ## Database Architecture
 
@@ -211,7 +210,7 @@ Next.js Server Actions in `apps/factorybay/src/app/actions/` provide the API lay
 ### Internationalization (i18n)
 - All routes prefixed with locale: `/en/shop`, `/si/shop`
 - Middleware handles locale detection (`apps/factorybay/src/middleware.ts`)
-- Translations in `messages/en.json` and `messages/si.json`
+- Translations in `apps/factorybay/messages/en.json` and `apps/factorybay/messages/si.json`
 - Use `useTranslations()` hook in client components
 - Server components: import translations via `getTranslations()`
 
@@ -280,7 +279,7 @@ npm run minio:init
 ### Testing Database Queries
 Use `tsx` to run TypeScript files directly:
 ```bash
-tsx scripts/your-test-script.ts
+tsx apps/factorybay/scripts/your-test-script.ts
 ```
 
 ### Debugging
@@ -346,4 +345,4 @@ Many documentation files (MD files) have been deleted from git. Avoid recreating
 - `README.md` - Project overview and quick start
 - `STYLE_GUIDE.md` - Design system and component specifications
 - `docker-compose.yml` - Service configuration
-- `.env.example` - Environment variable template
+- `apps/factorybay/.env.example` - Environment variable template

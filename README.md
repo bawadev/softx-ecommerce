@@ -53,8 +53,8 @@ git clone <your-repo>
 cd softx-ecommerce
 npm install
 
-# 2. Copy environment variables
-cp .env.example .env.local
+# 2. Copy environment variables (Next.js loads .env files from apps/factorybay)
+cp apps/factorybay/.env.example apps/factorybay/.env.local
 
 # 3. Start everything!
 ./setup.sh start
@@ -250,10 +250,10 @@ softx-ecommerce/
 │       ├── auth.ts          # Authentication
 │       ├── types.ts         # TypeScript types
 │       └── repositories/    # Database operations
-├── scripts/                 # Database scripts
-├── public/                  # Static assets
-├── .env.local              # Environment variables
-└── package.json            # Dependencies
+├── apps/factorybay/scripts/ # Database scripts
+├── apps/factorybay/public/  # Static assets
+├── apps/factorybay/.env.local # Environment variables (loaded from the app dir)
+└── package.json            # npm workspaces root (app deps in apps/factorybay/package.json)
 ```
 
 ---
