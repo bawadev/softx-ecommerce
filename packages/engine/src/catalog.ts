@@ -10,6 +10,9 @@ import * as heroRepo from './repositories/hero-slide.repository'
 
 const { ok, err } = v1
 
+/** Explicit cap for promo-category product listings; matches ListProductsQuerySchema's max (the repo would otherwise silently default to 20). */
+const PROMO_CATEGORY_PRODUCT_LIMIT = 200
+
 /**
  * Catalog service v1. Maps the engine's repositories (raw Neo4j shapes,
  * deprecated fields, major-unit prices) onto the `v1.CatalogService`
@@ -158,7 +161,7 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
     async listProductsByPromotionalCategory(categoryId) {
       try {
         const products = await withSession((session) =>
-          promoRepo.getProductsByCategory(session, categoryId)
+          promoRepo.getProductsByCategory(session, categoryId, PROMO_CATEGORY_PRODUCT_LIMIT)
         )
         return ok(products.map((p) => toProductDTO(p, currency)))
       } catch (e) {
