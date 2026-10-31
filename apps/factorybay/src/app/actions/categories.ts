@@ -154,7 +154,7 @@ export async function getFeaturedCategoriesAction() {
     if (!r.ok) {
       return { success: false, message: r.error.message }
     }
-    return { success: true, data: collectFromTree(r.data, (node) => node.isFeatured) }
+    return { success: true, data: collectFromTree(r.data, (node) => node.isFeatured && node.isActive) }
   } catch (error: unknown) {
     console.error('Error fetching featured categories:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch featured categories' }

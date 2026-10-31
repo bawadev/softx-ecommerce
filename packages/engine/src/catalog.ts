@@ -13,6 +13,9 @@ const { ok, err } = v1
 /** Explicit cap for promo-category product listings; matches ListProductsQuerySchema's max (the repo would otherwise silently default to 20). */
 const PROMO_CATEGORY_PRODUCT_LIMIT = 200
 
+/** Newest-first cap for category product listings; parity with the pre-contract inline Cypher (ORDER BY p.createdAt DESC LIMIT 50) the app's category browsing relied on. */
+const CATEGORY_PRODUCTS_LIMIT = 50
+
 /**
  * Catalog service v1. Maps the engine's repositories (raw Neo4j shapes,
  * deprecated fields, major-unit prices) onto the `v1.CatalogService`
@@ -107,6 +110,9 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
         return ok(
           products
             .filter((p): p is productRepo.ProductWithVariants => p !== null)
+            // Newest first, capped — parity with the pre-contract behavior.
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .slice(0, CATEGORY_PRODUCTS_LIMIT)
             .map((p) => toProductDTO(p, currency))
         )
       } catch (e) {

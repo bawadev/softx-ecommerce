@@ -1,5 +1,5 @@
 import { v1 } from '@softx/contract'
-import type { ProductWithVariants } from '@softx/engine'
+import { convertNeo4jIntegers, type ProductWithVariants } from '@softx/engine'
 
 /**
  * Adapter: repository product → v1.ProductDTO.
@@ -9,21 +9,26 @@ import type { ProductWithVariants } from '@softx/engine'
  * Removed when those paths move onto the engine (Phase 5).
  */
 export function toProductDTO(p: ProductWithVariants): v1.ProductDTO {
+  // The feeding repositories return raw Neo4j records, so integer properties
+  // — variant stockQuantity today — arrive as Neo4j Integer objects, which
+  // fail the contract's z.number().int() validation. Normalize defensively
+  // before mapping (same treatment as the engine's catalog mapper).
+  const src = convertNeo4jIntegers(p)
   return {
-    id: p.id,
-    name: p.name,
-    description: p.description,
-    brand: p.brand,
-    gender: p.gender,
-    sku: p.sku,
+    id: src.id,
+    name: src.name,
+    description: src.description,
+    brand: src.brand,
+    gender: src.gender,
+    sku: src.sku,
     price: {
-      stock: v1.fromMajorAmount(p.stockPrice, defaultCurrency()),
-      retail: v1.fromMajorAmount(p.retailPrice, defaultCurrency()),
+      stock: v1.fromMajorAmount(src.stockPrice, defaultCurrency()),
+      retail: v1.fromMajorAmount(src.retailPrice, defaultCurrency()),
     },
-    images: p.images ?? [],
-    createdAt: p.createdAt,
-    updatedAt: p.updatedAt,
-    variants: p.variants.map((v) => ({
+    images: src.images ?? [],
+    createdAt: src.createdAt,
+    updatedAt: src.updatedAt,
+    variants: src.variants.map((v) => ({
       id: v.id,
       size: v.size,
       color: v.color,
