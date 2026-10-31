@@ -1,3 +1,7 @@
 export * from './core/result'
 export * from './core/money'
 export * from './core/paged'
+export * from './catalog/product.dto'
+export * from './catalog/category.dto'
+export * from './catalog/promotional-category.dto'
+export * from './catalog/hero-slide.dto'
