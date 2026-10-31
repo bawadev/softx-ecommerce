@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
-import type { OrderWithItems } from '@/lib/repositories/order.repository'
+import type { OrderWithItems } from '@softx/engine'
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 import { shopConfig } from '@/config/shop'
 

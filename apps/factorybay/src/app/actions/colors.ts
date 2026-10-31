@@ -1,8 +1,8 @@
 'use server'
 
-import { getSession } from '@/lib/db'
+import { getSession } from '@softx/engine'
 import { isAdmin } from '@/lib/auth'
-import * as colorRepo from '@/lib/repositories/color.repository'
+import * as colorRepo from '@softx/engine'
 import { FASHION_COLORS } from '@/lib/color-utils'
 
 /**

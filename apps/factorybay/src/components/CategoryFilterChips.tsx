@@ -1,6 +1,6 @@
 'use client'
 
-import { ProductCategory } from '@/lib/types'
+import { ProductCategory } from '@softx/engine'
 
 interface CategoryFilterChipsProps {
   selectedCategories: ProductCategory[]

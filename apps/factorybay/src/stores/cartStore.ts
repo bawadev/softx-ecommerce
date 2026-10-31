@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { CartItemWithDetails } from '@/lib/repositories/cart.repository'
+import type { CartItemWithDetails } from '@softx/engine'
 import {
   addToCartAction,
   removeFromCartAction,

@@ -14,8 +14,8 @@ import {
   addProductImage,
   removeProductImage,
   type ProductWithVariants,
-} from '@/lib/repositories/product.repository'
-import type { ActionResponse, Product, ProductVariant } from '@/lib/types'
+} from '@softx/engine'
+import type { ActionResponse, Product, ProductVariant } from '@softx/engine'
 
 /**
  * Get all products for admin view
@@ -332,7 +332,7 @@ export async function addVariantImageAction(
 
   try {
     // Get current variant to access existing images
-    const { getVariantById } = await import('@/lib/repositories/product.repository')
+    const { getVariantById } = await import('@softx/engine')
     const variant = await getVariantById(variantId)
 
     if (!variant) {
@@ -378,7 +378,7 @@ export async function removeVariantImageAction(
 
   try {
     // Get current variant to access existing images
-    const { getVariantById } = await import('@/lib/repositories/product.repository')
+    const { getVariantById } = await import('@softx/engine')
     const variant = await getVariantById(variantId)
 
     if (!variant) {

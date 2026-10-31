@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from 'next-intl'
-import { PromotionalCategory } from '@/lib/types'
-import { ProductWithVariants } from '@/lib/repositories/product.repository'
+import { PromotionalCategory } from '@softx/engine'
+import { ProductWithVariants } from '@softx/engine'
 import {
   createPromotionalCategoryAction,
   updatePromotionalCategoryAction,

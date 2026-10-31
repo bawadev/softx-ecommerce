@@ -9,8 +9,8 @@ import {
   getCategoryByIdAction,
 } from '@/app/actions/categories'
 import ProductGrid from '@/components/products/ProductGrid'
-import { ProductWithVariants } from '@/lib/repositories/product.repository'
-import { PromotionalCategory } from '@/lib/types'
+import { ProductWithVariants } from '@softx/engine'
+import { PromotionalCategory } from '@softx/engine'
 
 export default async function ShopPage({
   searchParams,

@@ -7,7 +7,7 @@
  * Input/output shape matches CustomPanelStyle — hex colors + 0-100 opacity fields.
  */
 
-import type { CustomPanelStyle } from '@/lib/types'
+import type { CustomPanelStyle } from '@softx/engine'
 
 export const DEFAULT_CUSTOM_STYLE: CustomPanelStyle = {
   textColor: '#ffffff',

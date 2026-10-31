@@ -10,7 +10,7 @@ import {
   getCategoryStatisticsAction,
   findDuplicateNamesAction
 } from '@/app/actions/categories'
-import type { CategoryWithChildren, CategoryTree } from '@/lib/repositories/category.repository'
+import type { CategoryWithChildren, CategoryTree } from '@softx/engine'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 export default function CategoriesClient() {

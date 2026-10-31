@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import CartItem from '@/components/cart/CartItem'
-import type { CartItemWithDetails } from '@/lib/repositories/cart.repository'
+import type { CartItemWithDetails } from '@softx/engine'
 import { useCartStore } from '@/stores/cartStore'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 

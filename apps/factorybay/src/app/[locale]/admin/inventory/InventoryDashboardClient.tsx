@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from 'next-intl'
-import type { ProductWithVariants } from '@/lib/repositories/product.repository'
+import type { ProductWithVariants } from '@softx/engine'
 
 interface InventoryDashboardClientProps {
   products: ProductWithVariants[]

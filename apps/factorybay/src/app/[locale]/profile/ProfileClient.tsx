@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { updateUserPreferencesAction, updateUserMeasurementsAction } from '@/app/actions/user-profile'
-import type { User, UserPreference, UserMeasurements, ProductCategory, SizeOption, MeasurementUnit } from '@/lib/types'
+import type { User, UserPreference, UserMeasurements, ProductCategory, SizeOption, MeasurementUnit } from '@softx/engine'
 
 interface ProfileClientProps {
   user: User

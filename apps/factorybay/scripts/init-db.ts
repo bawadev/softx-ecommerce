@@ -7,7 +7,7 @@
 
 import dotenv from 'dotenv'
 import { initializeSchema } from '../src/lib/schema'
-import { closeDriver } from '../src/lib/db'
+import { closeDriver } from '@softx/engine'
 
 // Load environment variables
 dotenv.config({ path: '.env.local' })

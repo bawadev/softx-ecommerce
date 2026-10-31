@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers'
-import type { JWTPayload, User } from './types'
+import type { JWTPayload, User } from '@softx/engine'
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET

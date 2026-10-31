@@ -1,8 +1,8 @@
 'use server'
 
 import { isAdmin } from '@/lib/auth'
-import { updateUser, findUserByEmail } from '@/lib/repositories/user.repository'
-import type { ActionResponse } from '@/lib/types'
+import { updateUser, findUserByEmail } from '@softx/engine'
+import type { ActionResponse } from '@softx/engine'
 
 /**
  * Make a user an admin (dev helper)

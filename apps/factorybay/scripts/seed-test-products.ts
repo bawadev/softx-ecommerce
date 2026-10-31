@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as Minio from 'minio'
-import { getSession, closeDriver } from '../src/lib/db'
+import { getSession, closeDriver } from '@softx/engine'
 
 dotenv.config({ path: '.env.local' })
 

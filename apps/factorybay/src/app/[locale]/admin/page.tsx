@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { isAdmin } from '@/lib/auth'
 import { getTranslations, getLocale } from 'next-intl/server'
 import Link from 'next/link'
-import { getProductCount } from '@/lib/repositories/product.repository'
+import { getProductCount } from '@softx/engine'
 import { shopConfig } from '@/config/shop'
 
 export default async function AdminDashboardPage() {

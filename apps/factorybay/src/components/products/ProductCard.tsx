@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import type { ProductWithVariants } from '@/lib/repositories/product.repository'
+import type { ProductWithVariants } from '@softx/engine'
 import { getColorHex } from '@/lib/color-utils'
 import { useCartStore } from '@/stores/cartStore'
 

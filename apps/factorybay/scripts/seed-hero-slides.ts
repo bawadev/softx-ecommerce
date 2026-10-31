@@ -8,10 +8,10 @@
 import dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-import { getSession, closeDriver } from '../src/lib/db'
+import { getSession, closeDriver } from '@softx/engine'
 import { uploadFile, initializeBucket } from '../src/lib/minio'
-import * as heroSlideRepo from '../src/lib/repositories/hero-slide.repository'
-import type { HeroAnimationType } from '../src/lib/types'
+import * as heroSlideRepo from '@softx/engine'
+import type { HeroAnimationType } from '@softx/engine'
 import { shopConfig } from '../src/config/shop'
 
 // Load environment variables

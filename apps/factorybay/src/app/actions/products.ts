@@ -8,7 +8,7 @@ import {
   getProductCount,
   type ProductFilters,
   type ProductWithVariants,
-} from '@/lib/repositories/product.repository'
+} from '@softx/engine'
 
 /**
  * Get all products with optional filtering

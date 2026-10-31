@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
-import { getOrderById } from '@/lib/repositories/order.repository'
+import { getOrderById } from '@softx/engine'
 import { getTranslations } from 'next-intl/server'
 import PaymentPageClient from './PaymentPageClient'
 

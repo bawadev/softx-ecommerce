@@ -1,10 +1,10 @@
 'use server'
 
-import { getSession } from '@/lib/db'
+import { getSession } from '@softx/engine'
 import { getCurrentUser } from '@/lib/auth'
 import { deleteFile } from '@/lib/minio'
-import { ActionResponse, HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@/lib/types'
-import * as heroSlideRepo from '@/lib/repositories/hero-slide.repository'
+import { ActionResponse, HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@softx/engine'
+import * as heroSlideRepo from '@softx/engine'
 
 /**
  * Get all hero slides (public for frontend, all for admin)

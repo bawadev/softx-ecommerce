@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
-import type { OrderWithItems } from '@/lib/repositories/order.repository'
+import type { OrderWithItems } from '@softx/engine'
 
 interface OrdersPageClientProps {
   orders: OrderWithItems[]

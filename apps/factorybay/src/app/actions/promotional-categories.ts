@@ -1,10 +1,10 @@
 'use server'
 
-import { getSession } from '@/lib/db'
+import { getSession } from '@softx/engine'
 import { getCurrentUser } from '@/lib/auth'
-import { ActionResponse, PromotionalCategory } from '@/lib/types'
-import * as promoCategoryRepo from '@/lib/repositories/promotional-category.repository'
-import { ProductWithVariants } from '@/lib/repositories/product.repository'
+import { ActionResponse, PromotionalCategory } from '@softx/engine'
+import * as promoCategoryRepo from '@softx/engine'
+import { ProductWithVariants } from '@softx/engine'
 
 /**
  * Create a new promotional category (Admin only)

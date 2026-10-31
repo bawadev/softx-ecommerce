@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import type { ProductWithVariants } from '@/lib/repositories/product.repository'
-import type { ProductCategory, ProductGender, SizeOption, Product } from '@/lib/types'
-import type { Category } from '@/lib/repositories/category.repository'
+import type { ProductWithVariants } from '@softx/engine'
+import type { ProductCategory, ProductGender, SizeOption, Product } from '@softx/engine'
+import type { Category } from '@softx/engine'
 import { getCategoryByIdAction } from '@/app/actions/categories'
 import { addProductImageAction, removeProductImageAction } from '@/app/actions/admin-products'
 import { uploadMultipleImages, deleteImage } from '@/app/actions/upload'

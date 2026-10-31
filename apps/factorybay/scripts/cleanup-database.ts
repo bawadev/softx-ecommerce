@@ -8,8 +8,8 @@
  */
 
 import dotenv from 'dotenv'
-import { getSession, closeDriver } from '../src/lib/db'
-import { getLeafCategories, assignProductToCategories } from '../src/lib/repositories/category.repository'
+import { getSession, closeDriver } from '@softx/engine'
+import { getLeafCategories, assignProductToCategories } from '@softx/engine'
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' })

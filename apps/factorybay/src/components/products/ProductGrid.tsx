@@ -1,5 +1,5 @@
 import ProductCard from './ProductCard'
-import type { ProductWithVariants } from '@/lib/repositories/product.repository'
+import type { ProductWithVariants } from '@softx/engine'
 
 interface ProductGridProps {
   products: ProductWithVariants[]

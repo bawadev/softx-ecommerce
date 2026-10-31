@@ -1,6 +1,6 @@
 'use client'
 
-import { type SizeOption } from '@/lib/types'
+import { type SizeOption } from '@softx/engine'
 import { getColorHex } from '@/lib/color-utils'
 
 export type ColorQty = {

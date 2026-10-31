@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { Category } from '@/lib/repositories/category.repository'
+import type { Category } from '@softx/engine'
 import {
   getRootCategoriesAction,
   getChildCategoriesAction,

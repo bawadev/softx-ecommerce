@@ -13,15 +13,15 @@ import {
   createUser,
   findUserByEmail,
   emailExists,
-} from '@/lib/repositories/user.repository'
+} from '@softx/engine'
 import {
   addToCart,
-} from '@/lib/repositories/cart.repository'
+} from '@softx/engine'
 import {
   getGuestCart,
   clearGuestCart,
 } from '@/lib/guest-cart'
-import type { AuthResponse, CreateUserInput, LoginInput } from '@/lib/types'
+import type { AuthResponse, CreateUserInput, LoginInput } from '@softx/engine'
 
 /**
  * Sign up a new user

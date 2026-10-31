@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { searchProductsAction } from '@/app/actions/products'
-import { ProductWithVariants } from '@/lib/repositories/product.repository'
+import { ProductWithVariants } from '@softx/engine'
 import Image from 'next/image'
 
 interface SearchAutocompleteProps {

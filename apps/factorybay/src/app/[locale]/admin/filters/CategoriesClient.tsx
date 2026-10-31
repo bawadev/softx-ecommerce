@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
-import type { CategoryWithChildren, CategoryTree } from '@/lib/repositories/category.repository'
+import type { CategoryWithChildren, CategoryTree } from '@softx/engine'
 import {
   createCategoryAction,
   updateCategoryAction,

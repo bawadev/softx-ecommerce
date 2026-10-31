@@ -1,9 +1,9 @@
 import { getCurrentUser } from '@/lib/auth'
 import { getPersonalizedRecommendationsAction, getRecentlyViewedProductsAction } from '@/app/actions/user-profile'
-import { getNewArrivals } from '@/lib/repositories/recommendation.repository'
+import { getNewArrivals } from '@softx/engine'
 import { getAllPromotionalCategoriesAction, getProductsByCategoryAction } from '@/app/actions/promotional-categories'
 import { getAllHeroSlidesAction } from '@/app/actions/hero-slides'
-import type { PromotionalCategory } from '@/lib/types'
+import type { PromotionalCategory } from '@softx/engine'
 import HomePageClient from './HomePageClient'
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {

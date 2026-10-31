@@ -8,7 +8,7 @@
  */
 
 import dotenv from 'dotenv'
-import { getSession, closeDriver } from '../src/lib/db'
+import { getSession, closeDriver } from '@softx/engine'
 import * as readline from 'readline'
 
 // Load environment variables

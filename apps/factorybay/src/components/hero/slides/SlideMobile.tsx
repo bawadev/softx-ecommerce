@@ -10,7 +10,7 @@ import {
   reducedMotionVariants,
   resolveTheme,
 } from '../heroAnimationConfig'
-import type { HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@/lib/types'
+import type { HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@softx/engine'
 
 interface SlideMobileProps {
   title: string

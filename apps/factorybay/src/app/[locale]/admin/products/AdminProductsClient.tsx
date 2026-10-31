@@ -25,9 +25,9 @@ import {
   getCategoryByIdAction,
   getCategoriesForProductAction,
 } from '@/app/actions/categories'
-import type { ProductWithVariants } from '@/lib/repositories/product.repository'
-import type { ProductCategory, ProductGender, Product, PromotionalCategory, SizeOption } from '@/lib/types'
-import type { Category } from '@/lib/repositories/category.repository'
+import type { ProductWithVariants } from '@softx/engine'
+import type { ProductCategory, ProductGender, Product, PromotionalCategory, SizeOption } from '@softx/engine'
+import type { Category } from '@softx/engine'
 import CategoryPickerDialog from '@/components/category/CategoryPickerDialog'
 import ProductFormDialog from '@/components/admin/ProductFormDialog'
 import Notification, { type NotificationType } from '@/components/ui/Notification'

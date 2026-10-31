@@ -1,4 +1,4 @@
-import { getSession } from '../src/lib/db'
+import { getSession } from '@softx/engine'
 
 async function checkRootCategories() {
   const session = getSession()

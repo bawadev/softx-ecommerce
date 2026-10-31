@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: '.env.local' })
 
-import { createProduct } from '../src/lib/repositories/product.repository'
-import { assignProductToCategories } from '../src/lib/repositories/category.repository'
+import { createProduct } from '@softx/engine'
+import { assignProductToCategories } from '@softx/engine'
 import { uploadFile } from '../src/lib/minio'
-import { getSession, closeDriver } from '../src/lib/db'
+import { getSession, closeDriver } from '@softx/engine'
 import fs from 'fs'
 import path from 'path'
 

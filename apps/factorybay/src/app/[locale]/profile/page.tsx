@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { getUserPreferencesAction, getUserMeasurementsAction } from '@/app/actions/user-profile'
-import { findUserById } from '@/lib/repositories/user.repository'
+import { findUserById } from '@softx/engine'
 import ProfileClient from './ProfileClient'
 
 export default async function ProfilePage({

@@ -14,7 +14,7 @@ import {
   reducedMotionVariants,
 } from './heroAnimationConfig'
 import { useIsMobile } from '@/hooks/useIsMobile'
-import type { HeroSlide } from '@/lib/types'
+import type { HeroSlide } from '@softx/engine'
 import SlideLeftPanel from './slides/SlideLeftPanel'
 import SlideTopLeftRound from './slides/SlideTopLeftRound'
 import SlideTopRightPanel from './slides/SlideTopRightPanel'

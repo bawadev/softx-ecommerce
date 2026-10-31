@@ -6,9 +6,9 @@
  */
 
 import dotenv from 'dotenv'
-import { getSession, closeDriver } from '../src/lib/db'
+import { getSession, closeDriver } from '@softx/engine'
 import { hashPassword } from '../src/lib/auth'
-import { createUser, findUserByEmail } from '../src/lib/repositories/user.repository'
+import { createUser, findUserByEmail } from '@softx/engine'
 import { seedHeroSlides } from './seed-hero-slides'
 
 // Load environment variables

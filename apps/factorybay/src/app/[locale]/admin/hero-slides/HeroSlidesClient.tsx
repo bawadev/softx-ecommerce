@@ -10,7 +10,7 @@ import type {
   PromotionalCategory,
   HeroColorTheme,
   CustomPanelStyle,
-} from '@/lib/types'
+} from '@softx/engine'
 import {
   createHeroSlideAction,
   updateHeroSlideAction,

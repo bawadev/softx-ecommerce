@@ -6,17 +6,17 @@ import {
   upsertUserPreferences,
   getUserMeasurements,
   upsertUserMeasurements,
-} from '@/lib/repositories/user-profile.repository'
+} from '@softx/engine'
 import {
   trackProductView,
   getRecentlyViewedProducts,
-} from '@/lib/repositories/browsing-history.repository'
+} from '@softx/engine'
 import {
   getRecommendationsForUser,
   getSimilarProducts,
-} from '@/lib/repositories/recommendation.repository'
-import type { ActionResponse, UserPreference, UserMeasurements, ProductCategory, SizeOption, MeasurementUnit } from '@/lib/types'
-import type { ProductWithVariants } from '@/lib/repositories/product.repository'
+} from '@softx/engine'
+import type { ActionResponse, UserPreference, UserMeasurements, ProductCategory, SizeOption, MeasurementUnit } from '@softx/engine'
+import type { ProductWithVariants } from '@softx/engine'
 
 /**
  * Get user's preferences

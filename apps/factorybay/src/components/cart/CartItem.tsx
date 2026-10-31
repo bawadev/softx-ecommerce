@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
-import type { CartItemWithDetails } from '@/lib/repositories/cart.repository'
+import type { CartItemWithDetails } from '@softx/engine'
 import { useCartStore } from '@/stores/cartStore'
 import { getColorHex } from '@/lib/color-utils'
 

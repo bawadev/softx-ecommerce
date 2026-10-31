@@ -12,7 +12,7 @@ import {
   seedColorsAction,
 } from '@/app/actions/colors'
 import { hexToRgb, sortByHue } from '@/lib/color-utils'
-import type { Color } from '@/lib/repositories/color.repository'
+import type { Color } from '@softx/engine'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 export default function ColorsClient() {

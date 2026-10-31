@@ -1,5 +1,5 @@
 import type { Variants, Transition } from 'framer-motion'
-import type { CustomPanelStyle, HeroColorTheme } from '@/lib/types'
+import type { CustomPanelStyle, HeroColorTheme } from '@softx/engine'
 
 export interface ResolvedTheme {
   bgGradient: string

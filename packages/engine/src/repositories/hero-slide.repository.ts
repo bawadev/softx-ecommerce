@@ -1,5 +1,5 @@
 import { Session } from 'neo4j-driver'
-import { HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@/lib/types'
+import { HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '../types'
 
 /**
  * Helper function to safely convert Neo4j integers to JavaScript numbers

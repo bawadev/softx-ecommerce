@@ -3,8 +3,8 @@
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
 import { uploadFile } from '@/lib/minio'
-import { updateOrderPaymentProof } from '@/lib/repositories/order.repository'
-import type { ActionResponse } from '@/lib/types'
+import { updateOrderPaymentProof } from '@softx/engine'
+import type { ActionResponse } from '@softx/engine'
 
 export async function uploadPaymentProofAction(
   orderId: string,

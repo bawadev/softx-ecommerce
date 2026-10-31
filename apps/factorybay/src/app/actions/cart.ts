@@ -10,7 +10,7 @@ import {
   clearCart,
   getCartTotal,
   type CartItemWithDetails,
-} from '@/lib/repositories/cart.repository'
+} from '@softx/engine'
 import {
   addToGuestCart,
   removeFromGuestCart,
@@ -20,8 +20,8 @@ import {
   clearGuestCart,
   type GuestCartItem,
 } from '@/lib/guest-cart'
-import { getVariantWithProduct } from '@/lib/repositories/product.repository'
-import type { ActionResponse } from '@/lib/types'
+import { getVariantWithProduct } from '@softx/engine'
+import type { ActionResponse } from '@softx/engine'
 
 /**
  * Get guest cart items with full details.

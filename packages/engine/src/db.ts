@@ -18,8 +18,8 @@ export function getDriver(): Driver {
   return driver
 }
 
-export function getSession(): Session {
-  return getDriver().session()
+export function getSession(database?: string): Session {
+  return getDriver().session(database ? { database } : undefined)
 }
 
 export async function closeDriver(): Promise<void> {
@@ -32,9 +32,10 @@ export async function closeDriver(): Promise<void> {
 // Helper function to run a query
 export async function runQuery<T = any>(
   query: string,
-  params: Record<string, any> = {}
+  params: Record<string, any> = {},
+  database?: string
 ): Promise<T[]> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(query, params)
     return result.records.map((record) => record.toObject() as T)

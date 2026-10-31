@@ -1,6 +1,6 @@
 import { Session } from 'neo4j-driver'
 import neo4j from 'neo4j-driver'
-import { PromotionalCategory, PromotionalCategoryItem } from '@/lib/types'
+import { PromotionalCategory, PromotionalCategoryItem } from '../types'
 import { ProductWithVariants } from './product.repository'
 
 /**

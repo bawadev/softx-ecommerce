@@ -5,8 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from 'next-intl'
 import { updateAdminOrderStatusAction } from '@/app/actions/admin-orders'
-import type { OrderWithItems } from '@/lib/repositories/order.repository'
-import type { OrderStatus } from '@/lib/types'
+import type { OrderWithItems } from '@softx/engine'
+import type { OrderStatus } from '@softx/engine'
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 
 interface AdminOrdersClientProps {
