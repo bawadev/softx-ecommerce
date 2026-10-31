@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { searchProductsAction } from '@/app/actions/products'
-import { ProductWithVariants } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { amount } from '@/lib/price'
 import Image from 'next/image'
 
 interface SearchAutocompleteProps {
@@ -21,7 +22,7 @@ export default function SearchAutocomplete({
   large = false,
 }: SearchAutocompleteProps) {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<ProductWithVariants[]>([])
+  const [results, setResults] = useState<v1.ProductDTO[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -118,10 +119,9 @@ export default function SearchAutocomplete({
           )}
 
           {!isLoading && results.map((product) => {
-            // Check variant images first, then fall back to product images
-            const firstImage = product.variants.find((v) => v.images?.length > 0)?.images?.[0] || product.images?.[0]
+            const firstImage = product.images?.[0]
             const discountPercent = Math.round(
-              ((product.retailPrice - product.stockPrice) / product.retailPrice) * 100
+              ((amount(product.price.retail) - amount(product.price.stock)) / amount(product.price.retail)) * 100
             )
 
             return (
@@ -149,9 +149,9 @@ export default function SearchAutocomplete({
                   <h4 className="font-semibold text-black-700 truncate">{product.name}</h4>
                   <p className="text-sm text-gray-600">{product.brand}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="font-bold text-black-700">Rs {product.stockPrice.toFixed(2)}</span>
+                    <span className="font-bold text-black-700">Rs {amount(product.price.stock).toFixed(2)}</span>
                     <span className="text-xs text-gray-500 line-through">
-                      Rs {product.retailPrice.toFixed(2)}
+                      Rs {amount(product.price.retail).toFixed(2)}
                     </span>
                     {discountPercent > 0 && (
                       <span className="text-xs bg-coral-100 text-coral-700 px-2 py-0.5 rounded-full font-semibold">

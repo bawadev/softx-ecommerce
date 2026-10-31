@@ -5,27 +5,27 @@ import { getCurrentUser } from '@/lib/auth'
 import { deleteFile } from '@/lib/minio'
 import { ActionResponse, HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@softx/engine'
 import * as heroSlideRepo from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { getCatalog } from '@/lib/engine'
 
 /**
  * Get all hero slides (public for frontend, all for admin)
  */
 export async function getAllHeroSlidesAction(
   activeOnly = false
-): Promise<ActionResponse<HeroSlide[]>> {
-  const session = getSession()
-
+): Promise<ActionResponse<v1.HeroSlideDTO[]>> {
   try {
-    const slides = await heroSlideRepo.getAllHeroSlides(session, activeOnly)
-
+    const r = await getCatalog().listHeroSlides(activeOnly)
+    if (!r.ok) {
+      return { success: false, message: r.error.message || 'Failed to fetch hero slides' }
+    }
     return {
       success: true,
-      data: slides,
+      data: r.data,
     }
   } catch (error: any) {
     console.error('Error fetching hero slides:', error)
     return { success: false, message: error.message || 'Failed to fetch hero slides' }
-  } finally {
-    await session.close()
   }
 }
 

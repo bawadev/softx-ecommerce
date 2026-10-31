@@ -147,7 +147,7 @@
     "filteredProducts": "පෙරන ලද නිෂ්පාදන"
   },
   "product": {
-    "stockPrice": "තොග මිල",
+    "salePrice": "තොග මිල",
     "save": "ඉතිරි කරගන්න",
     "selectSize": "ප්‍රමාණය තෝරන්න",
     "selectColor": "වර්ණය තෝරන්න",
@@ -197,7 +197,7 @@
     "proceedToCheckout": "ගෙවීමට යන්න",
     "continueShopping": "← සාප්පු සවාරි දිගටම කරගෙන යන්න",
     "youSave": "ඔබ ඉතිරි කරගන්නවා",
-    "retailPrice": "සිල්ලර මිල",
+    "retailTotal": "සිල්ලර මිල",
     "addMoreForFreeShipping": "නොමිලේ බෙදා හැරීම සඳහා තවත් Rs {amount} එක් කරන්න",
     "secureCheckout": "ඊකොම් මගින් ආරක්ෂිත ගෙවීම",
     "failedToLoad": "කරත්තය පූරණය කිරීම අසාර්ථක විය",

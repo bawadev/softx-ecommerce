@@ -3,7 +3,7 @@ import { getPersonalizedRecommendationsAction, getRecentlyViewedProductsAction }
 import { getNewArrivals } from '@softx/engine'
 import { getAllPromotionalCategoriesAction, getProductsByCategoryAction } from '@/app/actions/promotional-categories'
 import { getAllHeroSlidesAction } from '@/app/actions/hero-slides'
-import type { PromotionalCategory } from '@softx/engine'
+import { toProductDTO } from '@/lib/product-dto'
 import HomePageClient from './HomePageClient'
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -11,7 +11,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const user = await getCurrentUser()
 
   // Fetch data in parallel
-  const [recommendationsResult, recentlyViewedResult, newArrivals, promoCategoriesResult, heroSlidesResult] = await Promise.all([
+  const [recommendationsResult, recentlyViewedResult, newArrivalsResult, promoCategoriesResult, heroSlidesResult] = await Promise.all([
     user ? getPersonalizedRecommendationsAction() : Promise.resolve({ success: true, data: { products: [] } }),
     user ? getRecentlyViewedProductsAction() : Promise.resolve({ success: true, data: { products: [] } }),
     getNewArrivals(8),
@@ -19,14 +19,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getAllHeroSlidesAction(true), // Only active hero slides
   ])
 
-  const recommendations = recommendationsResult.data?.products || []
-  const recentlyViewed = recentlyViewedResult.data?.products || []
+  // Recommendations / recently-viewed / new-arrivals still come from repository
+  // reads without an engine service yet — adapt them onto the v1 product DTO.
+  const recommendations = (recommendationsResult.data?.products || []).map(toProductDTO)
+  const recentlyViewed = (recentlyViewedResult.data?.products || []).map(toProductDTO)
+  const newArrivals = newArrivalsResult.map(toProductDTO)
   const promoCategories = promoCategoriesResult.data || []
   const heroSlides = heroSlidesResult.data || []
 
   // Fetch products for each promotional category
   const promotionalCategoriesWithProducts = await Promise.all(
-    promoCategories.map(async (category: PromotionalCategory) => {
+    promoCategories.map(async (category) => {
       const productsResult = await getProductsByCategoryAction(category.id, 8)
       return {
         category,

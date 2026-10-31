@@ -5,6 +5,8 @@ import { getCurrentUser } from '@/lib/auth'
 import { ActionResponse, PromotionalCategory } from '@softx/engine'
 import * as promoCategoryRepo from '@softx/engine'
 import { ProductWithVariants } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { getCatalog } from '@/lib/engine'
 
 /**
  * Create a new promotional category (Admin only)
@@ -46,21 +48,20 @@ export async function createPromotionalCategoryAction(data: {
  */
 export async function getAllPromotionalCategoriesAction(
   activeOnly = false
-): Promise<ActionResponse<PromotionalCategory[]>> {
-  const session = getSession()
-
+): Promise<ActionResponse<v1.PromotionalCategoryDTO[]>> {
   try {
-    const categories = await promoCategoryRepo.getAllPromotionalCategories(session, activeOnly)
+    const r = await getCatalog().listPromotionalCategories(!activeOnly)
+    if (!r.ok) {
+      return { success: false, message: r.error.message || 'Failed to fetch promotional categories' }
+    }
 
     return {
       success: true,
-      data: categories,
+      data: r.data,
     }
   } catch (error: any) {
     console.error('Error fetching promotional categories:', error)
     return { success: false, message: error.message || 'Failed to fetch promotional categories' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -69,12 +70,16 @@ export async function getAllPromotionalCategoriesAction(
  */
 export async function getPromotionalCategoryByIdAction(
   categoryId: string
-): Promise<ActionResponse<PromotionalCategory>> {
-  const session = getSession()
-
+): Promise<ActionResponse<v1.PromotionalCategoryDTO>> {
   try {
-    const category = await promoCategoryRepo.getPromotionalCategoryById(session, categoryId)
+    // The engine contract has no by-id lookup; list everything (including
+    // inactive) and find by id.
+    const r = await getCatalog().listPromotionalCategories(true)
+    if (!r.ok) {
+      return { success: false, message: r.error.message || 'Failed to fetch promotional category' }
+    }
 
+    const category = r.data.find((c) => c.id === categoryId)
     if (!category) {
       return { success: false, message: 'Promotional category not found' }
     }
@@ -86,8 +91,6 @@ export async function getPromotionalCategoryByIdAction(
   } catch (error: any) {
     console.error('Error fetching promotional category:', error)
     return { success: false, message: error.message || 'Failed to fetch promotional category' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -96,25 +99,20 @@ export async function getPromotionalCategoryByIdAction(
  */
 export async function getPromotionalCategoryBySlugAction(
   slug: string
-): Promise<ActionResponse<PromotionalCategory>> {
-  const session = getSession()
-
+): Promise<ActionResponse<v1.PromotionalCategoryDTO>> {
   try {
-    const category = await promoCategoryRepo.getPromotionalCategoryBySlug(session, slug)
-
-    if (!category) {
-      return { success: false, message: 'Promotional category not found' }
+    const r = await getCatalog().getPromotionalCategoryBySlug(slug)
+    if (!r.ok) {
+      return { success: false, message: r.error.message || 'Promotional category not found' }
     }
 
     return {
       success: true,
-      data: category,
+      data: r.data,
     }
   } catch (error: any) {
     console.error('Error fetching promotional category by slug:', error)
     return { success: false, message: error.message || 'Failed to fetch promotional category' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -300,21 +298,20 @@ export async function updateCategoryItemQuantityAction(
 export async function getProductsByCategoryAction(
   categoryId: string,
   limit = 20
-): Promise<ActionResponse<ProductWithVariants[]>> {
-  const session = getSession()
-
+): Promise<ActionResponse<v1.ProductDTO[]>> {
   try {
-    const products = await promoCategoryRepo.getProductsByCategory(session, categoryId, limit)
+    const r = await getCatalog().listProductsByPromotionalCategory(categoryId)
+    if (!r.ok) {
+      return { success: false, message: r.error.message || 'Failed to fetch products' }
+    }
 
     return {
       success: true,
-      data: products,
+      data: r.data.slice(0, limit),
     }
   } catch (error: any) {
     console.error('Error fetching products by category:', error)
     return { success: false, message: error.message || 'Failed to fetch products' }
-  } finally {
-    await session.close()
   }
 }
 

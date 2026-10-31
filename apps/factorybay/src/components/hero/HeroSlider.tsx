@@ -14,7 +14,7 @@ import {
   reducedMotionVariants,
 } from './heroAnimationConfig'
 import { useIsMobile } from '@/hooks/useIsMobile'
-import type { HeroSlide } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import SlideLeftPanel from './slides/SlideLeftPanel'
 import SlideTopLeftRound from './slides/SlideTopLeftRound'
 import SlideTopRightPanel from './slides/SlideTopRightPanel'
@@ -29,7 +29,7 @@ const SLIDE_MAP: Record<string, typeof SlideLeftPanel> = {
 }
 
 interface HeroSliderProps {
-  slides: HeroSlide[]
+  slides: v1.HeroSlideDTO[]
 }
 
 export default function HeroSlider({ slides }: HeroSliderProps) {

@@ -5,12 +5,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import type { ProductWithVariants } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import { getColorHex } from '@/lib/color-utils'
 import { useCartStore } from '@/stores/cartStore'
+import { amount } from '@/lib/price'
 
 interface ProductCardProps {
-  product: ProductWithVariants
+  product: v1.ProductDTO
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -34,13 +35,14 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [isTouchDevice, setIsTouchDevice] = useState(false)
 
   // Get first variant for display image and check stock
-  const firstVariant = product.variants[0]
   const hasStock = product.variants.some((v) => v.stockQuantity > 0)
   const totalStock = product.variants.reduce((sum, v) => sum + v.stockQuantity, 0)
 
   // Calculate discount percentage
+  const stockAmount = amount(product.price.stock)
+  const retailAmount = amount(product.price.retail)
   const discountPercent = Math.round(
-    ((product.retailPrice - product.stockPrice) / product.retailPrice) * 100
+    ((retailAmount - stockAmount) / retailAmount) * 100
   )
 
   const productUrl = `/${locale}/product/${product.id}`
@@ -144,9 +146,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image - clickable link */}
       <Link href={productUrl} onClick={handleCardClick} className="relative z-0 block">
         <div className="relative aspect-[3/4] sm:aspect-[2/3] overflow-hidden rounded-t-lg bg-gray-100">
-          {(product.images?.[0] || firstVariant?.images?.[0]) ? (
+          {product.images?.[0] ? (
             <Image
-              src={product.images?.[0] || firstVariant?.images?.[0] || ''}
+              src={product.images[0]}
               alt={product.name}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -196,10 +198,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             </h3>
             <div className="mt-1.5 flex items-baseline gap-1.5 min-w-0">
               <span className="font-heading text-price text-black-700 truncate">
-                Rs {product.stockPrice.toFixed(0)}
+                Rs {stockAmount.toFixed(0)}
               </span>
               <span className="text-body-sm text-gray-400 line-through truncate">
-                Rs {product.retailPrice.toFixed(0)}
+                Rs {retailAmount.toFixed(0)}
               </span>
             </div>
           </Link>

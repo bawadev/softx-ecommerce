@@ -5,13 +5,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import type { ProductWithVariants } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import { trackProductViewAction } from '@/app/actions/user-profile'
 import { getColorHex } from '@/lib/color-utils'
 import { useCartStore } from '@/stores/cartStore'
+import { amount } from '@/lib/price'
 
 interface ProductDetailClientProps {
-  product: ProductWithVariants
+  product: v1.ProductDTO
 }
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
@@ -40,10 +41,12 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const hasStock = totalStock > 0
 
   // Calculate discount
+  const stockAmount = amount(product.price.stock)
+  const retailAmount = amount(product.price.retail)
   const discountPercent = Math.round(
-    ((product.retailPrice - product.stockPrice) / product.retailPrice) * 100
+    ((retailAmount - stockAmount) / retailAmount) * 100
   )
-  const savings = product.retailPrice - product.stockPrice
+  const savings = retailAmount - stockAmount
 
   // Find selected variant
   const selectedVariant =
@@ -216,17 +219,17 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             <div className="space-y-2 border-y border-gray-200 py-6">
               <div className="flex items-baseline gap-3">
                 <span className="font-display text-display-sm text-black-700 leading-none">
-                  Rs {product.stockPrice.toFixed(2)}
+                  Rs {stockAmount.toFixed(2)}
                 </span>
                 <span className="text-body-lg text-gray-400 line-through">
-                  Rs {product.retailPrice.toFixed(2)}
+                  Rs {retailAmount.toFixed(2)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-label uppercase text-black-700">
                   {t('saveAmount', { amount: savings.toFixed(2), percent: discountPercent })}
                 </span>
-                <span className="text-body-sm text-gray-600">{t('stockPrice')}</span>
+                <span className="text-body-sm text-gray-600">{t('salePrice')}</span>
               </div>
             </div>
 
@@ -380,10 +383,6 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">{t('sku')}</span>
                 <span className="font-medium text-black-700">{product.sku}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">{t('category')}</span>
-                <span className="font-medium text-black-700">{product.category}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">{t('gender')}</span>

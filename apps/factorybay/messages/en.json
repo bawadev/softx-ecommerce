@@ -147,7 +147,7 @@
     "filteredProducts": "Filtered Products"
   },
   "product": {
-    "stockPrice": "Stock Price",
+    "salePrice": "Stock Price",
     "save": "Save",
     "selectSize": "Select Size",
     "selectColor": "Select Color",
@@ -197,7 +197,7 @@
     "proceedToCheckout": "Proceed to Checkout",
     "continueShopping": "← Continue Shopping",
     "youSave": "You Save",
-    "retailPrice": "Retail Price",
+    "retailTotal": "Retail Price",
     "addMoreForFreeShipping": "Add ${amount} more for free shipping",
     "secureCheckout": "Secure checkout powered by LOCKED",
     "failedToLoad": "Failed to load cart",

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { Category } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import {
   getRootCategoriesAction,
   getChildCategoriesAction,
@@ -15,7 +15,7 @@ interface CategoryPickerDialogProps {
   initialSelectedIds?: string[]
 }
 
-interface CategoryTreeItem extends Category {
+interface CategoryTreeItem extends v1.CategoryDTO {
   children?: CategoryTreeItem[]
 }
 
@@ -48,9 +48,8 @@ export default function CategoryPickerDialog({
     setLoading(true)
     const result = await getCategoryTreeAction()
     if (result.success && result.data) {
-      // getCategoryTreeAction returns dynamic hierarchies
-      const tree = Object.values(result.data).flat()
-      setCategoryTree(tree as CategoryTreeItem[])
+      // The v1 tree is a flat array of root nodes with nested children
+      setCategoryTree(result.data as CategoryTreeItem[])
     }
     setLoading(false)
   }

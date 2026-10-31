@@ -13,7 +13,9 @@ import {
   getAllBrandsAction,
   addVariantImageAction,
   removeVariantImageAction,
+  getAdminProductAction,
 } from '@/app/actions/admin-products'
+import { getProductAction } from '@/app/actions/products'
 import { uploadMultipleImages, deleteImage } from '@/app/actions/upload'
 import {
   getAllPromotionalCategoriesAction,
@@ -21,45 +23,31 @@ import {
 } from '@/app/actions/promotional-categories'
 import {
   assignProductToCategoriesAction,
-  getCategoryTreeAction,
   getCategoryByIdAction,
   getCategoriesForProductAction,
 } from '@/app/actions/categories'
 import type { ProductWithVariants } from '@softx/engine'
-import type { ProductCategory, ProductGender, Product, PromotionalCategory, SizeOption } from '@softx/engine'
-import type { Category } from '@softx/engine'
+import type { ProductGender, SizeOption } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import CategoryPickerDialog from '@/components/category/CategoryPickerDialog'
-import ProductFormDialog from '@/components/admin/ProductFormDialog'
+import ProductFormDialog, { type FormData, type VariantFormData } from '@/components/admin/ProductFormDialog'
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import { amount } from '@/lib/price'
+import { toProductDTO } from '@/lib/product-dto'
+import {
+  emptyProductForm,
+  repositoryProductToForm,
+  parseFormPrices,
+  formToUpdatePayload,
+  formToCreatePayload,
+} from '@/lib/admin-product-form'
 
 interface AdminProductsClientProps {
-  products: ProductWithVariants[]
+  products: v1.ProductDTO[]
 }
 
-type FormData = {
-  name: string
-  description: string
-  brand: string
-  category?: ProductCategory // DEPRECATED: Use categoryIds instead
-  categoryIds: string[] // Selected category IDs (leaf categories only)
-  gender: ProductGender
-  stockPrice: string
-  retailPrice: string
-  sku: string
-  images: string[]
-}
-
-type VariantFormData = {
-  id?: string // For editing existing variants
-  size: SizeOption
-  color: string
-  stockQuantity: number
-}
-
-const CATEGORIES: ProductCategory[] = ['SHIRT', 'PANTS', 'JACKET', 'DRESS', 'SHOES', 'ACCESSORIES']
 const GENDERS: ProductGender[] = ['MEN', 'WOMEN', 'UNISEX']
-const SIZES: SizeOption[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
 
 export default function AdminProductsClient({ products: initialProducts }: AdminProductsClientProps) {
   const locale = useLocale()
@@ -70,17 +58,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
   const [isEditing, setIsEditing] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingProduct, setEditingProduct] = useState<ProductWithVariants | null>(null)
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    description: '',
-    brand: '',
-    categoryIds: [],
-    gender: 'UNISEX',
-    stockPrice: '',
-    retailPrice: '',
-    sku: '',
-    images: [],
-  })
+  const [formData, setFormData] = useState<FormData>(emptyProductForm())
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -92,20 +70,20 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   // Sorting state
-  const [sortBy, setSortBy] = useState<'name' | 'category' | 'price' | 'variants' | 'stock'>('name')
+  const [sortBy, setSortBy] = useState<'name' | 'price' | 'variants' | 'stock'>('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   // Section assignment state
   const [showSectionDialog, setShowSectionDialog] = useState(false)
-  const [selectedProductForSection, setSelectedProductForSection] = useState<ProductWithVariants | null>(null)
-  const [promotionalCategories, setPromotionalCategories] = useState<PromotionalCategory[]>([])
+  const [selectedProductForSection, setSelectedProductForSection] = useState<v1.ProductDTO | null>(null)
+  const [promotionalCategories, setPromotionalCategories] = useState<v1.PromotionalCategoryDTO[]>([])
   const [sectionQuantities, setSectionQuantities] = useState<Record<string, number>>({})
   const [assigningSections, setAssigningSections] = useState(false)
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
 
   // Category picker state (for form - new/edit products)
   const [showFormCategoryPicker, setShowFormCategoryPicker] = useState(false)
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<v1.CategoryDTO[]>([])
 
   // Variant management state
   const [variants, setVariants] = useState<VariantFormData[]>([])
@@ -172,7 +150,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
             return result.success && result.data ? result.data : null
           })
         )
-        setSelectedCategories(categories.filter((c): c is Category => c !== null))
+        setSelectedCategories(categories.filter((c): c is v1.CategoryDTO => c !== null))
       } else {
         setSelectedCategories([])
       }
@@ -208,7 +186,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
     })
   }
 
-  const handleOpenSectionDialog = async (product: ProductWithVariants) => {
+  const handleOpenSectionDialog = async (product: v1.ProductDTO) => {
     setSelectedProductForSection(product)
     setOpenDropdownId(null)
 
@@ -260,29 +238,30 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
     }
   }
 
-  const loadProductIntoForm = async (product: ProductWithVariants) => {
+  const loadProductIntoForm = async (product: v1.ProductDTO) => {
     setIsEditing(true)
     setEditingId(product.id)
-    setEditingProduct(product)
+
+    // The write-path form (ProductFormDialog) still works with repository
+    // product shapes — fetch the full repository product for editing.
+    const repoResult = await getAdminProductAction(product.id)
+    if (!repoResult.success || !repoResult.data) {
+      showNotification('error', 'Failed to load product', 'Could not fetch product for editing')
+      setIsEditing(false)
+      setEditingId(null)
+      return
+    }
+    const repoProduct = repoResult.data.product
+    setEditingProduct(repoProduct)
 
     // Fetch product categories
     const categoriesResult = await getCategoriesForProductAction(product.id)
     const categoryIds = categoriesResult.success && categoriesResult.data ? categoriesResult.data : []
 
-    setFormData({
-      name: product.name,
-      description: product.description,
-      brand: product.brand,
-      categoryIds,
-      gender: product.gender,
-      stockPrice: product.stockPrice.toString(),
-      retailPrice: product.retailPrice.toString(),
-      sku: product.sku,
-      images: product.images || [],
-    })
+    setFormData(repositoryProductToForm(repoProduct, categoryIds))
 
     // Load variants
-    setVariants(product.variants.map(v => ({
+    setVariants(repoProduct.variants.map(v => ({
       id: v.id,
       size: v.size,
       color: v.color,
@@ -297,17 +276,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
     setIsEditing(false)
     setEditingId(null)
     setEditingProduct(null)
-    setFormData({
-      name: '',
-      description: '',
-      brand: '',
-      categoryIds: [],
-      gender: 'UNISEX',
-      stockPrice: '',
-      retailPrice: '',
-      sku: '',
-      images: [],
-    })
+    setFormData(emptyProductForm())
     setVariants([])
     setVariantForm({ size: 'M', color: '', stockQuantity: 0 })
     setShowVariantForm(false)
@@ -316,7 +285,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
   }
 
   // Sorting function
-  const handleSort = (column: 'name' | 'category' | 'price' | 'variants' | 'stock') => {
+  const handleSort = (column: 'name' | 'price' | 'variants' | 'stock') => {
     if (sortBy === column) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
     } else {
@@ -333,11 +302,8 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
       case 'name':
         comparison = a.name.localeCompare(b.name)
         break
-      case 'category':
-        comparison = (a.category || '').localeCompare(b.category || '')
-        break
       case 'price':
-        comparison = a.stockPrice - b.stockPrice
+        comparison = amount(a.price.stock) - amount(b.price.stock)
         break
       case 'variants':
         comparison = a.variants.length - b.variants.length
@@ -422,10 +388,8 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
       return
     }
 
-    const stockPrice = parseFloat(formDataParam.stockPrice)
-    const retailPrice = parseFloat(formDataParam.retailPrice)
-
-    if (isNaN(stockPrice) || isNaN(retailPrice) || stockPrice <= 0 || retailPrice <= 0) {
+    const prices = parseFormPrices(formDataParam)
+    if (!prices) {
       showNotification('warning', 'Invalid prices', 'Please enter valid prices')
       return
     }
@@ -434,17 +398,8 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
 
     try {
       if (isEditing && editingId) {
-        // Update existing product
-        const updates: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>> = {
-          name: formDataParam.name.trim(),
-          description: formDataParam.description.trim(),
-          brand: formDataParam.brand.trim(),
-          gender: formDataParam.gender,
-          stockPrice,
-          retailPrice,
-          sku: formDataParam.sku.trim(),
-          images: formDataParam.images || [],
-        }
+        // Update existing product (write path stays on repository shapes)
+        const updates = formToUpdatePayload(formDataParam, prices)
 
         const result = await updateProductAction(editingId, updates)
 
@@ -452,13 +407,11 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
           // Assign product to selected categories
           await assignProductToCategoriesAction(editingId, formDataParam.categoryIds)
 
-          // Refresh the products list
-          const updatedProducts = products.map(p =>
-            p.id === editingId
-              ? { ...p, ...updates }
-              : p
-          )
-          setProducts(updatedProducts)
+          // Refresh the edited product in the list from the engine read path
+          const refreshed = await getProductAction(editingId)
+          if (refreshed.success && refreshed.product) {
+            setProducts(products.map(p => (p.id === editingId ? refreshed.product : p)))
+          }
           showNotification('success', 'Product updated successfully!')
           resetForm()
         } else {
@@ -469,16 +422,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
         // Auto-generate SKU if not provided (to avoid uniqueness constraint violations)
         const effectiveSku = formDataParam.sku.trim() || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
 
-        const newProduct: Omit<Product, 'id' | 'createdAt' | 'updatedAt'> = {
-          name: formDataParam.name.trim(),
-          description: formDataParam.description.trim(),
-          brand: formDataParam.brand.trim(),
-          gender: formDataParam.gender,
-          stockPrice,
-          retailPrice,
-          sku: effectiveSku,
-          images: formDataParam.images || []
-        }
+        const newProduct = formToCreatePayload(formDataParam, prices, effectiveSku)
 
         // Convert variants to the format expected by createProductAction
         const variantsToCreate = variantsParam.map(v => ({
@@ -494,7 +438,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
           // Assign product to selected categories
           await assignProductToCategoriesAction(result.data.product.id, formDataParam.categoryIds)
 
-          setProducts([result.data.product, ...products])
+          setProducts([toProductDTO(result.data.product), ...products])
           showNotification('success', 'Product created successfully with variants!')
           resetForm()
         } else {
@@ -620,9 +564,6 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                           <h3 className="text-sm font-semibold text-black-700 truncate">{product.name}</h3>
                           <p className="text-xs text-gray-500">{product.brand} &middot; {product.sku}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
-                              {product.category}
-                            </span>
                             <span className="text-xs text-gray-500">{product.gender}</span>
                           </div>
                         </div>
@@ -631,8 +572,8 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                       {/* Details row */}
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                         <div>
-                          <span className="text-sm font-semibold text-black-700">Rs {product.stockPrice.toFixed(0)}</span>
-                          <span className="text-xs text-gray-400 line-through ml-1">Rs {product.retailPrice.toFixed(0)}</span>
+                          <span className="text-sm font-semibold text-black-700">Rs {amount(product.price.stock).toFixed(0)}</span>
+                          <span className="text-xs text-gray-400 line-through ml-1">Rs {amount(product.price.retail).toFixed(0)}</span>
                         </div>
                         <div className="text-xs text-gray-500">
                           {product.variants.length} variants &middot; {product.variants.map(v => v.size).join(', ')}
@@ -712,20 +653,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                         <div className="flex items-center gap-1">
                           Product
                           {sortBy === 'name' && (
-                            <svg className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                            </svg>
-                          )}
-                        </div>
-                      </th>
-                      <th
-                        onClick={() => handleSort('category')}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
-                      >
-                        <div className="flex items-center gap-1">
-                          Category
-                          {sortBy === 'category' && (
-                            <svg className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className={`w-4 h-4 transition-transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                             </svg>
                           )}
@@ -813,12 +741,11 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-black-700">{product.category}</div>
-                            <div className="text-xs text-gray-500">{product.gender}</div>
+                            <div className="text-sm text-black-700">{product.gender}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-semibold text-black-700">Rs {product.stockPrice.toFixed(2)}</div>
-                            <div className="text-xs text-gray-500 line-through">Rs {product.retailPrice.toFixed(2)}</div>
+                            <div className="text-sm font-semibold text-black-700">Rs {amount(product.price.stock).toFixed(2)}</div>
+                            <div className="text-xs text-gray-500 line-through">Rs {amount(product.price.retail).toFixed(2)}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm text-black-700">{product.variants.length} variants</div>

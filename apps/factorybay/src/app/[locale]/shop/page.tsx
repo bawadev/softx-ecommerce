@@ -9,8 +9,7 @@ import {
   getCategoryByIdAction,
 } from '@/app/actions/categories'
 import ProductGrid from '@/components/products/ProductGrid'
-import { ProductWithVariants } from '@softx/engine'
-import { PromotionalCategory } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 
 export default async function ShopPage({
   searchParams,
@@ -22,8 +21,8 @@ export default async function ShopPage({
   const promoSlug = params.promo
   const categoryParam = params.category
 
-  let products: ProductWithVariants[] = []
-  let promoCategory: PromotionalCategory | null = null
+  let products: v1.ProductDTO[] = []
+  let promoCategory: v1.PromotionalCategoryDTO | null = null
   let categoryTitle: string | null = null
 
   // Category-based filtering
@@ -32,7 +31,7 @@ export default async function ShopPage({
     if (categoryIds.length > 0) {
       const result = await getFullProductsByCategoriesAction(categoryIds)
       if (result.success && result.data) {
-        products = result.data as ProductWithVariants[]
+        products = result.data
       }
       // Get the category name for header display
       if (categoryIds.length === 1) {

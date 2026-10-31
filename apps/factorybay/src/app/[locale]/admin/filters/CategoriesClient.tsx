@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
-import type { CategoryWithChildren, CategoryTree } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import {
   createCategoryAction,
   updateCategoryAction,
@@ -26,15 +26,15 @@ interface ProductWithVariants {
 }
 
 interface CategoriesClientProps {
-  initialCategories: CategoryTree
+  initialCategories: v1.CategoryTreeDTO[]
 }
 
 export default function CategoriesClient({ initialCategories }: CategoriesClientProps) {
   const locale = useLocale()
-  const [categoryTree, setCategoryTree] = useState<CategoryTree>(initialCategories)
+  const [categoryTree, setCategoryTree] = useState<v1.CategoryTreeDTO[]>(initialCategories)
 
   // Flatten tree to array for easier processing
-  const categories = Object.values(categoryTree).flat()
+  const categories = categoryTree
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState('')
   const [selectedParentId, setSelectedParentId] = useState<string | null>(null)
@@ -44,7 +44,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
   // Product management state
   const [showProductsModal, setShowProductsModal] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<CategoryWithChildren | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<v1.CategoryTreeDTO | null>(null)
   const [categoryProducts, setCategoryProducts] = useState<ProductWithVariants[]>([])
   const [unassignedProducts, setUnassignedProducts] = useState<ProductWithVariants[]>([])
   const [loadingProducts, setLoadingProducts] = useState(false)
@@ -91,7 +91,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
     }
   }
 
-  const handleViewProducts = async (category: CategoryWithChildren) => {
+  const handleViewProducts = async (category: v1.CategoryTreeDTO) => {
     setSelectedCategory(category)
     setShowProductsModal(true)
     setShowAddProductsSection(false)
@@ -267,9 +267,9 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
   }
 
   // Flatten the category tree into a single array
-  const flattenCategories = (categories: CategoryWithChildren[]): CategoryWithChildren[] => {
-    const result: CategoryWithChildren[] = []
-    const flatten = (categoryList: CategoryWithChildren[]) => {
+  const flattenCategories = (categories: v1.CategoryTreeDTO[]): v1.CategoryTreeDTO[] => {
+    const result: v1.CategoryTreeDTO[] = []
+    const flatten = (categoryList: v1.CategoryTreeDTO[]) => {
       categoryList.forEach(category => {
         result.push(category)
         if (category.children && category.children.length > 0) {
@@ -282,7 +282,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
   }
 
   // Filter the tree based on featured status
-  const filterTree = (categories: CategoryWithChildren[]): CategoryWithChildren[] => {
+  const filterTree = (categories: v1.CategoryTreeDTO[]): v1.CategoryTreeDTO[] => {
     if (!showOnlyFeatured) return categories
 
     return categories
@@ -295,7 +295,7 @@ export default function CategoriesClient({ initialCategories }: CategoriesClient
 
   const filteredCategories = filterTree(categories)
 
-  const renderCategory = (category: CategoryWithChildren, depth: number = 0) => {
+  const renderCategory = (category: v1.CategoryTreeDTO, depth: number = 0) => {
     const hasChildren = category.children && category.children.length > 0
     const isExpanded = expandedCategories.has(category.id)
     const isEditing = editingCategory?.id === category.id

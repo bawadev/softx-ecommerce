@@ -4,13 +4,12 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
 import type {
-  HeroSlide,
   HeroAnimationType,
   HeroMobileAnimationType,
-  PromotionalCategory,
   HeroColorTheme,
   CustomPanelStyle,
 } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import {
   createHeroSlideAction,
   updateHeroSlideAction,
@@ -45,8 +44,8 @@ const COLOR_THEME_OPTIONS: { value: HeroColorTheme; label: string; description: 
 ]
 
 interface HeroSlidesClientProps {
-  initialSlides: HeroSlide[]
-  promotionalCategories: PromotionalCategory[]
+  initialSlides: v1.HeroSlideDTO[]
+  promotionalCategories: v1.PromotionalCategoryDTO[]
 }
 
 type FormData = {
@@ -83,9 +82,9 @@ const emptyForm: FormData = {
 
 export default function HeroSlidesClient({ initialSlides, promotionalCategories }: HeroSlidesClientProps) {
   const locale = useLocale()
-  const [slides, setSlides] = useState<HeroSlide[]>(initialSlides)
+  const [slides, setSlides] = useState<v1.HeroSlideDTO[]>(initialSlides)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null)
+  const [editingSlide, setEditingSlide] = useState<v1.HeroSlideDTO | null>(null)
   const [form, setForm] = useState<FormData>(emptyForm)
   const [saving, setSaving] = useState(false)
   const [sectionDropdownOpen, setSectionDropdownOpen] = useState(false)
@@ -124,7 +123,7 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
     setIsModalOpen(true)
   }
 
-  const openEditModal = (slide: HeroSlide) => {
+  const openEditModal = (slide: v1.HeroSlideDTO) => {
     setEditingSlide(slide)
     setForm({
       imageUrl: slide.imageUrl,
@@ -256,7 +255,7 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
     setConfirmDialog(null)
   }
 
-  const handleToggleActive = async (slide: HeroSlide) => {
+  const handleToggleActive = async (slide: v1.HeroSlideDTO) => {
     const result = await updateHeroSlideAction(slide.id, { isActive: !slide.isActive })
     if (result.success && result.data) {
       setSlides((prev) =>

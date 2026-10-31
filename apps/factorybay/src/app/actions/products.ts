@@ -1,36 +1,26 @@
 'use server'
 
-import {
-  getAllProducts,
-  getProductById,
-  searchProducts,
-  getAllBrands,
-  getProductCount,
-  type ProductFilters,
-  type ProductWithVariants,
-} from '@softx/engine'
+import { getCatalog } from '@/lib/engine'
+import type { ProductFilters } from '@softx/engine'
 
 /**
  * Get all products with optional filtering
  */
 export async function getProductsAction(filters?: ProductFilters) {
-  try {
-    const products = await getAllProducts(filters)
-    const count = await getProductCount(filters)
-
+  const r = await getCatalog().listProducts(filters)
+  if (!r.ok) {
+    console.error('Get products error:', r.error)
     return {
-      success: true,
-      products,
-      count,
-    }
-  } catch (error) {
-    console.error('Get products error:', error)
-    return {
-      success: false,
+      success: false as const,
       products: [],
       count: 0,
-      error: 'Failed to fetch products',
+      error: r.error.message,
     }
+  }
+  return {
+    success: true as const,
+    products: r.data.items,
+    count: r.data.total,
   }
 }
 
@@ -38,28 +28,18 @@ export async function getProductsAction(filters?: ProductFilters) {
  * Get a single product by ID
  */
 export async function getProductAction(id: string) {
-  try {
-    const product = await getProductById(id)
-
-    if (!product) {
-      return {
-        success: false,
-        product: null,
-        error: 'Product not found',
-      }
-    }
-
+  const r = await getCatalog().getProduct(id)
+  if (!r.ok) {
+    console.error('Get product error:', r.error)
     return {
-      success: true,
-      product,
-    }
-  } catch (error) {
-    console.error('Get product error:', error)
-    return {
-      success: false,
+      success: false as const,
       product: null,
-      error: 'Failed to fetch product',
+      error: r.error.message,
     }
+  }
+  return {
+    success: true as const,
+    product: r.data,
   }
 }
 
@@ -67,20 +47,18 @@ export async function getProductAction(id: string) {
  * Search products
  */
 export async function searchProductsAction(query: string) {
-  try {
-    const products = await searchProducts(query)
-
+  const r = await getCatalog().searchProducts(query)
+  if (!r.ok) {
+    console.error('Search products error:', r.error)
     return {
-      success: true,
-      products,
-    }
-  } catch (error) {
-    console.error('Search products error:', error)
-    return {
-      success: false,
+      success: false as const,
       products: [],
-      error: 'Failed to search products',
+      error: r.error.message,
     }
+  }
+  return {
+    success: true as const,
+    products: r.data,
   }
 }
 
@@ -88,19 +66,17 @@ export async function searchProductsAction(query: string) {
  * Get all available brands
  */
 export async function getBrandsAction() {
-  try {
-    const brands = await getAllBrands()
-
+  const r = await getCatalog().listBrands()
+  if (!r.ok) {
+    console.error('Get brands error:', r.error)
     return {
-      success: true,
-      brands,
-    }
-  } catch (error) {
-    console.error('Get brands error:', error)
-    return {
-      success: false,
+      success: false as const,
       brands: [],
-      error: 'Failed to fetch brands',
+      error: r.error.message,
     }
+  }
+  return {
+    success: true as const,
+    brands: r.data,
   }
 }

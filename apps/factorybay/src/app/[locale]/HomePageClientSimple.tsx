@@ -5,35 +5,33 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import type { ProductWithVariants } from '@softx/engine'
-import type { PromotionalCategory } from '@softx/engine'
-import type { Category } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { amount } from '@/lib/price'
 import SearchAutocomplete from '@/components/SearchAutocomplete'
 import { shopConfig } from '@/config/shop'
 import {
   getFeaturedCategoriesAction,
-  getProductsByCategoriesAction,
   getFullProductsByCategoriesAction
 } from '@/app/actions/categories'
 
 interface HomePageClientProps {
   isAuthenticated: boolean
-  recommendations: ProductWithVariants[]
-  recentlyViewed: ProductWithVariants[]
-  newArrivals: ProductWithVariants[]
+  recommendations: v1.ProductDTO[]
+  recentlyViewed: v1.ProductDTO[]
+  newArrivals: v1.ProductDTO[]
   promotionalCategories: Array<{
-    category: PromotionalCategory
-    products: ProductWithVariants[]
+    category: v1.PromotionalCategoryDTO
+    products: v1.ProductDTO[]
   }>
 }
 
-function ProductCard({ product }: { product: ProductWithVariants }) {
+function ProductCard({ product }: { product: v1.ProductDTO }) {
   const locale = useLocale()
   const t = useTranslations('common')
-  const firstImage = product.variants.find(v => v.images?.length > 0)?.images?.[0]
+  const firstImage = product.images?.[0]
   const totalStock = product.variants.reduce((sum, v) => sum + v.stockQuantity, 0)
   const discountPercent = Math.round(
-    ((product.retailPrice - product.stockPrice) / product.retailPrice) * 100
+    ((amount(product.price.retail) - amount(product.price.stock)) / amount(product.price.retail)) * 100
   )
 
   return (
@@ -65,8 +63,8 @@ function ProductCard({ product }: { product: ProductWithVariants }) {
         <h3 className="font-heading text-heading-sm text-black-700 md:line-clamp-2 break-words">{product.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">{product.brand}</p>
         <div className="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-0 sm:gap-1 min-w-0">
-          <span className="font-heading text-price text-black-700 truncate">Rs {product.stockPrice.toFixed(0)}</span>
-          <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through truncate">Rs {product.retailPrice.toFixed(0)}</span>
+          <span className="font-heading text-price text-black-700 truncate">Rs {amount(product.price.stock).toFixed(0)}</span>
+          <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through truncate">Rs {amount(product.price.retail).toFixed(0)}</span>
         </div>
         <p className="text-xs text-gray-500 mt-1">
           {totalStock > 0 ? `${totalStock} ${t('inStock')}` : t('outOfStock')}
@@ -87,8 +85,8 @@ export default function HomePageClientSimple({
   const router = useRouter()
   const t = useTranslations('home')
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set())
-  const [filteredProducts, setFilteredProducts] = useState<ProductWithVariants[]>([])
-  const [featuredCategories, setFeaturedCategories] = useState<Category[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<v1.ProductDTO[]>([])
+  const [featuredCategories, setFeaturedCategories] = useState<v1.CategoryDTO[]>([])
   const [loading, setLoading] = useState(false)
 
   // Group categories by hierarchy
@@ -143,7 +141,7 @@ export default function HomePageClientSimple({
   }
 
   // Filter existing sections by selected categories
-  const filterProducts = (products: ProductWithVariants[]) => {
+  const filterProducts = (products: v1.ProductDTO[]) => {
     if (selectedCategoryIds.size === 0) return products
     // This would require product IDs to be checked against category assignments
     // For simplicity, we'll show all products when no filter is active

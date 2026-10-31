@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import CartItem from '@/components/cart/CartItem'
 import type { CartItemWithDetails } from '@softx/engine'
 import { useCartStore } from '@/stores/cartStore'
+import { cartRetailTotal } from '@/lib/price'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 interface CartPageClientProps {
@@ -56,11 +57,8 @@ export default function CartPageClient({
     })
   }
 
-  // Calculate savings
-  const retailTotal = items.reduce(
-    (sum, item) => sum + item.product.retailPrice * item.quantity,
-    0
-  )
+  // Calculate savings (cart-domain prices; Phase 2 moves the cart onto Money)
+  const retailTotal = cartRetailTotal(items)
   const savings = retailTotal - total
 
   return (
@@ -123,7 +121,7 @@ export default function CartPageClient({
 
                 {/* Retail Price */}
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t('retailPrice')}</span>
+                  <span className="text-gray-600">{t('retailTotal')}</span>
                   <span className="font-medium text-gray-400 line-through">
                     Rs {retailTotal.toFixed(2)}
                   </span>

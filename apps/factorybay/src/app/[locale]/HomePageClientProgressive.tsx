@@ -5,9 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import type { ProductWithVariants } from '@softx/engine'
-import type { PromotionalCategory } from '@softx/engine'
-import type { Category } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { amount } from '@/lib/price'
 import SearchAutocomplete from '@/components/SearchAutocomplete'
 import { shopConfig } from '@/config/shop'
 import {
@@ -17,22 +16,22 @@ import {
 
 interface HomePageClientProps {
   isAuthenticated: boolean
-  recommendations: ProductWithVariants[]
-  recentlyViewed: ProductWithVariants[]
-  newArrivals: ProductWithVariants[]
+  recommendations: v1.ProductDTO[]
+  recentlyViewed: v1.ProductDTO[]
+  newArrivals: v1.ProductDTO[]
   promotionalCategories: Array<{
-    category: PromotionalCategory
-    products: ProductWithVariants[]
+    category: v1.PromotionalCategoryDTO
+    products: v1.ProductDTO[]
   }>
 }
 
-function ProductCard({ product }: { product: ProductWithVariants }) {
+function ProductCard({ product }: { product: v1.ProductDTO }) {
   const locale = useLocale()
   const t = useTranslations('common')
-  const firstImage = product.variants.find(v => v.images?.length > 0)?.images?.[0]
+  const firstImage = product.images?.[0]
   const totalStock = product.variants.reduce((sum, v) => sum + v.stockQuantity, 0)
   const discountPercent = Math.round(
-    ((product.retailPrice - product.stockPrice) / product.retailPrice) * 100
+    ((amount(product.price.retail) - amount(product.price.stock)) / amount(product.price.retail)) * 100
   )
 
   return (
@@ -64,8 +63,8 @@ function ProductCard({ product }: { product: ProductWithVariants }) {
         <h3 className="font-semibold text-black-700 md:line-clamp-2 text-xs sm:text-sm md:text-base break-words">{product.name}</h3>
         <p className="text-xs sm:text-sm text-gray-600 mt-1">{product.brand}</p>
         <div className="mt-2 flex flex-col sm:flex-row sm:items-baseline gap-0 sm:gap-1 min-w-0">
-          <span className="text-sm sm:text-base md:text-lg font-bold text-black-700 truncate">Rs {product.stockPrice.toFixed(0)}</span>
-          <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through truncate">Rs {product.retailPrice.toFixed(0)}</span>
+          <span className="text-sm sm:text-base md:text-lg font-bold text-black-700 truncate">Rs {amount(product.price.stock).toFixed(0)}</span>
+          <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through truncate">Rs {amount(product.price.retail).toFixed(0)}</span>
         </div>
         <p className="text-xs text-gray-500 mt-1">
           {totalStock > 0 ? `${totalStock} ${t('inStock')}` : t('outOfStock')}
@@ -87,10 +86,10 @@ export default function HomePageClientProgressive({
   const t = useTranslations('home')
 
   // State
-  const [allCategories, setAllCategories] = useState<Category[]>([])
+  const [allCategories, setAllCategories] = useState<v1.CategoryDTO[]>([])
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set())
-  const [filteredProducts, setFilteredProducts] = useState<ProductWithVariants[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<v1.ProductDTO[]>([])
   const [loading, setLoading] = useState(false)
 
   // Load all categories on mount
@@ -110,35 +109,20 @@ export default function HomePageClientProgressive({
   async function loadCategories() {
     const result = await getCategoryTreeAction()
     if (result.success && result.data) {
-      // Recursively flatten the tree structure into a single array
-      const flattenCategory = (cat: any): Category[] => {
+      // The v1 tree is a flat array of root nodes with nested children —
+      // recursively flatten it into a single array.
+      const flattenCategory = (cat: v1.CategoryTreeDTO): v1.CategoryDTO[] => {
         const { children, ...categoryData } = cat
-        const flattened: Category[] = [categoryData]
+        const flattened: v1.CategoryDTO[] = [categoryData]
         if (children && children.length > 0) {
-          children.forEach((child: any) => {
+          children.forEach((child) => {
             flattened.push(...flattenCategory(child))
           })
         }
         return flattened
       }
 
-      const allCats: Category[] = []
-      if (result.data.ladies) {
-        result.data.ladies.forEach((cat: any) => {
-          allCats.push(...flattenCategory(cat))
-        })
-      }
-      if (result.data.gents) {
-        result.data.gents.forEach((cat: any) => {
-          allCats.push(...flattenCategory(cat))
-        })
-      }
-      if (result.data.kids) {
-        result.data.kids.forEach((cat: any) => {
-          allCats.push(...flattenCategory(cat))
-        })
-      }
-      setAllCategories(allCats)
+      setAllCategories(result.data.flatMap(flattenCategory))
     }
   }
 
@@ -216,7 +200,7 @@ export default function HomePageClientProgressive({
   }
 
   // Render category and its children recursively
-  const renderCategory = (category: Category) => {
+  const renderCategory = (category: v1.CategoryDTO) => {
     const isExpanded = expandedCategories.has(category.id)
     const isSelected = selectedCategoryIds.has(category.id)
     const children = getChildren(category.id)

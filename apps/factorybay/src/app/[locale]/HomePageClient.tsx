@@ -4,9 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
-import type { ProductWithVariants } from '@softx/engine'
-import type { PromotionalCategory, HeroSlide } from '@softx/engine'
-import type { Category } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import ProductCard from '@/components/products/ProductCard'
 import HeroSlider from '@/components/hero/HeroSlider'
 import {
@@ -18,14 +16,14 @@ import {
 
 interface HomePageClientProps {
   isAuthenticated: boolean
-  recommendations: ProductWithVariants[]
-  recentlyViewed: ProductWithVariants[]
-  newArrivals: ProductWithVariants[]
+  recommendations: v1.ProductDTO[]
+  recentlyViewed: v1.ProductDTO[]
+  newArrivals: v1.ProductDTO[]
   promotionalCategories: Array<{
-    category: PromotionalCategory
-    products: ProductWithVariants[]
+    category: v1.PromotionalCategoryDTO
+    products: v1.ProductDTO[]
   }>
-  heroSlides: HeroSlide[]
+  heroSlides: v1.HeroSlideDTO[]
 }
 
 export default function HomePageClient({
@@ -43,10 +41,10 @@ export default function HomePageClient({
   // Category state
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set())
   const [filteredProductIds, setFilteredProductIds] = useState<string[]>([])
-  const [filteredProducts, setFilteredProducts] = useState<ProductWithVariants[]>([])
-  const [rootCategories, setRootCategories] = useState<Category[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<v1.ProductDTO[]>([])
+  const [rootCategories, setRootCategories] = useState<v1.CategoryDTO[]>([])
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null)
-  const [childCategories, setChildCategories] = useState<Category[]>([])
+  const [childCategories, setChildCategories] = useState<v1.CategoryDTO[]>([])
 
   // Load all root categories dynamically on mount
   useEffect(() => {
@@ -80,7 +78,7 @@ export default function HomePageClient({
   }, [selectedCategoryIds])
 
   // Handle clicking a root category - expand/collapse to show children
-  const handleRootCategoryClick = async (category: Category) => {
+  const handleRootCategoryClick = async (category: v1.CategoryDTO) => {
     if (expandedCategoryId === category.id) {
       // Clicking the same root category - collapse it
       setExpandedCategoryId(null)
@@ -107,7 +105,7 @@ export default function HomePageClient({
   }
 
   // Filter products based on selected categories
-  const filterProducts = (products: ProductWithVariants[]) => {
+  const filterProducts = (products: v1.ProductDTO[]) => {
     if (selectedCategoryIds.size === 0) {
       return products
     }

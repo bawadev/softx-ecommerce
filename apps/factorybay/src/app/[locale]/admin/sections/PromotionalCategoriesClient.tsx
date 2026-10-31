@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from 'next-intl'
-import { PromotionalCategory } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import { ProductWithVariants } from '@softx/engine'
+import { amount } from '@/lib/price'
 import {
   createPromotionalCategoryAction,
   updatePromotionalCategoryAction,
@@ -24,7 +25,7 @@ import Toast, { ToastType } from '@/components/Toast'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 interface PromotionalCategoriesClientProps {
-  initialCategories: PromotionalCategory[]
+  initialCategories: v1.PromotionalCategoryDTO[]
 }
 
 interface ToastState {
@@ -39,7 +40,7 @@ export default function PromotionalCategoriesClient({
   const locale = useLocale()
   const [categories, setCategories] = useState(initialCategories)
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [editingCategory, setEditingCategory] = useState<PromotionalCategory | null>(null)
+  const [editingCategory, setEditingCategory] = useState<v1.PromotionalCategoryDTO | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [categoryProducts, setCategoryProducts] = useState<
     Array<{
@@ -52,12 +53,12 @@ export default function PromotionalCategoriesClient({
     }>
   >([])
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<ProductWithVariants[]>([])
+  const [searchResults, setSearchResults] = useState<v1.ProductDTO[]>([])
   const [productCategoryInfo, setProductCategoryInfo] = useState<
     Record<
       string,
       Array<{
-        category: PromotionalCategory
+        category: v1.PromotionalCategoryDTO
         allocatedQuantity: number
         soldQuantity: number
         remainingQuantity: number
@@ -71,7 +72,7 @@ export default function PromotionalCategoriesClient({
   const [multiSectionProducts, setMultiSectionProducts] = useState<
     Array<{
       product: ProductWithVariants
-      sections: Array<{ category: PromotionalCategory; allocatedQuantity: number }>
+      sections: Array<{ category: v1.PromotionalCategoryDTO; allocatedQuantity: number }>
     }>
   >([])
   const [showAllMultiSection, setShowAllMultiSection] = useState(false)
@@ -299,7 +300,7 @@ export default function PromotionalCategoriesClient({
     setEditQuantityValue(0)
   }
 
-  const handleToggleSectionActive = async (category: PromotionalCategory) => {
+  const handleToggleSectionActive = async (category: v1.PromotionalCategoryDTO) => {
     const result = await updatePromotionalCategoryAction(category.id, {
       isActive: !category.isActive,
     })
@@ -370,7 +371,7 @@ export default function PromotionalCategoriesClient({
 
   const loadMultiSectionProducts = async () => {
     // Get all products from all categories and find those in multiple sections
-    const productMap = new Map<string, { product: ProductWithVariants; sections: Array<{ category: PromotionalCategory; allocatedQuantity: number }> }>()
+    const productMap = new Map<string, { product: ProductWithVariants; sections: Array<{ category: v1.PromotionalCategoryDTO; allocatedQuantity: number }> }>()
 
     for (const category of categories) {
       const result = await getCategoryItemsWithDetailsAction(category.id)
@@ -555,7 +556,7 @@ export default function PromotionalCategoriesClient({
                       {searchResults.map((product) => {
                         const totalStock = product.variants.reduce((sum, v) => sum + v.stockQuantity, 0)
                         const discountPercent = Math.round(
-                          ((product.retailPrice - product.stockPrice) / product.retailPrice) * 100
+                          ((amount(product.price.retail) - amount(product.price.stock)) / amount(product.price.retail)) * 100
                         )
                         const existingCategories = productCategoryInfo[product.id] || []
                         const isInCurrentCategory = existingCategories.some(
@@ -607,10 +608,10 @@ export default function PromotionalCategoriesClient({
                                 <div className="flex items-center gap-3 mb-2">
                                   <div className="flex items-baseline gap-2">
                                     <span className="text-lg font-bold text-black-700">
-                                      Rs {product.stockPrice.toFixed(2)}
+                                      Rs {amount(product.price.stock).toFixed(2)}
                                     </span>
                                     <span className="text-sm text-gray-500 line-through">
-                                      Rs {product.retailPrice.toFixed(2)}
+                                      Rs {amount(product.price.retail).toFixed(2)}
                                     </span>
                                   </div>
                                   <span

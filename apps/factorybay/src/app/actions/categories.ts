@@ -4,20 +4,58 @@ import { getSession } from '@softx/engine'
 import { isAdmin } from '@/lib/auth'
 import { convertNeo4jIntegers } from '@softx/engine'
 import * as categoryRepo from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { getCatalog } from '@/lib/engine'
+
+/**
+ * Collect nodes matching a predicate across the whole tree (depth-first).
+ */
+function collectFromTree(
+  nodes: v1.CategoryTreeDTO[],
+  predicate: (node: v1.CategoryTreeDTO) => boolean
+): v1.CategoryDTO[] {
+  const out: v1.CategoryDTO[] = []
+  const walk = (list: v1.CategoryTreeDTO[]) => {
+    for (const node of list) {
+      if (predicate(node)) {
+        out.push(node)
+      }
+      walk(node.children)
+    }
+  }
+  walk(nodes)
+  return out
+}
+
+/**
+ * Find a node (and its children) anywhere in the tree.
+ */
+function findInTree(
+  nodes: v1.CategoryTreeDTO[],
+  id: string
+): v1.CategoryTreeDTO | null {
+  for (const node of nodes) {
+    if (node.id === id) return node
+    const hit = findInTree(node.children, id)
+    if (hit) return hit
+  }
+  return null
+}
 
 /**
  * Get all root categories (Ladies, Gents, Kids)
  */
 export async function getRootCategoriesAction() {
-  const session = getSession()
   try {
-    const categories = await categoryRepo.getRootCategories(session)
-    return { success: true, data: categories }
+    // getCategoryTree() returns the root nodes (level 0 / parentId null) with nested children
+    const r = await getCatalog().getCategoryTree()
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    return { success: true, data: r.data }
   } catch (error: unknown) {
     console.error('Error fetching root categories:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch root categories' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -25,17 +63,16 @@ export async function getRootCategoriesAction() {
  * Get complete category tree
  */
 export async function getCategoryTreeAction() {
-  const session = getSession()
   try {
-    const tree = await categoryRepo.getCategoryTree(session)
-    // Convert Neo4j Integers to plain numbers for Client Components
-    const sanitizedTree = convertNeo4jIntegers(tree)
-    return { success: true, data: sanitizedTree }
+    // v1 tree: flat array of root CategoryTreeDTO nodes with nested children
+    const r = await getCatalog().getCategoryTree()
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    return { success: true, data: r.data }
   } catch (error: unknown) {
     console.error('Error fetching category tree:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch category tree' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -45,15 +82,15 @@ export async function getCategoryTreeAction() {
 export async function getCategoriesByHierarchyAction(
   hierarchy: string
 ) {
-  const session = getSession()
   try {
-    const categories = await categoryRepo.getCategoriesByHierarchy(session, hierarchy)
-    return { success: true, data: categories }
+    const r = await getCatalog().getCategoryTree()
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    return { success: true, data: collectFromTree(r.data, (node) => node.hierarchy === hierarchy) }
   } catch (error: unknown) {
     console.error('Error fetching categories by hierarchy:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch categories' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -61,18 +98,15 @@ export async function getCategoriesByHierarchyAction(
  * Get category by ID
  */
 export async function getCategoryByIdAction(id: string) {
-  const session = getSession()
   try {
-    const category = await categoryRepo.getCategoryById(session, id)
-    if (!category) {
-      return { success: false, message: 'Category not found' }
+    const r = await getCatalog().getCategory(id)
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
     }
-    return { success: true, data: category }
+    return { success: true, data: r.data }
   } catch (error: unknown) {
     console.error('Error fetching category:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch category' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -80,15 +114,16 @@ export async function getCategoryByIdAction(id: string) {
  * Get child categories
  */
 export async function getChildCategoriesAction(parentId: string) {
-  const session = getSession()
   try {
-    const categories = await categoryRepo.getChildCategories(session, parentId)
-    return { success: true, data: categories }
+    const r = await getCatalog().getCategoryTree()
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    const node = findInTree(r.data, parentId)
+    return { success: true, data: node ? node.children : [] }
   } catch (error: unknown) {
     console.error('Error fetching child categories:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch child categories' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -96,17 +131,17 @@ export async function getChildCategoriesAction(parentId: string) {
  * Get child categories with descendant product counts (rolls up from all sub-levels)
  */
 export async function getChildCategoriesWithDescendantCountsAction(parentId: string) {
-  const session = getSession()
   try {
-    const categories = await categoryRepo.getChildCategoriesWithDescendantCounts(session, parentId)
-    // Convert Neo4j Integers to plain numbers for Client Components
-    const sanitizedCategories = convertNeo4jIntegers(categories)
-    return { success: true, data: sanitizedCategories }
+    const r = await getCatalog().getCategoryTree()
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    // Tree nodes carry productCount rolled up across all descendants
+    const node = findInTree(r.data, parentId)
+    return { success: true, data: node ? node.children : [] }
   } catch (error: unknown) {
     console.error('Error fetching child categories with descendant counts:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch child categories' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -114,15 +149,15 @@ export async function getChildCategoriesWithDescendantCountsAction(parentId: str
  * Get featured categories
  */
 export async function getFeaturedCategoriesAction() {
-  const session = getSession()
   try {
-    const categories = await categoryRepo.getFeaturedCategories(session)
-    return { success: true, data: categories }
+    const r = await getCatalog().getCategoryTree()
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    return { success: true, data: collectFromTree(r.data, (node) => node.isFeatured) }
   } catch (error: unknown) {
     console.error('Error fetching featured categories:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch featured categories' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -249,24 +284,23 @@ export async function moveCategoryAction(
 
 /**
  * Get products by categories
+ *
+ * Returns product IDs (the engine's listProductsByCategories always includes
+ * descendant categories, which matches the previous default usage of this action).
  */
 export async function getProductsByCategoriesAction(
   categoryIds: string[],
-  includeDescendants: boolean = true
+  _includeDescendants: boolean = true
 ) {
-  const session = getSession()
   try {
-    const productIds = await categoryRepo.getProductsByCategories(
-      session,
-      categoryIds,
-      includeDescendants
-    )
-    return { success: true, data: productIds }
+    const r = await getCatalog().listProductsByCategories(categoryIds)
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    return { success: true, data: r.data.map((p) => p.id) }
   } catch (error: unknown) {
     console.error('Error fetching products by categories:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -274,31 +308,15 @@ export async function getProductsByCategoriesAction(
  * Get full product objects by categories
  */
 export async function getFullProductsByCategoriesAction(categoryIds: string[]) {
-  const session = getSession()
   try {
-    const result = await session.run(
-      `UNWIND $categoryIds as categoryId
-       MATCH (c:Category {id: categoryId})
-       OPTIONAL MATCH (descendant:Category)-[:CHILD_OF*0..]->(c)
-       WITH collect(DISTINCT descendant.id) + collect(DISTINCT c.id) as allCategoryIds
-       UNWIND allCategoryIds as catId
-       MATCH (p:Product)-[:HAS_CATEGORY]->(cat:Category {id: catId})
-       WITH DISTINCT p
-       OPTIONAL MATCH (v:ProductVariant)-[:VARIANT_OF]->(p)
-       WITH p, collect(v {.*}) as variants
-       RETURN p {.*, variants: variants}
-       ORDER BY p.createdAt DESC
-       LIMIT 50`,
-      { categoryIds }
-    )
-
-    const products = result.records.map(record => convertNeo4jIntegers(record.get('p')))
-    return { success: true, data: products }
+    const r = await getCatalog().listProductsByCategories(categoryIds)
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
+    }
+    return { success: true, data: r.data }
   } catch (error: unknown) {
     console.error('Error fetching full products by categories:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
   }
 }
 

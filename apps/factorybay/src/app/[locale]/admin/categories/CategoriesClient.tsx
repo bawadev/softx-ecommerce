@@ -10,11 +10,11 @@ import {
   getCategoryStatisticsAction,
   findDuplicateNamesAction
 } from '@/app/actions/categories'
-import type { CategoryWithChildren, CategoryTree } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 export default function CategoriesClient() {
-  const [categoryTree, setCategoryTree] = useState<CategoryTree | null>(null)
+  const [categoryTree, setCategoryTree] = useState<v1.CategoryTreeDTO[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [selectedHierarchy, setSelectedHierarchy] = useState<'ladies' | 'gents' | 'kids'>('ladies')
@@ -162,7 +162,7 @@ export default function CategoriesClient() {
     setShowCreateModal(true)
   }
 
-  function renderCategory(category: CategoryWithChildren, hierarchy: 'ladies' | 'gents' | 'kids') {
+  function renderCategory(category: v1.CategoryTreeDTO, hierarchy: 'ladies' | 'gents' | 'kids') {
     const isEditing = editingCategory === category.id
 
     return (
@@ -279,7 +279,7 @@ export default function CategoriesClient() {
   function renderHierarchy(
     title: string,
     hierarchy: 'ladies' | 'gents' | 'kids',
-    categories: CategoryWithChildren[]
+    categories: v1.CategoryTreeDTO[]
   ) {
     return (
       <div className="bg-white rounded-lg shadow p-6 mb-6">
@@ -417,9 +417,13 @@ export default function CategoriesClient() {
       {/* Category Trees */}
       {categoryTree && (
         <>
-          {renderHierarchy('👗 Ladies', 'ladies', categoryTree.ladies)}
-          {renderHierarchy('👔 Gents', 'gents', categoryTree.gents)}
-          {renderHierarchy('👶 Kids', 'kids', categoryTree.kids)}
+          {(['ladies', 'gents', 'kids'] as const).map((hierarchy) =>
+            renderHierarchy(
+              hierarchy === 'ladies' ? '👗 Ladies' : hierarchy === 'gents' ? '👔 Gents' : '👶 Kids',
+              hierarchy,
+              categoryTree.filter((c) => c.hierarchy === hierarchy)
+            )
+          )}
         </>
       )}
 

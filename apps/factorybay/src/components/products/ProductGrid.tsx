@@ -1,8 +1,8 @@
 import ProductCard from './ProductCard'
-import type { ProductWithVariants } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 
 interface ProductGridProps {
-  products: ProductWithVariants[]
+  products: v1.ProductDTO[]
   emptyMessage?: string
 }
 

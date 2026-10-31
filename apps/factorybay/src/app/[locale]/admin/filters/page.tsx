@@ -13,7 +13,7 @@ export default async function CategoriesPage() {
   }
 
   const result = await getCategoryTreeAction()
-  const categories = result.data || {}
+  const categories = result.data || []
 
   return <CategoriesClient initialCategories={categories} />
 }

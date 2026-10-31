@@ -16,12 +16,14 @@ import {
   type ProductWithVariants,
 } from '@softx/engine'
 import type { ActionResponse, Product, ProductVariant } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { getCatalog } from '@/lib/engine'
 
 /**
- * Get all products for admin view
+ * Get all products for admin view (engine catalog read → v1.ProductDTO)
  */
 export async function getAdminProductsAction(): Promise<
-  ActionResponse<{ products: ProductWithVariants[] }>
+  ActionResponse<{ products: v1.ProductDTO[] }>
 > {
   const adminAccess = await isAdmin()
 
@@ -33,11 +35,17 @@ export async function getAdminProductsAction(): Promise<
   }
 
   try {
-    const products = await getAllProducts({}, 100) // Get up to 100 products
+    const r = await getCatalog().listProducts({ limit: 100 }) // Get up to 100 products
+    if (!r.ok) {
+      return {
+        success: false,
+        message: 'Failed to fetch products',
+      }
+    }
 
     return {
       success: true,
-      data: { products },
+      data: { products: r.data.items },
     }
   } catch (error) {
     console.error('Get admin products error:', error)

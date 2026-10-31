@@ -4,10 +4,10 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from 'next-intl'
-import type { ProductWithVariants } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 
 interface InventoryDashboardClientProps {
-  products: ProductWithVariants[]
+  products: v1.ProductDTO[]
 }
 
 type SortOption = 'stock-asc' | 'stock-desc' | 'name'
@@ -239,7 +239,7 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                           {getStockLevelBadge(product.stockLevel)}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600">{product.brand} &middot; {product.category}</p>
+                      <p className="text-xs text-gray-600">{product.brand}</p>
                       <p className="text-xs text-gray-400">SKU: {product.sku}</p>
                     </div>
                   </div>
@@ -314,7 +314,7 @@ export default function InventoryDashboardClient({ products }: InventoryDashboar
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
                           <h3 className="text-lg font-semibold text-black-700 truncate">{product.name}</h3>
-                          <p className="text-sm text-gray-600">{product.brand} &middot; {product.category}</p>
+                          <p className="text-sm text-gray-600">{product.brand}</p>
                           <p className="text-xs text-gray-500 mt-1">SKU: {product.sku}</p>
                         </div>
 
