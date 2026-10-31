@@ -10,14 +10,23 @@ import { test, expect } from '@playwright/test'
  * Seeding note: `npm run db:seed` creates users + hero slides only (and needs
  * MinIO for hero images); the product seed scripts
  * (`apps/factorybay/scripts/seed-test-products.ts` et al.) also upload to
- * MinIO. When MinIO is unavailable (broken image on Docker Hub), apply the
- * same product fixtures directly, e.g. replicating seed-test-products.ts:
+ * MinIO. The committed MinIO-free seed data lives in
+ * `apps/factorybay/scripts/seed-smoke-products.cypher` (4 products mirroring
+ * seed-test-products.ts, all SKUs prefixed 'SMOKE-'). Apply it with:
+ *
+ *   docker compose exec -T neo4j bash -c \
+ *     'cypher-shell -u neo4j -p ecommerce123' \
+ *     < apps/factorybay/scripts/seed-smoke-products.cypher
+ *
+ * The script is idempotent (it clears prior SMOKE-* nodes first). To seed a
+ * single product by hand instead, keep the same SKU prefix so the cleanup
+ * below still matches, e.g.:
  *
  *   docker compose exec -T neo4j cypher-shell -u neo4j -p ecommerce123 \
  *     "CREATE (p:Product {id: 'smoke-1', name: 'Classic Cotton T-Shirt',
  *       description: 'Premium quality cotton t-shirt, comfortable and durable.',
  *       brand: 'UrbanStyle', gender: 'MEN', stockPrice: 850, retailPrice: 1500,
- *       sku: 'UST-SMOKE-001', category: 'SHIRT', images: [],
+ *       sku: 'SMOKE-UST-001', category: 'SHIRT', images: [],
  *       createdAt: datetime().toISOString(), updatedAt: datetime().toISOString()})
  *     WITH p
  *     UNWIND [{size:'M',color:'White',qty:30},{size:'L',color:'White',qty:20}] AS v
