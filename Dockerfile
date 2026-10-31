@@ -6,6 +6,9 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/factorybay/package.json ./apps/factorybay/
+COPY packages/contract/package.json ./packages/contract/
+COPY packages/engine/package.json ./packages/engine/
+COPY packages/engine-fixtures/package.json ./packages/engine-fixtures/
 RUN npm ci
 
 # Build the application

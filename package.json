@@ -8,12 +8,17 @@
     },
     "postcss-selector-parser": "7.1.6"
   },
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "npm run dev -w factorybay",
     "build": "npm run build -w factorybay",
     "start": "npm run start -w factorybay",
     "lint": "npm run lint -w factorybay",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "db:init": "npm run db:init -w factorybay",
     "db:seed": "npm run db:seed -w factorybay",
     "db:clear": "npm run db:clear -w factorybay",
@@ -28,5 +33,8 @@
     "seed:hero-slides": "npm run seed:hero-slides -w factorybay",
     "minio:init": "npm run minio:init -w factorybay",
     "setup:categories": "npm run setup:categories -w factorybay"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.12"
   }
 }
