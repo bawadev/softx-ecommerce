@@ -4,6 +4,8 @@
 
 A modern e-commerce platform built with Next.js, TypeScript, Neo4j, and Tailwind CSS. Ecom offers premium branded clothing at wholesale prices with intelligent recommendations and personalized shopping experiences.
 
+Monorepo: the Next.js app lives in `apps/factorybay`; shared packages live in `packages/*` (contract, engine). Build/deploy from the repo root.
+
 ---
 
 ## 🎯 Project Vision
@@ -233,7 +235,7 @@ npm run setup:categories  # Setup Ladies/Gents/Kids category hierarchy
 
 ```
 softx-ecommerce/
-├── src/
+├── apps/factorybay/src/
 │   ├── app/                  # Next.js pages
 │   │   ├── page.tsx         # Homepage
 │   │   ├── login/           # Login page

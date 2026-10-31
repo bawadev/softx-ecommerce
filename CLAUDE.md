@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Ecom is a modern e-commerce platform for branded clothing at wholesale prices. Built with Next.js 15 (App Router), TypeScript, Neo4j graph database, and MinIO for object storage. The platform features internationalization (i18n) with English and Sinhala support.
 
+Monorepo: the Next.js app lives in `apps/factorybay`; shared packages live in `packages/*` (contract, engine). Build/deploy from the repo root.
+
 ## Essential Commands
 
 ### Development
@@ -71,7 +73,7 @@ docker compose logs -f minio   # View MinIO logs
 
 ### Project Structure
 ```
-src/
+apps/factorybay/src/
 ├── app/
 │   ├── [locale]/              # Internationalized routes
 │   │   ├── page.tsx           # Homepage
@@ -153,7 +155,7 @@ Ecom uses Neo4j to model complex relationships between users, products, orders, 
 **Schema Management:**
 - Constraints ensure uniqueness (emails, SKUs, order numbers)
 - Indexes optimize queries (categories, brands, prices)
-- All managed in `src/lib/schema.ts`
+- All managed in `apps/factorybay/src/lib/schema.ts`
 
 ### Category vs. Filter System
 
@@ -162,7 +164,7 @@ Ecom uses Neo4j to model complex relationships between users, products, orders, 
 - Three root hierarchies: Ladies, Gents, Kids
 - Structure: Root (L0) → Clothing/Footwear (L1) → Tops/Bottoms (L2) → Shirts/Blouses (L3)
 - Products SHOULD be assigned to leaf categories only
-- Located in: `src/lib/repositories/category.repository.ts`
+- Located in: `apps/factorybay/src/lib/repositories/category.repository.ts`
 
 **Custom Filters (Multi-Parent Graph):**
 - Filters can have MULTIPLE parents
@@ -170,25 +172,25 @@ Ecom uses Neo4j to model complex relationships between users, products, orders, 
 - Cycle prevention automatically enforced
 - Products linked via `TAGGED_WITH` relationship
 - Enables complex filtering (e.g., "Summer" + "Casual" + "Red")
-- Located in: `src/lib/repositories/custom-filter.repository.ts`
+- Located in: `apps/factorybay/src/lib/repositories/custom-filter.repository.ts`
 
 **IMPORTANT:** The legacy `Product.category` field is DEPRECATED. Use the filter system (`TAGGED_WITH` relationships) instead.
 
 ## Key Implementation Patterns
 
 ### Repository Pattern
-All database operations are encapsulated in repository files under `src/lib/repositories/`. Each repository provides a clean API for a specific domain entity.
+All database operations are encapsulated in repository files under `apps/factorybay/src/lib/repositories/`. Each repository provides a clean API for a specific domain entity.
 
 **Example:**
 ```typescript
-// src/lib/repositories/product.repository.ts
+// apps/factorybay/src/lib/repositories/product.repository.ts
 export async function getAllProducts(filters?: ProductFilters): Promise<ProductWithVariants[]>
 export async function getProductById(id: string): Promise<ProductWithVariants | null>
 export async function createProduct(input: CreateProductInput): Promise<Product>
 ```
 
 ### Server Actions
-Next.js Server Actions in `src/app/actions/` provide the API layer. They:
+Next.js Server Actions in `apps/factorybay/src/app/actions/` provide the API layer. They:
 - Handle authentication/authorization
 - Call repository functions
 - Return standardized `ActionResponse<T>` objects
@@ -196,19 +198,19 @@ Next.js Server Actions in `src/app/actions/` provide the API layer. They:
 
 ### Authentication Flow
 1. JWT tokens stored in httpOnly cookies (security best practice)
-2. `getCurrentUser()` from `src/lib/auth.ts` retrieves current user
+2. `getCurrentUser()` from `apps/factorybay/src/lib/auth.ts` retrieves current user
 3. Password requirements: min 8 chars, 1 uppercase, 1 number
 4. Role-based access: `CUSTOMER` or `ADMIN`
 
 ### Image Upload Flow
-1. Images uploaded through Server Actions (`src/app/actions/upload.ts`)
+1. Images uploaded through Server Actions (`apps/factorybay/src/app/actions/upload.ts`)
 2. Automatically converted to WebP format for optimization (via Sharp)
 3. Stored in MinIO with public read access
 4. URLs returned: `http://localhost:9000/product-images/{timestamp}-{filename}.webp`
 
 ### Internationalization (i18n)
 - All routes prefixed with locale: `/en/shop`, `/si/shop`
-- Middleware handles locale detection (`src/middleware.ts`)
+- Middleware handles locale detection (`apps/factorybay/src/middleware.ts`)
 - Translations in `messages/en.json` and `messages/si.json`
 - Use `useTranslations()` hook in client components
 - Server components: import translations via `getTranslations()`
@@ -235,7 +237,7 @@ When updating filter parent relationships, cycles must be prevented. The `custom
 All uploaded images are automatically converted to WebP format (except SVGs) for optimal performance. Original formats are not preserved. Ensure clients understand this behavior.
 
 ### Guest Cart vs. User Cart
-- Guest carts stored in localStorage (`src/lib/guest-cart.ts`)
+- Guest carts stored in localStorage (`apps/factorybay/src/lib/guest-cart.ts`)
 - User carts stored in Neo4j via `HAS_CART_ITEM` relationships
 - Cart migration happens on login (guest cart → user cart)
 
@@ -262,14 +264,14 @@ npm run minio:init
 **Important:** Always run `npm run db:seed` after `db:init` or `db:clear` to create the default admin and customer test accounts. Without this, you won't be able to login to the admin panel.
 
 ### Making Database Changes
-1. Update schema in `src/lib/schema.ts`
+1. Update schema in `apps/factorybay/src/lib/schema.ts`
 2. Run `npm run db:init` to apply constraints/indexes
-3. Update relevant repository in `src/lib/repositories/`
-4. Update Server Actions in `src/app/actions/`
-5. Update TypeScript types in `src/lib/types.ts`
+3. Update relevant repository in `apps/factorybay/src/lib/repositories/`
+4. Update Server Actions in `apps/factorybay/src/app/actions/`
+5. Update TypeScript types in `apps/factorybay/src/lib/types.ts`
 
 ### Adding New Features
-1. Define types in `src/lib/types.ts`
+1. Define types in `apps/factorybay/src/lib/types.ts`
 2. Create repository functions for data access
 3. Create Server Actions for business logic
 4. Build UI components

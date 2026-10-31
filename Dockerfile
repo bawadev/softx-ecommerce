@@ -5,6 +5,7 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
+COPY apps/factorybay/package.json ./apps/factorybay/
 RUN npm ci
 
 # Build the application
@@ -55,16 +56,17 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/messages ./messages
+COPY --from=builder /app/apps/factorybay/public ./apps/factorybay/public
+COPY --from=builder /app/apps/factorybay/messages ./apps/factorybay/messages
 
 # Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN mkdir -p apps/factorybay/.next
+RUN chown nextjs:nodejs apps/factorybay/.next
 
 # Leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# (output: "standalone" preserves the apps/factorybay prefix internally)
+COPY --from=builder --chown=nextjs:nodejs /app/apps/factorybay/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/factorybay/.next/static ./apps/factorybay/.next/static
 
 USER nextjs
 
@@ -72,4 +74,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+# standalone preserves the apps/factorybay prefix, so server.js lives there
+CMD ["node", "apps/factorybay/server.js"]
