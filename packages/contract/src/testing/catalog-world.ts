@@ -113,6 +113,11 @@ const promoProps = [
 ].join(', ')
 const promoCypher = `CREATE (promo:PromotionalCategory {${promoProps}})`
 
+// HeroSlideDTO deliberately omits timestamps, but real HeroSlide nodes always carry
+// them — hero-slide.repository.ts mapToHeroSlide calls properties.createdAt.toString()
+// / properties.updatedAt.toString() unguarded, so seeded nodes must include both.
+const heroWorldTs = '2026-01-01T00:00:00.000Z'
+
 const heroCypher = worldHeroSlides
   .map((h, i) => {
     const props = [
@@ -125,6 +130,8 @@ const heroCypher = worldHeroSlides
       `subtitle: ${q(h.subtitle)}`,
       `displayOrder: ${h.displayOrder}`,
       `isActive: ${h.isActive}`,
+      `createdAt: ${q(heroWorldTs)}`,
+      `updatedAt: ${q(heroWorldTs)}`,
     ].join(', ')
     return `CREATE (h${i}:HeroSlide {${props}})`
   })
