@@ -18,6 +18,7 @@
     "start": "npm run start -w factorybay",
     "lint": "npm run lint -w factorybay",
     "test": "vitest run",
+    "test:integration": "RUN_INTEGRATION=1 vitest run packages/engine/test",
     "test:watch": "vitest",
     "db:init": "npm run db:init -w factorybay",
     "db:seed": "npm run db:seed -w factorybay",

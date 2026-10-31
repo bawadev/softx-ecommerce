@@ -2,20 +2,26 @@ import { v1 } from '@softx/contract'
 import type { ProductWithVariants } from '../repositories/product.repository'
 import type { Category } from '../repositories/category.repository'
 import type { PromotionalCategory, HeroSlide } from '../types'
+import { convertNeo4jIntegers } from '../neo4j-utils'
 
 export function toProductDTO(p: ProductWithVariants, currency: string): v1.ProductDTO {
+  // The product repository returns raw Neo4j records (record.get('p')), so
+  // integer properties — variant stockQuantity today — arrive as Neo4j
+  // Integer objects, which fail the contract's z.number().int() validation.
+  // Normalize the whole record defensively before mapping.
+  const src = convertNeo4jIntegers(p)
   return {
-    id: p.id,
-    name: p.name,
-    description: p.description,
-    brand: p.brand,
-    gender: p.gender,
-    sku: p.sku,
-    price: { stock: v1.fromMajorAmount(p.stockPrice, currency), retail: v1.fromMajorAmount(p.retailPrice, currency) },
-    images: p.images,
-    createdAt: p.createdAt,
-    updatedAt: p.updatedAt,
-    variants: p.variants.map((v) => ({
+    id: src.id,
+    name: src.name,
+    description: src.description,
+    brand: src.brand,
+    gender: src.gender,
+    sku: src.sku,
+    price: { stock: v1.fromMajorAmount(src.stockPrice, currency), retail: v1.fromMajorAmount(src.retailPrice, currency) },
+    images: src.images,
+    createdAt: src.createdAt,
+    updatedAt: src.updatedAt,
+    variants: src.variants.map((v) => ({
       id: v.id, size: v.size, color: v.color, stockQuantity: v.stockQuantity,
     })),
   }
