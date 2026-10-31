@@ -30,6 +30,14 @@ npm run start              # Start production server
 npm run lint               # Run ESLint
 ```
 
+### Monorepo & Contract
+```bash
+npm test                 # vitest across workspaces (unit + fixtures conformance)
+npm run test:integration # real-engine conformance (needs docker compose up; NEO4J_PASSWORD=ecommerce123; product graph must be otherwise empty)
+npm run test:smoke       # Playwright smoke (needs seeded products; see apps/factorybay/e2e/smoke.spec.ts header)
+npm run audit:api        # @softx/contract public-API snapshot check (gate: git diff --exit-code -- packages/contract/etc)
+```
+
 ### Database Management
 ```bash
 npm run db:init            # Initialize Neo4j schema (constraints & indexes)
@@ -62,6 +70,9 @@ docker compose logs -f minio   # View MinIO logs
 ```
 
 ## Architecture Overview
+
+### Catalog Contract & Engine
+The storefront's catalog read path does not touch repositories directly: `apps/factorybay` consumes `@softx/engine` through the versioned `v1.CatalogService` contract (`packages/contract`), which defines the DTOs, `Result` envelope, and backward-compatibility rules. The engine (Neo4j) and the fixtures engine (in-memory fake) both implement the same contract, and a shared conformance suite runs against both. The contract's public API is frozen by an api-extractor snapshot committed at `packages/contract/etc/contract.api.md` — after changing `packages/contract/src`, run `npm run audit:api` and commit the updated snapshot deliberately (removals/renames are breaking and require a new contract major). The authoritative design is the spec: `docs/superpowers/specs/2026-10-31-engine-contract-separation-design.md`.
 
 ### Tech Stack
 - **Frontend:** Next.js 15.1.4 (App Router), React 19, TypeScript 5.7

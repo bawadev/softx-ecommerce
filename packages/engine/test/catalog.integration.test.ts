@@ -1,6 +1,6 @@
 import { describe, beforeAll, afterAll } from 'vitest'
 import neo4j from 'neo4j-driver'
-import { testing } from '@softx/contract'
+import { runCatalogConformance, catalogWorld } from '@softx/contract/testing'
 import { createEngine, engineConfigFromEnv, type Engine } from '../src/engine'
 import { closeDriver } from '../src/db'
 
@@ -45,14 +45,14 @@ describe.skipIf(!RUN)('real engine: catalog conformance (live Neo4j)', () => {
     )
     await driver.verifyConnectivity()
     // Idempotent reset of any stale conformance nodes, then seed the world.
-    await runCypher(testing.catalogWorld.teardownCypher)
-    await runCypher(testing.catalogWorld.seedCypher)
+    await runCypher(catalogWorld.teardownCypher)
+    await runCypher(catalogWorld.seedCypher)
   }, 60_000)
 
   afterAll(async () => {
     try {
       if (driver) {
-        await runCypher(testing.catalogWorld.teardownCypher)
+        await runCypher(catalogWorld.teardownCypher)
         await driver.close()
       }
     } finally {
@@ -61,7 +61,7 @@ describe.skipIf(!RUN)('real engine: catalog conformance (live Neo4j)', () => {
     }
   })
 
-  testing.runCatalogConformance('real-engine', () =>
+  runCatalogConformance('real-engine', () =>
     engine.for({ clientId: 'conformance' }).catalog,
   )
 })

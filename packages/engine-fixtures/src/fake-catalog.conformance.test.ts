@@ -1,4 +1,4 @@
-import { testing } from '@softx/contract'
+import { runCatalogConformance } from '@softx/contract/testing'
 import { createFakeCatalogService } from './fake-catalog'
 
-testing.runCatalogConformance('engine-fixtures', () => createFakeCatalogService())
+runCatalogConformance('engine-fixtures', () => createFakeCatalogService())

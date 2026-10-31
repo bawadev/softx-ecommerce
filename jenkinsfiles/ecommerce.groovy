@@ -8,6 +8,19 @@
 // - Accessory boot (Neo4j, MinIO) via Kamal
 // - App deployment via Kamal deploy
 
+// Pre-deploy checks. This file is a scripted pipeline (a bare shared-library
+// call); deployKamalApp creates its own node/stages, so the checks stage
+// acquires its own node and runs before the deploy call.
+stage('checks') {
+    node('') {
+        checkout scm
+        sh 'npm ci'
+        sh 'JWT_SECRET=build-time-placeholder NEO4J_PASSWORD=dummy MINIO_ACCESS_KEY=dummy MINIO_SECRET_KEY=dummy MINIO_BUCKET_NAME=product-images MINIO_USE_SSL=false npm run build'
+        sh 'npm test'
+        sh 'npm run audit:api && git diff --exit-code -- packages/contract/etc'
+    }
+}
+
 deployKamalApp(
     appName:       'ecommerce',
     sourceRepo:    'bawadev/softx-ecommerce',

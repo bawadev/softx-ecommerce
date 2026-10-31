@@ -10,6 +10,14 @@ apps/*/node_modules
 # testing
 /coverage
 
+# Playwright
+apps/*/test-results/
+apps/*/playwright-report/
+
+# api-extractor (contract API audit)
+packages/*/dist-api-audit/
+packages/contract/etc/temp/
+
 # next.js
 /.next/
 apps/*/.next/

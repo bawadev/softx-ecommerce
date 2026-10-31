@@ -1,12 +1,20 @@
-// Root export of @softx/contract exposes the `v1` and `testing` namespaces
-// (ok/err live under v1), so the brief's `{ ok, err }` import is adapted here.
-import { testing, v1 } from '@softx/contract'
+// `v1` (ok/err) comes from the contract root; the test world fixtures come
+// from the `@softx/contract/testing` subpath (the root barrel deliberately
+// does not re-export `testing` — it imports vitest and must stay out of app
+// runtimes).
+import { v1 } from '@softx/contract'
+import {
+  worldProducts,
+  worldCategories,
+  worldPromoCategory,
+  worldHeroSlides,
+} from '@softx/contract/testing'
 
 export function createFakeCatalogService(): v1.CatalogService {
-  const products = [...testing.worldProducts]
-  const categories = [...testing.worldCategories]
-  const promo = { ...testing.worldPromoCategory }
-  const slides = [...testing.worldHeroSlides]
+  const products = [...worldProducts]
+  const categories = [...worldCategories]
+  const promo = { ...worldPromoCategory }
+  const slides = [...worldHeroSlides]
 
   const matchesQuery = (p: v1.ProductDTO, q: Partial<v1.ListProductsQuery>) =>
     (q.brand === undefined || p.brand === q.brand) &&

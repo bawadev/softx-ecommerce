@@ -1,0 +1,7 @@
+# Playwright test artifacts (dev-only; keep out of the build context)
+**/test-results/
+**/playwright-report/
+
+# api-extractor temp output (dev-only)
+packages/*/dist-api-audit/
+packages/contract/etc/temp/
