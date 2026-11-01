@@ -44,18 +44,19 @@ export const accountWorld = {
       createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z'})
   `,
   /**
-   * Removes the seeded user AND every account the suite signs up (the suite
-   * pins signup emails to the 'conformance-acct-' prefix for exactly this
-   * match).
+   * Removes the seeded user, every account the suite signs up (the suite pins
+   * signup emails to the 'conformance-acct-' prefix for exactly this match),
+   * AND the suite-created nodes whose uuid ids escape the User-based matches
+   * (labels/property verified against the repositories: user-profile.repository
+   * MERGEs :UserPreference/:UserMeasurements on {userId};
+   * browsing-history.repository creates :ProductView WITH a userId property —
+   * property form, no path match needed). The suite only writes these for the
+   * seeded id, so userId = 'conformance-acct-user' sweeps them all; without
+   * it, a re-run's "unset reads as defaults" blocks would see stale nodes.
    *
-   * Residue that ESCAPES this teardown (own uuid ids, no :User label, only a
-   * userId property) — the Task 5 integration file sweeps these in its own
-   * pre/post cleanup, mirroring order.integration.test.ts, or the next run's
-   * "unset preferences/measurements read as defaults" assertions would see
-   * stale nodes:
-   *   MATCH (n) WHERE (n:UserPreference OR n:UserMeasurements OR n:ProductView)
-   *     AND n.userId = 'conformance-acct-user' DETACH DELETE n
-   * (ProductView nodes created by the suite carry the same userId property.)
+   * The keyword-OR label expression ((n:A OR n:B)) requires Cypher 25
+   * (Neo4j 5.26+/2025.x) — syntax verified against the live dev server
+   * (neo4j:latest = 2026.10.1).
    */
-  teardownCypher: `MATCH (n) WHERE n.id = 'conformance-acct-user' OR (n:User AND n.email STARTS WITH 'conformance-acct-') DETACH DELETE n`,
+  teardownCypher: `MATCH (n) WHERE n.id = 'conformance-acct-user' OR (n:User AND n.email STARTS WITH 'conformance-acct-') OR ((n:UserPreference OR n:UserMeasurements OR n:ProductView) AND n.userId = 'conformance-acct-user') DETACH DELETE n`,
 }
