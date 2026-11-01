@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
-import type { OrderWithItems } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { amount } from '@/lib/price'
 
 interface OrdersPageClientProps {
-  orders: OrderWithItems[]
+  orders: v1.OrderDTO[]
   count: number
 }
 
@@ -88,7 +89,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                       <div>
                         <p className="text-xs text-gray-600">{t('total')}</p>
                         <p className="text-sm font-semibold text-black-700">
-                          Rs {order.totalAmount.toFixed(2)}
+                          Rs {amount(order.totalAmount).toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -120,15 +121,15 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                 <div className="px-6 py-4">
                   <div className="space-y-4">
                     {order.items.map((item) => (
-                      <div key={item.id} className="flex gap-4">
+                      <div key={item.variantId} className="flex gap-4">
                         <Link
-                          href={`/${locale}/product/${item.product.id}`}
+                          href={`/${locale}/product/${item.productId}`}
                           className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
                         >
-                          {(item.variant.images?.[0] || item.product.images?.[0]) ? (
+                          {item.productImage ? (
                             <Image
-                              src={item.variant.images?.[0] || item.product.images[0]}
-                              alt={item.product.name}
+                              src={item.productImage}
+                              alt={item.productName}
                               fill
                               className="object-cover"
                               sizes="80px"
@@ -142,21 +143,21 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
 
                         <div className="flex-1">
                           <Link
-                            href={`/${locale}/product/${item.product.id}`}
+                            href={`/${locale}/product/${item.productId}`}
                             className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
                           >
-                            {item.product.name}
+                            {item.productName}
                           </Link>
-                          <p className="text-xs text-gray-600 mt-1">{item.product.brand}</p>
+                          <p className="text-xs text-gray-600 mt-1">{item.productBrand}</p>
                           <p className="text-xs text-gray-600 mt-1">
-                            {t('size')} {item.variant.size} • {t('color')} {item.variant.color} • {t('qty')}{' '}
+                            {t('size')} {item.variantSize} • {t('color')} {item.variantColor} • {t('qty')}{' '}
                             {item.quantity}
                           </p>
                         </div>
 
                         <div className="text-right">
                           <p className="text-sm font-bold text-black-700">
-                            Rs {(item.priceAtPurchase * item.quantity).toFixed(2)}
+                            Rs {(amount(item.priceAtPurchase) * item.quantity).toFixed(2)}
                           </p>
                         </div>
                       </div>

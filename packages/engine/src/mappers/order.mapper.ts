@@ -9,8 +9,9 @@ import { convertNeo4jIntegers } from '../neo4j-utils'
  * `userId` is intentionally dropped — ownership stays server-side and never
  * enters a DTO. Item money converts through `fromMajorAmount` (major → minor,
  * rounded), and the item's display fields reduce to what the order UI
- * renders: productName from the JOINed product, productImage preferring
- * variant.images[0] with product.images[0] as fallback.
+ * renders: productName/productId/productBrand from the JOINed product,
+ * variantSize/variantColor from the JOINed variant, and productImage
+ * preferring variant.images[0] with product.images[0] as fallback.
  *
  * The repository returns raw Neo4j records, so integer properties (item
  * quantity, priceAtPurchase when integer-valued) arrive as Neo4j Integer
@@ -39,6 +40,10 @@ export function toOrderDTO(order: OrderWithItems, currency: string): v1.OrderDTO
         priceAtPurchase: v1.fromMajorAmount(item.priceAtPurchase, currency),
         productName: item.product.name,
         ...(productImage ? { productImage } : {}),
+        productId: item.product.id,
+        productBrand: item.product.brand,
+        variantSize: item.variant.size,
+        variantColor: item.variant.color,
       }
     }),
     createdAt: src.createdAt,

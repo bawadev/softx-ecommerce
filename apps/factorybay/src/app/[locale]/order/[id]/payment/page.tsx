@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
-import { getOrderById } from '@softx/engine'
+import { getOrderService } from '@/lib/engine'
 import { getTranslations } from 'next-intl/server'
 import PaymentPageClient from './PaymentPageClient'
 
@@ -28,22 +28,18 @@ export default async function PaymentPage({ params }: { params: Promise<{ id: st
     redirect(`/login?redirect=/order/${orderId}/payment`)
   }
 
-  // Get order
-  const order = await getOrderById(orderId)
+  // Get order through the service (enforces ownership; NOT_FOUND/UNAUTHORIZED
+  // both render as 404 here, matching the previous behavior)
+  const r = await getOrderService().getOrder(userId, orderId)
 
-  if (!order) {
-    notFound()
-  }
-
-  // Verify order belongs to user
-  if (order.userId !== userId) {
+  if (!r.ok) {
     notFound()
   }
 
   // Only allow payment for CONFIRMED orders
-  if (order.status !== 'CONFIRMED') {
+  if (r.data.status !== 'CONFIRMED') {
     redirect(`/order/${orderId}`)
   }
 
-  return <PaymentPageClient order={order} />
+  return <PaymentPageClient order={r.data} />
 }

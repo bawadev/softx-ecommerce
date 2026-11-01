@@ -1192,6 +1192,10 @@ const OrderItemSchema: z.ZodObject<{
     }>;
     productName: z.ZodString;
     productImage: z.ZodOptional<z.ZodString>;
+    productId: z.ZodString;
+    productBrand: z.ZodString;
+    variantSize: z.ZodString;
+    variantColor: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     variantId: string;
     quantity: number;
@@ -1200,6 +1204,10 @@ const OrderItemSchema: z.ZodObject<{
         currency: string;
     };
     productName: string;
+    productId: string;
+    productBrand: string;
+    variantSize: string;
+    variantColor: string;
     productImage?: string | undefined;
 }, {
     variantId: string;
@@ -1209,6 +1217,10 @@ const OrderItemSchema: z.ZodObject<{
         currency: string;
     };
     productName: string;
+    productId: string;
+    productBrand: string;
+    variantSize: string;
+    variantColor: string;
     productImage?: string | undefined;
 }>;
 
@@ -1272,6 +1284,10 @@ const OrderSchema: z.ZodObject<{
         }>;
         productName: z.ZodString;
         productImage: z.ZodOptional<z.ZodString>;
+        productId: z.ZodString;
+        productBrand: z.ZodString;
+        variantSize: z.ZodString;
+        variantColor: z.ZodString;
     }, "strip", z.ZodTypeAny, {
         variantId: string;
         quantity: number;
@@ -1280,6 +1296,10 @@ const OrderSchema: z.ZodObject<{
             currency: string;
         };
         productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
         productImage?: string | undefined;
     }, {
         variantId: string;
@@ -1289,6 +1309,10 @@ const OrderSchema: z.ZodObject<{
             currency: string;
         };
         productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
         productImage?: string | undefined;
     }>, "many">;
     createdAt: z.ZodString;
@@ -1306,6 +1330,10 @@ const OrderSchema: z.ZodObject<{
             currency: string;
         };
         productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
         productImage?: string | undefined;
     }[];
     orderNumber: string;
@@ -1338,6 +1366,10 @@ const OrderSchema: z.ZodObject<{
             currency: string;
         };
         productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
         productImage?: string | undefined;
     }[];
     orderNumber: string;

@@ -411,7 +411,7 @@ export default function CheckoutPageClient({
                     )}
                   </div>
                   <span className={`font-medium ${shipping === 0 ? 'text-black-700' : 'text-black-700'}`}>
-                    {shipping === 0 ? t('free') : `$Rs {shipping.toFixed(2)}`}
+                    {shipping === 0 ? t('free') : `Rs ${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-3">

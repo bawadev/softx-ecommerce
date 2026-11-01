@@ -10,7 +10,7 @@ const validOrder = {
     postalCode: '00100', country: 'Sri Lanka', phone: '+94770000000',
   },
   deliveryMethod: 'SHIP' as const,
-  items: [{ variantId: 'v1', quantity: 2, priceAtPurchase: money(249900, 'LKR'), productName: 'Tee' }],
+  items: [{ variantId: 'v1', quantity: 2, priceAtPurchase: money(249900, 'LKR'), productName: 'Tee', productId: 'p1', productBrand: 'Acme', variantSize: 'M', variantColor: 'Black' }],
   createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z',
 }
 

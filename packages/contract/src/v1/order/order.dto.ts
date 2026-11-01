@@ -22,6 +22,13 @@ export const OrderItemSchema = z.object({
   priceAtPurchase: MoneySchema,
   productName: z.string(),
   productImage: z.string().optional(),
+  // Flat display fields (additive): the order UIs link to the product page,
+  // render the brand line, and show the variant attributes. The repo's
+  // item.id stays repo-only — variantId keys the order line.
+  productId: z.string(),
+  productBrand: z.string(),
+  variantSize: z.string(),
+  variantColor: z.string(),
 })
 export type OrderItemDTO = z.infer<typeof OrderItemSchema>
 

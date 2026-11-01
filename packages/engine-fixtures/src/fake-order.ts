@@ -69,7 +69,8 @@ export function createFakeOrderService(state: FakeCartState): v1.OrderService {
         shippingAddress: { ...command.shippingAddress },
         deliveryMethod: command.deliveryMethod,
         // Display fields derive from the cart's hydrated CartItemDTOs —
-        // product.name and product.images[0] — nothing re-hardcoded.
+        // product.name/id/brand, variant.size/color and product.images[0] —
+        // nothing re-hardcoded.
         items: items.map((i) => {
           const image = i.product.images[0]
           return {
@@ -81,6 +82,10 @@ export function createFakeOrderService(state: FakeCartState): v1.OrderService {
             ),
             productName: i.product.name,
             ...(image !== undefined ? { productImage: image } : {}),
+            productId: i.product.id,
+            productBrand: i.product.brand,
+            variantSize: i.variant.size,
+            variantColor: i.variant.color,
           }
         }),
         createdAt: FIXED_TS,

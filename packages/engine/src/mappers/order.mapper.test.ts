@@ -31,6 +31,11 @@ describe('toOrderDTO', () => {
     expect(dto.items[0]).not.toHaveProperty('variant')
     expect(dto.items[0].productName).toBe('Tee')
     expect(dto.items[0].productImage).toBe('http://x/variant.webp') // variant.images[0] || product.images[0]
+    // Flat display fields (product link target, brand line, variant attributes)
+    expect(dto.items[0].productId).toBe('p1')
+    expect(dto.items[0].productBrand).toBe('Acme')
+    expect(dto.items[0].variantSize).toBe('M')
+    expect(dto.items[0].variantColor).toBe('Black')
   })
 
   it('falls back to product.images[0] when the variant has no images', () => {
