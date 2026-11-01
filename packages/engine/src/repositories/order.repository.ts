@@ -35,7 +35,7 @@ export interface CreateOrderInput {
 /**
  * Create a new order
  */
-export async function createOrder(input: CreateOrderInput): Promise<Order> {
+export async function createOrder(input: CreateOrderInput, database?: string): Promise<Order> {
   if (input.items.length === 0) {
     throw new Error('Order must contain at least one item')
   }
@@ -43,7 +43,7 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
     throw new Error('Total amount must be greater than 0')
   }
 
-  const session = getSession()
+  const session = getSession(database)
   try {
     const orderId = uuidv4()
     const orderNumber = `FB-${Date.now()}`
@@ -121,8 +121,8 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
 /**
  * Get order by ID with all items
  */
-export async function getOrderById(orderId: string): Promise<OrderWithItems | null> {
-  const session = getSession()
+export async function getOrderById(orderId: string, database?: string): Promise<OrderWithItems | null> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -162,8 +162,8 @@ export async function getOrderById(orderId: string): Promise<OrderWithItems | nu
 /**
  * Get all orders for a user
  */
-export async function getUserOrders(userId: string): Promise<OrderWithItems[]> {
-  const session = getSession()
+export async function getUserOrders(userId: string, database?: string): Promise<OrderWithItems[]> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -204,9 +204,10 @@ export async function getUserOrders(userId: string): Promise<OrderWithItems[]> {
  */
 export async function updateOrderStatus(
   orderId: string,
-  status: OrderStatus
+  status: OrderStatus,
+  database?: string
 ): Promise<Order> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const now = new Date().toISOString()
 
@@ -234,8 +235,8 @@ export async function updateOrderStatus(
 /**
  * Get order count for a user
  */
-export async function getUserOrderCount(userId: string): Promise<number> {
-  const session = getSession()
+export async function getUserOrderCount(userId: string, database?: string): Promise<number> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -256,8 +257,8 @@ export async function getUserOrderCount(userId: string): Promise<number> {
 /**
  * Get all orders (for admin)
  */
-export async function getAllOrders(): Promise<OrderWithItems[]> {
-  const session = getSession()
+export async function getAllOrders(database?: string): Promise<OrderWithItems[]> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -298,9 +299,10 @@ export async function getAllOrders(): Promise<OrderWithItems[]> {
 export async function updateOrderPaymentProof(
   orderId: string,
   userId: string,
-  paymentProof: string
+  paymentProof: string,
+  database?: string
 ): Promise<Order> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const now = new Date().toISOString()
 

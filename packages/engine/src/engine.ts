@@ -1,6 +1,7 @@
 import type { v1 } from '@softx/contract'
 import { createCatalogService } from './catalog'
 import { createCartService } from './cart'
+import { createOrderService } from './order'
 
 export interface EngineConfig {
   neo4j: {
@@ -21,6 +22,7 @@ export interface TenantRef {
 export interface TenantEngine {
   readonly catalog: v1.CatalogService
   readonly cart: v1.CartService
+  readonly order: v1.OrderService
 }
 
 export interface Engine {
@@ -36,6 +38,9 @@ export function createEngine(config: EngineConfig): Engine {
         },
         get cart(): v1.CartService {
           return createCartService(config, tenant)
+        },
+        get order(): v1.OrderService {
+          return createOrderService(config, tenant)
         },
       }
     },

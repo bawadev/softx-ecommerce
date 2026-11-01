@@ -131,12 +131,27 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
       }
     },
 
-    // Contract v1 grew mergeCarts in Phase 3 Task 2; the real engine merge
-    // (hydrate like guestResult, then addToCart each surviving line) is
-    // Phase 3 Task 4. No caller wires this yet, so an explicit UNAVAILABLE
-    // keeps the adapter honest until then.
-    async mergeCarts(_from, _toUserId) {
-      return err('UNAVAILABLE', 'mergeCarts is not implemented yet (Phase 3 Task 4)')
+    // Move the source owner's lines into the user cart. The source lines are
+    // hydrated exactly like guestResult does (vanished variants self-heal
+    // out — guest lines via getVariantWithProduct, user lines via the cart
+    // JOIN), each surviving line is added with addToCart (which increments
+    // an existing line), a user source cart is cleared afterwards, and the
+    // USER cart is returned — user carts never echo guestItems.
+    async mergeCarts(from, toUserId) {
+      try {
+        const source =
+          from.kind === 'guest'
+            ? await hydrateGuest(from.items)
+            : (await cartRepo.getCartItems(from.userId, db)).map((r) => toCartItemDTO(r, currency))
+        for (const line of source) {
+          await cartRepo.addToCart(toUserId, line.variantId, line.quantity, db)
+        }
+        if (from.kind === 'user') await cartRepo.clearCart(from.userId, db)
+        const rows = await cartRepo.getCartItems(toUserId, db)
+        return ok({ cart: cartFrom(rows.map((r) => toCartItemDTO(r, currency))) })
+      } catch (e) {
+        return err('UNAVAILABLE', 'Failed to merge carts', { cause: String(e) })
+      }
     },
   }
 }
