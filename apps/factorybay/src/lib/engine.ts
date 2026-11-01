@@ -20,3 +20,11 @@ export function getCartService() {
 export function getOrderService() {
   return getEngine().for({ clientId: process.env.CLIENT_ID || 'factorybay' }).order
 }
+
+export function getAccountService() {
+  return getEngine().for({ clientId: process.env.CLIENT_ID || 'factorybay' }).account
+}
+
+export function getProfileService() {
+  return getEngine().for({ clientId: process.env.CLIENT_ID || 'factorybay' }).profile
+}

@@ -1,9 +1,8 @@
 import { getCurrentUser } from '@/lib/auth'
 import { getPersonalizedRecommendationsAction, getRecentlyViewedProductsAction } from '@/app/actions/user-profile'
-import { getNewArrivals } from '@softx/engine'
+import { getNewArrivals, toProductDTO } from '@softx/engine'
 import { getAllPromotionalCategoriesAction, getProductsByCategoryAction } from '@/app/actions/promotional-categories'
 import { getAllHeroSlidesAction } from '@/app/actions/hero-slides'
-import { toProductDTO } from '@/lib/product-dto'
 import HomePageClient from './HomePageClient'
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -19,11 +18,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getAllHeroSlidesAction(true), // Only active hero slides
   ])
 
-  // Recommendations / recently-viewed / new-arrivals still come from repository
-  // reads without an engine service yet — adapt them onto the v1 product DTO.
-  const recommendations = (recommendationsResult.data?.products || []).map(toProductDTO)
-  const recentlyViewed = (recentlyViewedResult.data?.products || []).map(toProductDTO)
-  const newArrivals = newArrivalsResult.map(toProductDTO)
+  // Recommendations / recently-viewed now arrive as engine ProductDTOs
+  // (ProfileService). New arrivals are still a repository read without an
+  // engine service yet — adapt them with the engine's shared mapper.
+  const recommendations = recommendationsResult.data?.products || []
+  const recentlyViewed = recentlyViewedResult.data?.products || []
+  const newArrivals = newArrivalsResult.map((p) => toProductDTO(p, process.env.DEFAULT_CURRENCY || 'LKR'))
   const promoCategories = promoCategoriesResult.data || []
   const heroSlides = heroSlidesResult.data || []
 

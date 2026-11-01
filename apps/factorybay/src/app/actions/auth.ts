@@ -1,68 +1,61 @@
 'use server'
 
 import {
-  hashPassword,
-  verifyPassword,
   generateToken,
   setAuthCookie,
   removeAuthCookie,
-  isValidEmail,
-  validatePassword,
 } from '@/lib/auth'
-import {
-  createUser,
-  findUserByEmail,
-  emailExists,
-} from '@softx/engine'
 import {
   getGuestCart,
   clearGuestCart,
 } from '@/lib/guest-cart'
-import { getCartService } from '@/lib/engine'
+import { getAccountService, getCartService } from '@/lib/engine'
 import type { AuthResponse, CreateUserInput, LoginInput } from '@softx/engine'
 
 /**
- * Sign up a new user
+ * Sign up a new user.
+ *
+ * Phase 4 Task 6: account creation (validation, duplicate-check, hashing)
+ * lives in the engine's AccountService — password hashes never cross this
+ * boundary. This action keeps ONLY the app-owned transport: token minting +
+ * cookie. Error-envelope strings are unchanged: VALIDATION messages come from
+ * the engine (parity port of the old app-side validators), CONFLICT renders
+ * the duplicate-email string, infra failures render the generic catch string.
  */
 export async function signupAction(
   input: CreateUserInput
 ): Promise<AuthResponse> {
   try {
-    // Validate email
-    if (!isValidEmail(input.email)) {
-      return {
-        success: false,
-        message: 'Please provide a valid email address',
-      }
-    }
-
-    // Validate password
-    const passwordError = validatePassword(input.password)
-    if (passwordError) {
-      return {
-        success: false,
-        message: passwordError,
-      }
-    }
-
-    // Check if email already exists
-    const exists = await emailExists(input.email)
-    if (exists) {
-      return {
-        success: false,
-        message: 'An account with this email already exists',
-      }
-    }
-
-    // Hash password
-    const passwordHash = await hashPassword(input.password)
-
-    // Create user
-    const user = await createUser({
-      ...input,
-      passwordHash,
-      role: input.role || 'CUSTOMER',
+    const r = await getAccountService().signUp({
+      email: input.email,
+      password: input.password,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      phone: input.phone,
+      role: input.role,
     })
+
+    if (!r.ok) {
+      if (r.error.code === 'CONFLICT') {
+        return {
+          success: false,
+          message: 'An account with this email already exists',
+        }
+      }
+      if (r.error.code === 'UNAVAILABLE') {
+        return {
+          success: false,
+          message: 'An error occurred during signup. Please try again.',
+        }
+      }
+      // VALIDATION — the engine owns the parity strings
+      return {
+        success: false,
+        message: r.error.message,
+      }
+    }
+
+    const user = r.data
 
     // Generate token
     const token = generateToken({
@@ -89,41 +82,36 @@ export async function signupAction(
 }
 
 /**
- * Log in an existing user
+ * Log in an existing user.
+ *
+ * Phase 4 Task 6: credential verification (email lookup + password compare)
+ * lives in the engine's AccountService; the returned AccountDTO carries no
+ * hash. This action keeps the app-owned transport (token + cookie) and the
+ * guest-cart migration exactly as before.
  */
 export async function loginAction(input: LoginInput): Promise<AuthResponse> {
   try {
-    // Validate email
-    if (!isValidEmail(input.email)) {
+    const r = await getAccountService().authenticate({
+      email: input.email,
+      password: input.password,
+    })
+
+    if (!r.ok) {
+      if (r.error.code === 'UNAVAILABLE') {
+        return {
+          success: false,
+          message: 'An error occurred during login. Please try again.',
+        }
+      }
+      // UNAUTHORIZED and VALIDATION — the engine owns the parity strings
+      // ('Invalid email or password' / 'Please provide a valid email address')
       return {
         success: false,
-        message: 'Please provide a valid email address',
+        message: r.error.message,
       }
     }
 
-    // Find user by email
-    const userWithPassword = await findUserByEmail(input.email)
-    if (!userWithPassword) {
-      return {
-        success: false,
-        message: 'Invalid email or password',
-      }
-    }
-
-    // Verify password
-    const isValid = await verifyPassword(
-      input.password,
-      userWithPassword.passwordHash
-    )
-    if (!isValid) {
-      return {
-        success: false,
-        message: 'Invalid email or password',
-      }
-    }
-
-    // Remove passwordHash from user object
-    const { passwordHash, ...user } = userWithPassword
+    const user = r.data
 
     // Generate token
     const token = generateToken({
@@ -140,8 +128,8 @@ export async function loginAction(input: LoginInput): Promise<AuthResponse> {
     try {
       const guestCart = (await getGuestCart()).filter((l) => l.quantity >= 1)
       if (guestCart.length > 0) {
-        const r = await getCartService().mergeCarts({ kind: 'guest', items: guestCart }, user.id)
-        if (r.ok) await clearGuestCart().catch(() => {})
+        const result = await getCartService().mergeCarts({ kind: 'guest', items: guestCart }, user.id)
+        if (result.ok) await clearGuestCart().catch(() => {})
       }
     } catch (error) {
       console.error('Cart migration error:', error) // don't fail login if migration fails
