@@ -6,9 +6,10 @@ import { v4 as uuidv4 } from 'uuid'
  * Create a new user in the database
  */
 export async function createUser(
-  input: CreateUserInput & { passwordHash: string }
+  input: CreateUserInput & { passwordHash: string },
+  database?: string
 ): Promise<User> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const userId = uuidv4()
     const now = new Date().toISOString()
@@ -65,9 +66,10 @@ export async function createUser(
  * Find a user by email
  */
 export async function findUserByEmail(
-  email: string
+  email: string,
+  database?: string
 ): Promise<(User & { passwordHash: string }) | null> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -89,8 +91,11 @@ export async function findUserByEmail(
 /**
  * Find a user by ID
  */
-export async function findUserById(id: string): Promise<User | null> {
-  const session = getSession()
+export async function findUserById(
+  id: string,
+  database?: string
+): Promise<User | null> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -119,8 +124,8 @@ export async function findUserById(id: string): Promise<User | null> {
 /**
  * Check if email already exists
  */
-export async function emailExists(email: string): Promise<boolean> {
-  const session = getSession()
+export async function emailExists(email: string, database?: string): Promise<boolean> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -141,9 +146,10 @@ export async function emailExists(email: string): Promise<boolean> {
  */
 export async function updateUser(
   id: string,
-  updates: Partial<Omit<User, 'id' | 'email' | 'createdAt'>>
+  updates: Partial<Omit<User, 'id' | 'email' | 'createdAt'>>,
+  database?: string
 ): Promise<User | null> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const now = new Date().toISOString()
     const result = await session.run(
