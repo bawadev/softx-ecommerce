@@ -1,5 +1,4 @@
 import type { v1 } from '@softx/contract'
-import type { CartItemWithDetails } from '@softx/engine'
 
 /** Money → major-unit number, for rendering exactly where the old number was rendered. */
 export function amount(m: v1.Money): number {
@@ -12,10 +11,8 @@ export function formatPrice(m: v1.Money): string {
 }
 
 /**
- * Cart-domain retail total (major-unit prices from the cart repository join).
- * The cart is not on the engine path yet (Phase 2 migrates it to Money); this
- * keeps that arithmetic in one place instead of the UI component.
+ * Cart-domain retail total (major units) over the CartService projection.
  */
-export function cartRetailTotal(items: CartItemWithDetails[]): number {
-  return items.reduce((sum, item) => sum + item.product.retailPrice * item.quantity, 0)
+export function cartRetailTotal(items: v1.CartItemDTO[]): number {
+  return items.reduce((sum, item) => sum + amount(item.product.price.retail) * item.quantity, 0)
 }

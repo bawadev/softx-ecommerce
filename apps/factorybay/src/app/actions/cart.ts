@@ -1,282 +1,78 @@
 'use server'
 
 import { getCurrentUserId } from '@/lib/auth'
-import {
-  addToCart,
-  removeFromCart,
-  updateCartItemQuantity,
-  getCartItems,
-  getCartCount,
-  clearCart,
-  getCartTotal,
-  type CartItemWithDetails,
-} from '@softx/engine'
-import {
-  addToGuestCart,
-  removeFromGuestCart,
-  updateGuestCartQuantity,
-  getGuestCart,
-  saveGuestCart,
-  clearGuestCart,
-  type GuestCartItem,
-} from '@/lib/guest-cart'
-import { getVariantWithProduct } from '@softx/engine'
+import { getCartService } from '@/lib/engine'
+import { getGuestCart, saveGuestCart, clearGuestCart } from '@/lib/guest-cart'
 import type { ActionResponse } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 
-/**
- * Get guest cart items with full details.
- * Also self-heals the cookie: any variant that no longer exists in the DB
- * (e.g. was removed by a reseed) gets pruned so the nav badge and the cart
- * page stay in agreement.
- */
-async function getGuestCartWithDetails(): Promise<CartItemWithDetails[]> {
-  const guestCart = await getGuestCart()
-  const items: CartItemWithDetails[] = []
-  const validEntries: GuestCartItem[] = []
+async function currentOwner(): Promise<v1.CartOwner> {
+  const userId = await getCurrentUserId()
+  if (userId) return { kind: 'user', userId }
+  // Legacy cookies may hold quantity <= 0 lines — the contract requires positive ints.
+  const items = (await getGuestCart()).filter((l) => l.quantity >= 1)
+  return { kind: 'guest', items }
+}
 
-  for (const item of guestCart) {
+/** Persist normalized guest lines back to the cookie. Safe only in action context — same rule as today. */
+async function persistGuest(m: v1.CartMutation): Promise<void> {
+  if (m.guestItems) {
     try {
-      const data = await getVariantWithProduct(item.variantId)
-      if (data) {
-        items.push({
-          id: item.variantId,
-          userId: 'guest',
-          variantId: item.variantId,
-          quantity: item.quantity,
-          addedAt: new Date().toISOString(),
-          product: data.product,
-          variant: data.variant,
-        })
-        validEntries.push(item)
-      }
-    } catch (error) {
-      console.error(`Failed to get variant details for ${item.variantId}:`, error)
-    }
-  }
-
-  if (validEntries.length !== guestCart.length) {
-    try {
-      await saveGuestCart(validEntries)
+      await saveGuestCart(m.guestItems)
     } catch {
-      // Cookie writes are only allowed in Server Action / Route Handler
-      // contexts. When this runs during a Server Component render the write
-      // is rejected — ignore it; the next client-triggered call will heal.
-    }
-  }
-
-  return items
-}
-
-function sumGuestItems(items: CartItemWithDetails[]): number {
-  return items.reduce((sum, item) => sum + item.quantity, 0)
-}
-
-/**
- * Calculate total for guest cart
- */
-function calculateGuestCartTotal(items: CartItemWithDetails[]): number {
-  return items.reduce((sum, item) => {
-    return sum + item.product.stockPrice * item.quantity
-  }, 0)
-}
-
-/**
- * Add item to cart (supports both authenticated and guest users)
- */
-export async function addToCartAction(
-  variantId: string,
-  quantity: number = 1
-): Promise<ActionResponse> {
-  try {
-    if (quantity < 1) {
-      return {
-        success: false,
-        message: 'Quantity must be at least 1',
-      }
-    }
-
-    const userId = await getCurrentUserId()
-
-    if (userId) {
-      // Authenticated user - use database cart
-      await addToCart(userId, variantId, quantity)
-    } else {
-      // Guest user - use cookie cart
-      await addToGuestCart(variantId, quantity)
-    }
-
-    return {
-      success: true,
-      message: 'Item added to cart',
-    }
-  } catch (error) {
-    console.error('Add to cart error:', error)
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to add item to cart',
+      // Server Component render context — ignore; the next client-triggered call heals.
     }
   }
 }
 
-/**
- * Remove item from cart (supports both authenticated and guest users)
- */
-export async function removeFromCartAction(variantId: string): Promise<ActionResponse> {
-  try {
-    const userId = await getCurrentUserId()
+/** The projection payload every mutation returns so the store never refetches. */
+type CartProjection = { items: v1.CartItemDTO[]; total: v1.Money; itemCount: number }
 
-    if (userId) {
-      // Authenticated user
-      await removeFromCart(userId, variantId)
-    } else {
-      // Guest user
-      await removeFromGuestCart(variantId)
-    }
-
-    return {
-      success: true,
-      message: 'Item removed from cart',
-    }
-  } catch (error) {
-    console.error('Remove from cart error:', error)
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to remove item',
-    }
-  }
+function projectionOf(m: v1.CartMutation): CartProjection {
+  return { items: m.cart.items, total: m.cart.total, itemCount: m.cart.itemCount }
 }
 
-/**
- * Update cart item quantity (supports both authenticated and guest users)
- */
-export async function updateCartItemAction(
-  variantId: string,
-  quantity: number
-): Promise<ActionResponse> {
-  try {
-    if (quantity < 1) {
-      return {
-        success: false,
-        message: 'Quantity must be at least 1',
-      }
-    }
-
-    const userId = await getCurrentUserId()
-
-    if (userId) {
-      // Authenticated user
-      await updateCartItemQuantity(userId, variantId, quantity)
-    } else {
-      // Guest user
-      await updateGuestCartQuantity(variantId, quantity)
-    }
-
-    return {
-      success: true,
-      message: 'Cart updated',
-    }
-  } catch (error) {
-    console.error('Update cart error:', error)
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to update cart',
-    }
-  }
+export async function addToCartAction(variantId: string, quantity = 1): Promise<ActionResponse<CartProjection>> {
+  const r = await getCartService().addItem(await currentOwner(), variantId, quantity)
+  if (!r.ok) return { success: false, message: r.error.message }
+  await persistGuest(r.data)
+  return { success: true, message: 'Item added to cart', data: projectionOf(r.data) }
 }
 
-/**
- * Get all cart items (supports both authenticated and guest users)
- */
+export async function removeFromCartAction(variantId: string): Promise<ActionResponse<CartProjection>> {
+  const r = await getCartService().removeItem(await currentOwner(), variantId)
+  if (!r.ok) return { success: false, message: r.error.message }
+  await persistGuest(r.data)
+  return { success: true, message: 'Item removed from cart', data: projectionOf(r.data) }
+}
+
+export async function updateCartItemAction(variantId: string, quantity: number): Promise<ActionResponse<CartProjection>> {
+  if (quantity < 1) return { success: false, message: 'Quantity must be at least 1' }
+  const r = await getCartService().updateItem(await currentOwner(), variantId, quantity)
+  if (!r.ok) return { success: false, message: r.error.message }
+  await persistGuest(r.data)
+  return { success: true, message: 'Cart updated', data: projectionOf(r.data) }
+}
+
 export async function getCartItemsAction(): Promise<
-  ActionResponse<{ items: CartItemWithDetails[]; total: number; itemCount: number }>
+  ActionResponse<{ items: v1.CartItemDTO[]; total: v1.Money; itemCount: number }>
 > {
-  try {
-    const userId = await getCurrentUserId()
-
-    let items: CartItemWithDetails[]
-    let total: number
-    let itemCount: number
-
-    if (userId) {
-      // Authenticated user
-      items = await getCartItems(userId)
-      total = await getCartTotal(userId)
-      itemCount = await getCartCount(userId)
-    } else {
-      // Guest user
-      items = await getGuestCartWithDetails()
-      total = calculateGuestCartTotal(items)
-      itemCount = sumGuestItems(items)
-    }
-
-    return {
-      success: true,
-      data: { items, total, itemCount },
-    }
-  } catch (error) {
-    console.error('Get cart items error:', error)
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to get cart items',
-    }
-  }
+  const r = await getCartService().getCart(await currentOwner())
+  if (!r.ok) return { success: false, message: r.error.message }
+  await persistGuest(r.data) // heals the cookie during reads too, when allowed
+  return { success: true, data: { items: r.data.cart.items, total: r.data.cart.total, itemCount: r.data.cart.itemCount } }
 }
 
-/**
- * Get cart item count (supports both authenticated and guest users)
- */
 export async function getCartCountAction(): Promise<ActionResponse<{ count: number }>> {
-  try {
-    const userId = await getCurrentUserId()
-
-    let count: number
-
-    if (userId) {
-      // Authenticated user
-      count = await getCartCount(userId)
-    } else {
-      // Guest user — validate entries so orphaned variants don't inflate the badge
-      const validItems = await getGuestCartWithDetails()
-      count = sumGuestItems(validItems)
-    }
-
-    return {
-      success: true,
-      data: { count },
-    }
-  } catch (error) {
-    console.error('Get cart count error:', error)
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to get cart count',
-    }
-  }
+  const r = await getCartService().getCart(await currentOwner())
+  if (!r.ok) return { success: false, message: r.error.message }
+  await persistGuest(r.data)
+  return { success: true, data: { count: r.data.cart.itemCount } }
 }
 
-/**
- * Clear cart (supports both authenticated and guest users)
- */
 export async function clearCartAction(): Promise<ActionResponse> {
-  try {
-    const userId = await getCurrentUserId()
-
-    if (userId) {
-      // Authenticated user
-      await clearCart(userId)
-    } else {
-      // Guest user
-      await clearGuestCart()
-    }
-
-    return {
-      success: true,
-      message: 'Cart cleared',
-    }
-  } catch (error) {
-    console.error('Clear cart error:', error)
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : 'Failed to clear cart',
-    }
-  }
+  const r = await getCartService().clearCart(await currentOwner())
+  if (!r.ok) return { success: false, message: r.error.message }
+  if ((await getCurrentUserId()) == null) await clearGuestCart().catch(() => {})
+  return { success: true, message: 'Cart cleared' }
 }

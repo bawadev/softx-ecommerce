@@ -22,6 +22,9 @@ const CATEGORY_PRODUCTS_LIMIT = 50
  * contract (DTOs, Money in minor units).
  *
  * Repository signature adaptations (vs. the Task 8 brief):
+ * - product.repository functions take an optional trailing `database`
+ *   argument (their own sessions); every call site forwards
+ *   `config.neo4j.database` (tenant-aware since Phase 2 Task 1).
  * - category/promotional-category/hero-slide repositories take a Neo4j
  *   `Session` as their first argument; `withSession` opens one per call
  *   (targeting `config.neo4j.database` when set) and closes it in `finally`.
@@ -64,9 +67,13 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
         const [all, total] = await Promise.all([
           productRepo.getAllProducts(
             Object.keys(filters).length > 0 ? filters : undefined,
-            limit + offset
+            limit + offset,
+            config.neo4j.database
           ),
-          productRepo.getProductCount(Object.keys(filters).length > 0 ? filters : undefined),
+          productRepo.getProductCount(
+            Object.keys(filters).length > 0 ? filters : undefined,
+            config.neo4j.database
+          ),
         ])
         const items = all.slice(offset, offset + limit).map((p) => toProductDTO(p, currency))
         return ok({ items, total, limit, offset })
@@ -77,7 +84,7 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
 
     async getProduct(id) {
       try {
-        const p = await productRepo.getProductById(id)
+        const p = await productRepo.getProductById(id, config.neo4j.database)
         return p ? ok(toProductDTO(p, currency)) : err('NOT_FOUND', `Product ${id} not found`)
       } catch (e) {
         return err('UNAVAILABLE', 'Failed to get product', { cause: String(e) })
@@ -86,7 +93,7 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
 
     async searchProducts(term) {
       try {
-        const products = await productRepo.searchProducts(term)
+        const products = await productRepo.searchProducts(term, undefined, config.neo4j.database)
         return ok(products.map((p) => toProductDTO(p, currency)))
       } catch (e) {
         return err('UNAVAILABLE', 'Failed to search products', { cause: String(e) })
@@ -95,7 +102,7 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
 
     async listBrands() {
       try {
-        return ok(await productRepo.getAllBrands())
+        return ok(await productRepo.getAllBrands(config.neo4j.database))
       } catch (e) {
         return err('UNAVAILABLE', 'Failed to list brands', { cause: String(e) })
       }
@@ -106,7 +113,9 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
         const productIds = await withSession((session) =>
           categoryRepo.getProductsByCategories(session, categoryIds)
         )
-        const products = await Promise.all(productIds.map((id) => productRepo.getProductById(id)))
+        const products = await Promise.all(
+          productIds.map((id) => productRepo.getProductById(id, config.neo4j.database))
+        )
         return ok(
           products
             .filter((p): p is productRepo.ProductWithVariants => p !== null)

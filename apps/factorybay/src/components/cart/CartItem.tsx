@@ -4,12 +4,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
-import type { CartItemWithDetails } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import { useCartStore } from '@/stores/cartStore'
 import { getColorHex } from '@/lib/color-utils'
+import { amount } from '@/lib/price'
 
 interface CartItemProps {
-  item: CartItemWithDetails
+  item: v1.CartItemDTO
 }
 
 export default function CartItem({ item }: CartItemProps) {
@@ -28,7 +29,7 @@ export default function CartItem({ item }: CartItemProps) {
     await removeFromCart(item.variantId)
   }
 
-  const itemTotal = item.product.stockPrice * localQuantity
+  const itemTotal = amount(item.product.price.stock) * localQuantity
 
   return (
     <div className="flex gap-4 border-b border-gray-200 py-6">
@@ -84,7 +85,7 @@ export default function CartItem({ item }: CartItemProps) {
               Rs {itemTotal.toFixed(2)}
             </p>
             <p className="text-xs text-gray-500">
-              Rs {item.product.stockPrice.toFixed(2)} each
+              Rs {amount(item.product.price.stock).toFixed(2)} each
             </p>
           </div>
         </div>

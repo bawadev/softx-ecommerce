@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import CartItem from '@/components/cart/CartItem'
-import type { CartItemWithDetails } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import { useCartStore } from '@/stores/cartStore'
-import { cartRetailTotal } from '@/lib/price'
+import { amount, cartRetailTotal } from '@/lib/price'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 interface CartPageClientProps {
-  initialItems: CartItemWithDetails[]
-  initialTotal: number
+  initialItems: v1.CartItemDTO[]
+  initialTotal: v1.Money
   initialItemCount: number
 }
 
@@ -57,9 +57,10 @@ export default function CartPageClient({
     })
   }
 
-  // Calculate savings (cart-domain prices; Phase 2 moves the cart onto Money)
+  // Calculate savings (Money totals from the CartService projection)
+  const totalAmount = amount(total)
   const retailTotal = cartRetailTotal(items)
-  const savings = retailTotal - total
+  const savings = retailTotal - totalAmount
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,7 +94,7 @@ export default function CartPageClient({
           <div className="lg:col-span-2">
             <div className="rounded-lg bg-white p-6 shadow-sm">
               {items.map((item) => (
-                <CartItem key={item.id} item={item} />
+                <CartItem key={item.variantId} item={item} />
               ))}
             </div>
 
@@ -115,7 +116,7 @@ export default function CartPageClient({
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('subtotal')}</span>
                   <span className="font-medium text-black-700">
-                    Rs {total.toFixed(2)}
+                    Rs {totalAmount.toFixed(2)}
                   </span>
                 </div>
 
@@ -143,14 +144,14 @@ export default function CartPageClient({
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('shipping')}</span>
                   <span className="font-medium text-black-700">
-                    {total >= 100 ? t('free') : 'Rs 9.99'}
+                    {totalAmount >= 100 ? t('free') : 'Rs 9.99'}
                   </span>
                 </div>
 
                 {/* Free shipping notice */}
-                {total < 100 && (
+                {totalAmount < 100 && (
                   <p className="text-xs text-gray-500">
-                    {t('addMoreForFreeShipping', { amount: (100 - total).toFixed(2) })}
+                    {t('addMoreForFreeShipping', { amount: (100 - totalAmount).toFixed(2) })}
                   </p>
                 )}
 
@@ -159,7 +160,7 @@ export default function CartPageClient({
                   <div className="flex justify-between">
                     <span className="text-base font-bold text-black-700">{t('total')}</span>
                     <span className="text-2xl font-bold text-black-700">
-                      Rs {(total + (total >= 100 ? 0 : 9.99)).toFixed(2)}
+                      Rs {(totalAmount + (totalAmount >= 100 ? 0 : 9.99)).toFixed(2)}
                     </span>
                   </div>
                 </div>

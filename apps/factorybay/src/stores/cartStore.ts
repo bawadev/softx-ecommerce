@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { CartItemWithDetails } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import {
   addToCartAction,
   removeFromCartAction,
@@ -9,10 +9,10 @@ import {
 } from '@/app/actions/cart'
 
 interface CartStore {
-  // State
-  items: CartItemWithDetails[]
+  // State (CartService projection)
+  items: v1.CartItemDTO[]
   itemCount: number
-  total: number
+  total: v1.Money
 
   // Loading states
   isAdding: boolean
@@ -28,11 +28,30 @@ interface CartStore {
   clearCart: () => Promise<boolean>
 }
 
+const EMPTY_MONEY: v1.Money = { amountMinor: 0, currency: 'LKR' }
+
+/** Optimistic stock-price total in minor units over a projected item list. */
+function stockTotalMinor(items: v1.CartItemDTO[]): number {
+  return items.reduce((sum, item) => sum + item.product.price.stock.amountMinor * item.quantity, 0)
+}
+
+function optimisticTotal(items: v1.CartItemDTO[], currency: string): v1.Money {
+  return { amountMinor: stockTotalMinor(items), currency }
+}
+
+/** Set the full projection returned by the mutation actions — never refetch. */
+function setProjection(
+  set: (partial: Partial<CartStore>) => void,
+  data: { items: v1.CartItemDTO[]; total: v1.Money; itemCount: number }
+) {
+  set({ items: data.items, itemCount: data.itemCount, total: data.total })
+}
+
 export const useCartStore = create<CartStore>((set, get) => ({
   // Initial state
   items: [],
   itemCount: 0,
-  total: 0,
+  total: EMPTY_MONEY,
   isAdding: false,
   isUpdating: false,
   isRemoving: false,
@@ -44,11 +63,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     try {
       const result = await getCartItemsAction()
       if (result.success && result.data) {
-        set({
-          items: result.data.items,
-          itemCount: result.data.itemCount,
-          total: result.data.total,
-        })
+        setProjection(set, result.data)
       }
     } catch (error) {
       console.error('Failed to load cart:', error)
@@ -57,26 +72,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  // Add item to cart with optimistic update
+  // Add item to cart — server projection applied on success, no refetch
   addToCart: async (variantId: string, quantity = 1) => {
     set({ isAdding: true })
-
-    // Optimistic update - we'll update the actual count after server response
-    // For now, we just show loading state
 
     try {
       const result = await addToCartAction(variantId, quantity)
 
-      if (result.success) {
-        // Reload cart to get updated state
-        const cartResult = await getCartItemsAction()
-        if (cartResult.success && cartResult.data) {
-          set({
-            items: cartResult.data.items,
-            itemCount: cartResult.data.itemCount,
-            total: cartResult.data.total,
-          })
-        }
+      if (result.success && result.data) {
+        setProjection(set, result.data)
         return true
       }
       return false
@@ -88,93 +92,72 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  // Update item quantity with optimistic update
+  // Update item quantity with optimistic pre-update, reconciled from the projection
   updateQuantity: async (variantId: string, quantity: number) => {
     set({ isUpdating: true })
 
     // Optimistic update - update local state immediately
-    const currentItems = get().items
-    const optimisticItems = currentItems.map(item =>
+    const snapshot = { items: get().items, itemCount: get().itemCount, total: get().total }
+    const optimisticItems = snapshot.items.map(item =>
       item.variantId === variantId
         ? { ...item, quantity }
         : item
     )
 
-    // Recalculate totals optimistically
-    const optimisticTotal = optimisticItems.reduce(
-      (sum, item) => sum + item.product.stockPrice * quantity,
-      0
-    )
-
     set({
       items: optimisticItems,
-      total: optimisticTotal,
+      itemCount: optimisticItems.reduce((sum, item) => sum + item.quantity, 0),
+      total: optimisticTotal(optimisticItems, snapshot.total.currency),
     })
 
     try {
       const result = await updateCartItemAction(variantId, quantity)
 
-      if (result.success) {
-        // Reload to get server-confirmed state
-        const cartResult = await getCartItemsAction()
-        if (cartResult.success && cartResult.data) {
-          set({
-            items: cartResult.data.items,
-            itemCount: cartResult.data.itemCount,
-            total: cartResult.data.total,
-          })
-        }
+      if (result.success && result.data) {
+        // Server projection is authoritative — reconcile from it
+        setProjection(set, result.data)
         return true
-      } else {
-        // Revert optimistic update on failure
-        set({ items: currentItems, total: get().total })
-        return false
       }
+      // Revert optimistic update on failure
+      set(snapshot)
+      return false
     } catch (error) {
       console.error('Failed to update cart:', error)
-      // Revert optimistic update on error
-      set({ items: currentItems, total: get().total })
+      set(snapshot)
       return false
     } finally {
       set({ isUpdating: false })
     }
   },
 
-  // Remove item from cart with optimistic update
+  // Remove item from cart with optimistic pre-update, reconciled from the projection
   removeFromCart: async (variantId: string) => {
     set({ isRemoving: true })
 
     // Optimistic update - remove item immediately
-    const currentItems = get().items
-    const optimisticItems = currentItems.filter(item => item.variantId !== variantId)
-
-    // Recalculate totals optimistically
-    const optimisticTotal = optimisticItems.reduce(
-      (sum, item) => sum + item.product.stockPrice * item.quantity,
-      0
-    )
+    const snapshot = { items: get().items, itemCount: get().itemCount, total: get().total }
+    const optimisticItems = snapshot.items.filter(item => item.variantId !== variantId)
 
     set({
       items: optimisticItems,
       itemCount: optimisticItems.reduce((sum, item) => sum + item.quantity, 0),
-      total: optimisticTotal,
+      total: optimisticTotal(optimisticItems, snapshot.total.currency),
     })
 
     try {
       const result = await removeFromCartAction(variantId)
 
-      if (result.success) {
-        // Optimistic update was correct, keep it
+      if (result.success && result.data) {
+        // Server projection is authoritative — reconcile from it
+        setProjection(set, result.data)
         return true
-      } else {
-        // Revert optimistic update on failure
-        set({ items: currentItems, itemCount: get().itemCount, total: get().total })
-        return false
       }
+      // Revert optimistic update on failure
+      set(snapshot)
+      return false
     } catch (error) {
       console.error('Failed to remove from cart:', error)
-      // Revert optimistic update on error
-      set({ items: currentItems, itemCount: get().itemCount, total: get().total })
+      set(snapshot)
       return false
     } finally {
       set({ isRemoving: false })
@@ -192,7 +175,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         set({
           items: [],
           itemCount: 0,
-          total: 0,
+          total: EMPTY_MONEY,
         })
         return true
       }

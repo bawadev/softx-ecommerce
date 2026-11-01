@@ -74,6 +74,8 @@ docker compose logs -f minio   # View MinIO logs
 ### Catalog Contract & Engine
 The storefront's catalog read path does not touch repositories directly: `apps/factorybay` consumes `@softx/engine` through the versioned `v1.CatalogService` contract (`packages/contract`), which defines the DTOs, `Result` envelope, and backward-compatibility rules. The engine (Neo4j) and the fixtures engine (in-memory fake) both implement the same contract, and a shared conformance suite runs against both. The contract's public API is frozen by an api-extractor snapshot committed at `packages/contract/etc/contract.api.md` — after changing `packages/contract/src`, run `npm run audit:api` and commit the updated snapshot deliberately (removals/renames are breaking and require a new contract major). The authoritative design is the spec: `docs/superpowers/specs/2026-10-31-engine-contract-separation-design.md`.
 
+Cart (Phase 2): user + guest carts are served by `CartService` (`packages/engine/src/cart.ts`); the zustand store is a projection of `CartMutation.cart`; guest cookie lines are normalized by the engine and persisted by the actions.
+
 ### Tech Stack
 - **Frontend:** Next.js 15.1.4 (App Router), React 19, TypeScript 5.7
 - **Styling:** Tailwind CSS 3.4, Framer Motion 11.15
