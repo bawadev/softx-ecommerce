@@ -31,13 +31,14 @@ export interface CartItemWithDetails extends CartItem {
 export async function addToCart(
   userId: string,
   variantId: string,
-  quantity: number = 1
+  quantity: number = 1,
+  database?: string
 ): Promise<CartItem> {
   if (quantity <= 0) {
     throw new Error('Quantity must be greater than 0')
   }
 
-  const session = getSession()
+  const session = getSession(database)
   try {
     const cartItemId = uuidv4()
     const now = new Date().toISOString()
@@ -65,8 +66,8 @@ export async function addToCart(
 /**
  * Remove item from cart
  */
-export async function removeFromCart(userId: string, variantId: string): Promise<void> {
-  const session = getSession()
+export async function removeFromCart(userId: string, variantId: string, database?: string): Promise<void> {
+  const session = getSession(database)
   try {
     await session.run(
       `
@@ -86,12 +87,13 @@ export async function removeFromCart(userId: string, variantId: string): Promise
 export async function updateCartItemQuantity(
   userId: string,
   variantId: string,
-  quantity: number
+  quantity: number,
+  database?: string
 ): Promise<CartItem> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     if (quantity <= 0) {
-      await removeFromCart(userId, variantId)
+      await removeFromCart(userId, variantId, database)
       throw new Error('Quantity must be greater than 0')
     }
 
@@ -113,8 +115,8 @@ export async function updateCartItemQuantity(
 /**
  * Get all cart items for a user with product and variant details
  */
-export async function getCartItems(userId: string): Promise<CartItemWithDetails[]> {
-  const session = getSession()
+export async function getCartItems(userId: string, database?: string): Promise<CartItemWithDetails[]> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -146,8 +148,8 @@ export async function getCartItems(userId: string): Promise<CartItemWithDetails[
 /**
  * Get cart item count for a user
  */
-export async function getCartCount(userId: string): Promise<number> {
-  const session = getSession()
+export async function getCartCount(userId: string, database?: string): Promise<number> {
+  const session = getSession(database)
   try {
     // Walk the full chain (CartItem → ProductVariant → Product) so orphan
     // items whose variant OR product was deleted don't inflate the badge.
@@ -172,8 +174,8 @@ export async function getCartCount(userId: string): Promise<number> {
 /**
  * Clear all items from cart
  */
-export async function clearCart(userId: string): Promise<void> {
-  const session = getSession()
+export async function clearCart(userId: string, database?: string): Promise<void> {
+  const session = getSession(database)
   try {
     await session.run(
       `
@@ -190,8 +192,8 @@ export async function clearCart(userId: string): Promise<void> {
 /**
  * Get cart total price
  */
-export async function getCartTotal(userId: string): Promise<number> {
-  const items = await getCartItems(userId)
+export async function getCartTotal(userId: string, database?: string): Promise<number> {
+  const items = await getCartItems(userId, database)
   return items.reduce((total, item) => {
     return total + item.product.stockPrice * item.quantity
   }, 0)
