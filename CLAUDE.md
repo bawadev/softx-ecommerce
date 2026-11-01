@@ -78,6 +78,8 @@ Cart (Phase 2): user + guest carts are served by `CartService` (`packages/engine
 
 Orders/checkout (Phase 3): OrderService computes totals server-side (free SHIP over 100.00, else 9.99), enforces ownership, records payment proofs; login merges the guest cart through the service.
 
+Auth/profile (Phase 4): account signup/login and profile reads/writes run through the engine's `AccountService` + `ProfileService` (validation, duplicate-check, bcrypt hashing, preferences/measurements/browsing-history all engine-side; password hashes never cross the boundary) — JWT minting, auth cookies, and guest-cart migration stay app-owned.
+
 ### Tech Stack
 - **Frontend:** Next.js 15.1.4 (App Router), React 19, TypeScript 5.7
 - **Styling:** Tailwind CSS 3.4, Framer Motion 11.15
