@@ -49,4 +49,38 @@ describe('toOrderDTO', () => {
     const dto = toOrderDTO(noVariantImages as never, 'LKR')
     expect(dto.items[0].productImage).toBe('http://x/product.webp')
   })
+
+  it('maps a severed variant/product link to placeholder display fields without throwing', () => {
+    // Admin deleteVariant/deleteProduct DETACH DELETE the variant/product
+    // nodes, so the repo's OPTIONAL MATCH over ITEM_OF_VARIANT→VARIANT_OF
+    // yields product:null/variant:null while the OrderItem node (and its
+    // variantId/quantity/priceAtPurchase) still exists.
+    const severed = {
+      ...repoOrder,
+      items: [{
+        id: 'oi1', orderId: 'o1', variantId: 'v1', quantity: 2, priceAtPurchase: 2499,
+        product: null,
+        variant: null,
+      }],
+    }
+    const dto = toOrderDTO(severed as never, 'LKR')
+    const item = dto.items[0]
+    // OrderItem-node properties survive the severed JOIN
+    expect(item.variantId).toBe('v1')
+    expect(item.quantity).toBe(2)
+    expect(item.priceAtPurchase).toEqual({ amountMinor: 249900, currency: 'LKR' })
+    // Placeholder display fields instead of a throw — every field PRESENT
+    // ('' placeholders), only productImage (always optional) stays omitted
+    expect(item.productName).toBe('(unavailable)')
+    expect(item.productId).toBe('')
+    expect(item.productBrand).toBe('')
+    expect(item.variantSize).toBe('')
+    expect(item.variantColor).toBe('')
+    expect(item).not.toHaveProperty('productImage')
+    // One severed item must never fail the whole orders list (listOrders
+    // try/catch) — the DTO still satisfies the contract schema, which keeps
+    // all four display fields required (variantSize is a plain string so ''
+    // parses).
+    expect(() => v1.OrderSchema.parse(dto)).not.toThrow()
+  })
 })

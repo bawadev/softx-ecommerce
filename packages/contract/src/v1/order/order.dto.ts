@@ -24,7 +24,12 @@ export const OrderItemSchema = z.object({
   productImage: z.string().optional(),
   // Flat display fields (additive): the order UIs link to the product page,
   // render the brand line, and show the variant attributes. The repo's
-  // item.id stays repo-only — variantId keys the order line.
+  // item.id stays repo-only — variantId keys the order line. These hydrate
+  // from an OPTIONAL MATCH over ITEM_OF_VARIANT→VARIANT_OF, so an admin
+  // deleteVariant/deleteProduct (DETACH DELETE) can sever the chain — the
+  // mapper then emits placeholder values ('' / '(unavailable)'), which is
+  // why variantSize is a plain string, not the SizeOption enum: historical
+  // display data must tolerate a non-enum placeholder.
   productId: z.string(),
   productBrand: z.string(),
   variantSize: z.string(),
