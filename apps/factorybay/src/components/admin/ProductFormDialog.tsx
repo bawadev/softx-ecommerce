@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import type { ProductWithVariants } from '@softx/engine'
-import type { ProductCategory, ProductGender, SizeOption, Product } from '@softx/engine'
+import type { ProductCategory, ProductGender, SizeOption } from '@softx/engine'
 import type { Category } from '@softx/engine'
 import { getCategoryByIdAction } from '@/app/actions/categories'
 import { addProductImageAction, removeProductImageAction } from '@/app/actions/admin-products'

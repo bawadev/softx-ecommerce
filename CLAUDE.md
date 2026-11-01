@@ -80,6 +80,8 @@ Orders/checkout (Phase 3): OrderService computes totals server-side (free SHIP o
 
 Auth/profile (Phase 4): account signup/login and profile reads/writes run through the engine's `AccountService` + `ProfileService` (validation, duplicate-check, bcrypt hashing, preferences/measurements/browsing-history all engine-side; password hashes never cross the boundary) — JWT minting, auth cookies, and guest-cart migration stay app-owned.
 
+Admin (Phase 5): every admin write goes through the engine's `AdminCatalogService` + `AdminOrderService`. The app's admin actions are thin wrappers: `lib/engine.ts`'s `currentActor()` derives an `ActorRef` (anonymous/customer/admin) from the session JWT and passes it as each service call's first argument — authorization is enforced ENGINE-side (every admin method returns `UNAUTHORIZED` for non-admin actors before touching the database), never in the action. Action names, envelopes, and messages are unchanged. `admin.ts` (role assignment) and `upload.ts` (MinIO) stay app-side by design (account-domain policy / transport). `@softx/engine` still exports a narrow `internal` escape hatch for the reads with no contract home yet (raw-Cypher admin reads, repository-boundary reads like the MAJOR-unit product edit form, and the maintenance/seed scripts); its exact consumer list is documented at `packages/engine/src/index.ts` and it should shrink over time — new code goes through the contract services.
+
 ### Tech Stack
 - **Frontend:** Next.js 15.1.4 (App Router), React 19, TypeScript 5.7
 - **Styling:** Tailwind CSS 3.4, Framer Motion 11.15

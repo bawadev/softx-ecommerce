@@ -21,8 +21,6 @@ export type {
   LoginInput, // actions/auth.ts
   AuthResponse, // actions/auth.ts
   JWTPayload, // lib/auth.ts
-  Product, // admin-product-form payload base
-  ProductVariant, // admin product actions
   ProductCategory, // profile preferences UI + CategoryFilterChips
   ProductGender, // admin product form
   SizeOption, // admin product form + profile measurements
@@ -63,8 +61,9 @@ export type { Color } from './repositories/color.repository' // admin ColorsClie
  *   pre-validation), `getLeafCategories` / `assignProductToCategories` /
  *   `createCategory` / `getCategoryTree` (maintenance scripts).
  * - `repositories.userRepository` — `findUserById` (profile page full-user
- *   read), `updateUser` / `findUserByEmail` (app-side admin role actions),
- *   `createUser` / `findUserByEmail` (db:seed).
+ *   read), `updateUser` / `findUserByEmail` (app-side admin role actions).
+ *   db:seed no longer consumes this repository — it creates its users
+ *   through `account.signUp` (`createUser` currently has no consumers).
  * - `repositories.heroSlideRepository` — `getAllHeroSlides` /
  *   `createHeroSlide` (hero-slide seed script).
  * - `repositories.promotionalCategoryRepository` —

@@ -10,6 +10,6 @@ export interface CartService {
   updateItem(owner: CartOwner, variantId: string, quantity: number): Promise<Result<CartMutation>>
   removeItem(owner: CartOwner, variantId: string): Promise<Result<CartMutation>>
   clearCart(owner: CartOwner): Promise<Result<CartMutation>>
-  /** Moves the source owner's lines into the user cart (validating/healing like addItem). Returns the USER cart. */
+  /** Moves the source owner's lines into the user cart (validating/healing like addItem). Returns the USER cart. user→same-user is a no-op returning the cart unchanged. */
   mergeCarts(from: CartOwner, toUserId: string): Promise<Result<CartMutation>>
 }
