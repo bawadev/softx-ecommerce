@@ -135,5 +135,22 @@ export function createFakeCartService(): v1.CartService {
       userCarts.set(owner.userId, [])
       return userResult(owner.userId)
     },
+
+    // Merge: hydrate the source lines exactly like guest flows (dead variants
+    // heal away), then move each surviving line into the user's map via
+    // guestAdd (increment-if-exists — the same reducer addItem uses). A user
+    // source is drained: its lines are moved, not copied, mirroring the
+    // guest cookie being consumed on login-merge (guest callers clear their
+    // cookie themselves; guest state is not ours to mutate). Returns the
+    // USER cart only — no guestItems echo (contract doc).
+    async mergeCarts(from, toUserId) {
+      const source = from.kind === 'guest' ? from.items : (userCarts.get(from.userId) ?? [])
+      if (from.kind === 'user') userCarts.set(from.userId, [])
+      for (const line of source) {
+        if (!worldVariant(line.variantId)) continue // self-heal: vanished variant drops out
+        userCarts.set(toUserId, guestAdd(userCarts.get(toUserId) ?? [], line.variantId, line.quantity))
+      }
+      return userResult(toUserId)
+    },
   }
 }
