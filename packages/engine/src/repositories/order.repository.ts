@@ -3,6 +3,11 @@ import { v4 as uuidv4 } from 'uuid'
 import type { Order, OrderItem, OrderStatus, ShippingAddress, DeliveryMethod } from '../types'
 
 export interface OrderWithItems extends Order {
+  // The product/variant blocks hydrate from an OPTIONAL MATCH over
+  // ITEM_OF_VARIANT→VARIANT_OF, so both are null when the chain is severed
+  // (admin deleteVariant/deleteProduct DETACH DELETE the target node while
+  // historical OrderItems remain). OrderItem's own properties
+  // (variantId/quantity/priceAtPurchase) are always present.
   items: (OrderItem & {
     product: {
       id: string
@@ -10,13 +15,13 @@ export interface OrderWithItems extends Order {
       brand: string
       sku: string
       images: string[]
-    }
+    } | null
     variant: {
       id: string
       size: string
       color: string
       images: string[]
-    }
+    } | null
   })[]
 }
 

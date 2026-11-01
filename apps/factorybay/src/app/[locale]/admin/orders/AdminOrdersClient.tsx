@@ -177,13 +177,20 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                 {/* Order Items */}
                 <div className="px-6 py-4">
                   <div className="space-y-3 mb-4">
-                    {order.items.map((item) => (
+                    {order.items.map((item) => {
+                      // The product/variant blocks hydrate from an OPTIONAL
+                      // MATCH — null when the ITEM_OF_VARIANT→VARIANT_OF chain
+                      // was severed (admin deleteVariant/deleteProduct). Render
+                      // placeholders instead of crashing the admin orders page.
+                      const image = item.variant?.images?.[0] || item.product?.images?.[0] || undefined
+                      const productName = item.product?.name ?? '(unavailable)'
+                      return (
                       <div key={item.id} className="flex gap-3">
                         <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                          {(item.variant.images?.[0] || item.product.images?.[0]) ? (
+                          {image ? (
                             <Image
-                              src={item.variant.images?.[0] || item.product.images[0]}
-                              alt={item.product.name}
+                              src={image}
+                              alt={productName}
                               fill
                               className="object-cover"
                               sizes="64px"
@@ -195,10 +202,13 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-black-700 truncate">{item.product.name}</p>
-                          <p className="text-xs text-gray-600">{item.product.brand}</p>
+                          <p className="text-sm font-medium text-black-700 truncate">{productName}</p>
+                          <p className="text-xs text-gray-600">{item.product?.brand}</p>
                           <p className="text-xs text-gray-500">
-                            Size: {item.variant.size} • Color: {item.variant.color} • Qty: {item.quantity}
+                            {item.variant
+                              ? `Size: ${item.variant.size} • Color: ${item.variant.color} • `
+                              : ''}
+                            Qty: {item.quantity}
                           </p>
                         </div>
                         <div className="text-right">
@@ -207,7 +217,8 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                           </p>
                         </div>
                       </div>
-                    ))}
+                      )
+                    })}
                   </div>
 
                   {/* Shipping Address */}
