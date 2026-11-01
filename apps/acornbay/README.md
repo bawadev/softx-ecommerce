@@ -5,5 +5,6 @@ See `apps/_template/README.md` for the anatomy of this app, and
 `scripts/seed-client.cypher` for this tenant's seed data.
 
 - tenant container: `ecom-acornbay-neo4j` (bolt `neo4j://localhost:7601`)
-- dev: `npm run dev -w acornbay`
+- dev: `npm run dev -w acornbay` (port **3100** — pinned in this app's `dev` script so it never collides with factorybay's 3000)
 - build: `npm run build -w acornbay`
+- pilot specs: `npm run test:pilot -w acornbay` (Playwright; boots the dev server itself, or set `PILOT_BASE_URL` to target an already-running instance)

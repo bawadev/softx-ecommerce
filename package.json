@@ -23,6 +23,7 @@
     "test:smoke": "npm run test:smoke -w factorybay",
     "test:watch": "vitest",
     "new-client": "tsx scripts/new-client.ts",
+    "verify:tenants": "tsx scripts/verify-tenants.ts",
     "build:all": "npm run build -w factorybay && npm run build -w acornbay",
     "audit:api": "npm run audit:api -w @softx/contract",
     "db:init": "npm run db:init -w factorybay",
