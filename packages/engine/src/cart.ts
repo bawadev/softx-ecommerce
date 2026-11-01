@@ -130,5 +130,13 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
         return err('UNAVAILABLE', 'Failed to clear cart', { cause: String(e) })
       }
     },
+
+    // Contract v1 grew mergeCarts in Phase 3 Task 2; the real engine merge
+    // (hydrate like guestResult, then addToCart each surviving line) is
+    // Phase 3 Task 4. No caller wires this yet, so an explicit UNAVAILABLE
+    // keeps the adapter honest until then.
+    async mergeCarts(_from, _toUserId) {
+      return err('UNAVAILABLE', 'mergeCarts is not implemented yet (Phase 3 Task 4)')
+    },
   }
 }
