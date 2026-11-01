@@ -118,10 +118,17 @@ function isPortFree(port: number): Promise<boolean> {
   })
 }
 
-/** Prefer PREFERRED_PORT, then scan 7600-7699. */
+/** Prefer PREFERRED_PORT, then scan 7600-7699. 7687 is excluded — it is
+ * factorybay's compose-pinned bolt port, and an OS-free check would happily
+ * hand it to a new client whenever factorybay's neo4j happens to be stopped
+ * (then factorybay's `docker compose up` could never bind again). */
+const FACTORYBAY_BOLT_PORT = 7687
+
 async function findFreePort(): Promise<number> {
   const candidates = [PREFERRED_PORT]
-  for (let p = PORT_RANGE_START; p <= PORT_RANGE_END; p++) if (p !== PREFERRED_PORT) candidates.push(p)
+  for (let p = PORT_RANGE_START; p <= PORT_RANGE_END; p++) {
+    if (p !== PREFERRED_PORT && p !== FACTORYBAY_BOLT_PORT) candidates.push(p)
+  }
   for (const p of candidates) if (await isPortFree(p)) return p
   throw new Error(`No free port in ${PORT_RANGE_START}-${PORT_RANGE_END}`)
 }
