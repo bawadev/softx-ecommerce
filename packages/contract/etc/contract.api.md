@@ -7,6 +7,772 @@
 import { z } from 'zod';
 
 // @public (undocumented)
+type CartDTO = z.infer<typeof CartDTOSchema>;
+
+// @public (undocumented)
+const CartDTOSchema: z.ZodObject<{
+    items: z.ZodArray<z.ZodObject<{
+        variantId: z.ZodString;
+        quantity: z.ZodNumber;
+        product: z.ZodObject<{
+            id: z.ZodString;
+            name: z.ZodString;
+            brand: z.ZodString;
+            sku: z.ZodString;
+            images: z.ZodArray<z.ZodString, "many">;
+            price: z.ZodObject<{
+                stock: z.ZodObject<{
+                    amountMinor: z.ZodNumber;
+                    currency: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    amountMinor: number;
+                    currency: string;
+                }, {
+                    amountMinor: number;
+                    currency: string;
+                }>;
+                retail: z.ZodObject<{
+                    amountMinor: z.ZodNumber;
+                    currency: z.ZodString;
+                }, "strip", z.ZodTypeAny, {
+                    amountMinor: number;
+                    currency: string;
+                }, {
+                    amountMinor: number;
+                    currency: string;
+                }>;
+            }, "strip", z.ZodTypeAny, {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            }, {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            }>;
+        }, "strip", z.ZodTypeAny, {
+            id: string;
+            name: string;
+            brand: string;
+            sku: string;
+            price: {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            };
+            images: string[];
+        }, {
+            id: string;
+            name: string;
+            brand: string;
+            sku: string;
+            price: {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            };
+            images: string[];
+        }>;
+        variant: z.ZodObject<{
+            id: z.ZodString;
+            size: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
+            color: z.ZodString;
+            stockQuantity: z.ZodNumber;
+        }, "strip", z.ZodTypeAny, {
+            id: string;
+            size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+            color: string;
+            stockQuantity: number;
+        }, {
+            id: string;
+            size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+            color: string;
+            stockQuantity: number;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        variantId: string;
+        quantity: number;
+        product: {
+            id: string;
+            name: string;
+            brand: string;
+            sku: string;
+            price: {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            };
+            images: string[];
+        };
+        variant: {
+            id: string;
+            size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+            color: string;
+            stockQuantity: number;
+        };
+    }, {
+        variantId: string;
+        quantity: number;
+        product: {
+            id: string;
+            name: string;
+            brand: string;
+            sku: string;
+            price: {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            };
+            images: string[];
+        };
+        variant: {
+            id: string;
+            size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+            color: string;
+            stockQuantity: number;
+        };
+    }>, "many">;
+    itemCount: z.ZodNumber;
+    total: z.ZodObject<{
+        amountMinor: z.ZodNumber;
+        currency: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        amountMinor: number;
+        currency: string;
+    }, {
+        amountMinor: number;
+        currency: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    items: {
+        variantId: string;
+        quantity: number;
+        product: {
+            id: string;
+            name: string;
+            brand: string;
+            sku: string;
+            price: {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            };
+            images: string[];
+        };
+        variant: {
+            id: string;
+            size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+            color: string;
+            stockQuantity: number;
+        };
+    }[];
+    itemCount: number;
+    total: {
+        amountMinor: number;
+        currency: string;
+    };
+}, {
+    items: {
+        variantId: string;
+        quantity: number;
+        product: {
+            id: string;
+            name: string;
+            brand: string;
+            sku: string;
+            price: {
+                stock: {
+                    amountMinor: number;
+                    currency: string;
+                };
+                retail: {
+                    amountMinor: number;
+                    currency: string;
+                };
+            };
+            images: string[];
+        };
+        variant: {
+            id: string;
+            size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+            color: string;
+            stockQuantity: number;
+        };
+    }[];
+    itemCount: number;
+    total: {
+        amountMinor: number;
+        currency: string;
+    };
+}>;
+
+// @public (undocumented)
+type CartItemDTO = z.infer<typeof CartItemSchema>;
+
+// @public (undocumented)
+const CartItemSchema: z.ZodObject<{
+    variantId: z.ZodString;
+    quantity: z.ZodNumber;
+    product: z.ZodObject<{
+        id: z.ZodString;
+        name: z.ZodString;
+        brand: z.ZodString;
+        sku: z.ZodString;
+        images: z.ZodArray<z.ZodString, "many">;
+        price: z.ZodObject<{
+            stock: z.ZodObject<{
+                amountMinor: z.ZodNumber;
+                currency: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                amountMinor: number;
+                currency: string;
+            }, {
+                amountMinor: number;
+                currency: string;
+            }>;
+            retail: z.ZodObject<{
+                amountMinor: z.ZodNumber;
+                currency: z.ZodString;
+            }, "strip", z.ZodTypeAny, {
+                amountMinor: number;
+                currency: string;
+            }, {
+                amountMinor: number;
+                currency: string;
+            }>;
+        }, "strip", z.ZodTypeAny, {
+            stock: {
+                amountMinor: number;
+                currency: string;
+            };
+            retail: {
+                amountMinor: number;
+                currency: string;
+            };
+        }, {
+            stock: {
+                amountMinor: number;
+                currency: string;
+            };
+            retail: {
+                amountMinor: number;
+                currency: string;
+            };
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        name: string;
+        brand: string;
+        sku: string;
+        price: {
+            stock: {
+                amountMinor: number;
+                currency: string;
+            };
+            retail: {
+                amountMinor: number;
+                currency: string;
+            };
+        };
+        images: string[];
+    }, {
+        id: string;
+        name: string;
+        brand: string;
+        sku: string;
+        price: {
+            stock: {
+                amountMinor: number;
+                currency: string;
+            };
+            retail: {
+                amountMinor: number;
+                currency: string;
+            };
+        };
+        images: string[];
+    }>;
+    variant: z.ZodObject<{
+        id: z.ZodString;
+        size: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
+        color: z.ZodString;
+        stockQuantity: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        id: string;
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    }, {
+        id: string;
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    variantId: string;
+    quantity: number;
+    product: {
+        id: string;
+        name: string;
+        brand: string;
+        sku: string;
+        price: {
+            stock: {
+                amountMinor: number;
+                currency: string;
+            };
+            retail: {
+                amountMinor: number;
+                currency: string;
+            };
+        };
+        images: string[];
+    };
+    variant: {
+        id: string;
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    };
+}, {
+    variantId: string;
+    quantity: number;
+    product: {
+        id: string;
+        name: string;
+        brand: string;
+        sku: string;
+        price: {
+            stock: {
+                amountMinor: number;
+                currency: string;
+            };
+            retail: {
+                amountMinor: number;
+                currency: string;
+            };
+        };
+        images: string[];
+    };
+    variant: {
+        id: string;
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    };
+}>;
+
+// @public (undocumented)
+type CartMutation = z.infer<typeof CartMutationSchema>;
+
+// @public (undocumented)
+const CartMutationSchema: z.ZodObject<{
+    cart: z.ZodObject<{
+        items: z.ZodArray<z.ZodObject<{
+            variantId: z.ZodString;
+            quantity: z.ZodNumber;
+            product: z.ZodObject<{
+                id: z.ZodString;
+                name: z.ZodString;
+                brand: z.ZodString;
+                sku: z.ZodString;
+                images: z.ZodArray<z.ZodString, "many">;
+                price: z.ZodObject<{
+                    stock: z.ZodObject<{
+                        amountMinor: z.ZodNumber;
+                        currency: z.ZodString;
+                    }, "strip", z.ZodTypeAny, {
+                        amountMinor: number;
+                        currency: string;
+                    }, {
+                        amountMinor: number;
+                        currency: string;
+                    }>;
+                    retail: z.ZodObject<{
+                        amountMinor: z.ZodNumber;
+                        currency: z.ZodString;
+                    }, "strip", z.ZodTypeAny, {
+                        amountMinor: number;
+                        currency: string;
+                    }, {
+                        amountMinor: number;
+                        currency: string;
+                    }>;
+                }, "strip", z.ZodTypeAny, {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                }, {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                }>;
+            }, "strip", z.ZodTypeAny, {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            }, {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            }>;
+            variant: z.ZodObject<{
+                id: z.ZodString;
+                size: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
+                color: z.ZodString;
+                stockQuantity: z.ZodNumber;
+            }, "strip", z.ZodTypeAny, {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            }, {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            }>;
+        }, "strip", z.ZodTypeAny, {
+            variantId: string;
+            quantity: number;
+            product: {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            };
+            variant: {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            };
+        }, {
+            variantId: string;
+            quantity: number;
+            product: {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            };
+            variant: {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            };
+        }>, "many">;
+        itemCount: z.ZodNumber;
+        total: z.ZodObject<{
+            amountMinor: z.ZodNumber;
+            currency: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            amountMinor: number;
+            currency: string;
+        }, {
+            amountMinor: number;
+            currency: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        items: {
+            variantId: string;
+            quantity: number;
+            product: {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            };
+            variant: {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            };
+        }[];
+        itemCount: number;
+        total: {
+            amountMinor: number;
+            currency: string;
+        };
+    }, {
+        items: {
+            variantId: string;
+            quantity: number;
+            product: {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            };
+            variant: {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            };
+        }[];
+        itemCount: number;
+        total: {
+            amountMinor: number;
+            currency: string;
+        };
+    }>;
+    guestItems: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        variantId: z.ZodString;
+        quantity: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        variantId: string;
+        quantity: number;
+    }, {
+        variantId: string;
+        quantity: number;
+    }>, "many">>;
+}, "strip", z.ZodTypeAny, {
+    cart: {
+        items: {
+            variantId: string;
+            quantity: number;
+            product: {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            };
+            variant: {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            };
+        }[];
+        itemCount: number;
+        total: {
+            amountMinor: number;
+            currency: string;
+        };
+    };
+    guestItems?: {
+        variantId: string;
+        quantity: number;
+    }[] | undefined;
+}, {
+    cart: {
+        items: {
+            variantId: string;
+            quantity: number;
+            product: {
+                id: string;
+                name: string;
+                brand: string;
+                sku: string;
+                price: {
+                    stock: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                    retail: {
+                        amountMinor: number;
+                        currency: string;
+                    };
+                };
+                images: string[];
+            };
+            variant: {
+                id: string;
+                size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+                color: string;
+                stockQuantity: number;
+            };
+        }[];
+        itemCount: number;
+        total: {
+            amountMinor: number;
+            currency: string;
+        };
+    };
+    guestItems?: {
+        variantId: string;
+        quantity: number;
+    }[] | undefined;
+}>;
+
+// @public (undocumented)
+type CartOwner = z.infer<typeof CartOwnerSchema>;
+
+// @public (undocumented)
+const CartOwnerSchema: z.ZodDiscriminatedUnion<"kind", [z.ZodObject<{
+    kind: z.ZodLiteral<"user">;
+    userId: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    kind: "user";
+    userId: string;
+}, {
+    kind: "user";
+    userId: string;
+}>, z.ZodObject<{
+    kind: z.ZodLiteral<"guest">;
+    items: z.ZodArray<z.ZodObject<{
+        variantId: z.ZodString;
+        quantity: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        variantId: string;
+        quantity: number;
+    }, {
+        variantId: string;
+        quantity: number;
+    }>, "many">;
+}, "strip", z.ZodTypeAny, {
+    kind: "guest";
+    items: {
+        variantId: string;
+        quantity: number;
+    }[];
+}, {
+    kind: "guest";
+    items: {
+        variantId: string;
+        quantity: number;
+    }[];
+}>]>;
+
+// @public (undocumented)
+interface CartService {
+    addItem(owner: CartOwner, variantId: string, quantity?: number): Promise<Result<CartMutation>>;
+    // (undocumented)
+    clearCart(owner: CartOwner): Promise<Result<CartMutation>>;
+    getCart(owner: CartOwner): Promise<Result<CartMutation>>;
+    // (undocumented)
+    removeItem(owner: CartOwner, variantId: string): Promise<Result<CartMutation>>;
+    updateItem(owner: CartOwner, variantId: string, quantity: number): Promise<Result<CartMutation>>;
+}
+
+// @public (undocumented)
 interface CatalogService {
     // (undocumented)
     getCategory(id: string): Promise<Result<CategoryDTO>>;
@@ -127,6 +893,21 @@ type ErrorCode = 'NOT_FOUND' | 'VALIDATION' | 'CONFLICT' | 'UNAUTHORIZED' | 'UNA
 
 // @public (undocumented)
 function fromMajorAmount(value: number, currency: string): Money;
+
+// @public (undocumented)
+type GuestCartLine = z.infer<typeof GuestCartLineSchema>;
+
+// @public (undocumented)
+const GuestCartLineSchema: z.ZodObject<{
+    variantId: z.ZodString;
+    quantity: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    variantId: string;
+    quantity: number;
+}, {
+    variantId: string;
+    quantity: number;
+}>;
 
 // @public (undocumented)
 const HeroAnimationTypeSchema: z.ZodEnum<["left-panel", "top-left-round", "top-right-panel", "bottom-right-quarter"]>;
@@ -465,6 +1246,90 @@ const ProductSchema: z.ZodObject<{
 }>;
 
 // @public (undocumented)
+type ProductSummaryDTO = z.infer<typeof ProductSummarySchema>;
+
+// @public (undocumented)
+const ProductSummarySchema: z.ZodObject<{
+    id: z.ZodString;
+    name: z.ZodString;
+    brand: z.ZodString;
+    sku: z.ZodString;
+    images: z.ZodArray<z.ZodString, "many">;
+    price: z.ZodObject<{
+        stock: z.ZodObject<{
+            amountMinor: z.ZodNumber;
+            currency: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            amountMinor: number;
+            currency: string;
+        }, {
+            amountMinor: number;
+            currency: string;
+        }>;
+        retail: z.ZodObject<{
+            amountMinor: z.ZodNumber;
+            currency: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            amountMinor: number;
+            currency: string;
+        }, {
+            amountMinor: number;
+            currency: string;
+        }>;
+    }, "strip", z.ZodTypeAny, {
+        stock: {
+            amountMinor: number;
+            currency: string;
+        };
+        retail: {
+            amountMinor: number;
+            currency: string;
+        };
+    }, {
+        stock: {
+            amountMinor: number;
+            currency: string;
+        };
+        retail: {
+            amountMinor: number;
+            currency: string;
+        };
+    }>;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    name: string;
+    brand: string;
+    sku: string;
+    price: {
+        stock: {
+            amountMinor: number;
+            currency: string;
+        };
+        retail: {
+            amountMinor: number;
+            currency: string;
+        };
+    };
+    images: string[];
+}, {
+    id: string;
+    name: string;
+    brand: string;
+    sku: string;
+    price: {
+        stock: {
+            amountMinor: number;
+            currency: string;
+        };
+        retail: {
+            amountMinor: number;
+            currency: string;
+        };
+    };
+    images: string[];
+}>;
+
+// @public (undocumented)
 type ProductVariantDTO = z.infer<typeof ProductVariantSchema>;
 
 // @public (undocumented)
@@ -568,9 +1433,45 @@ declare namespace v1 {
         CustomPanelStyleDTO,
         HeroSlideSchema,
         HeroSlideDTO,
-        CatalogService
+        CatalogService,
+        GuestCartLineSchema,
+        GuestCartLine,
+        CartOwnerSchema,
+        CartOwner,
+        ProductSummarySchema,
+        ProductSummaryDTO,
+        VariantSummarySchema,
+        VariantSummaryDTO,
+        CartItemSchema,
+        CartItemDTO,
+        CartDTOSchema,
+        CartDTO,
+        CartMutationSchema,
+        CartMutation,
+        CartService
     }
 }
+
+// @public (undocumented)
+type VariantSummaryDTO = z.infer<typeof VariantSummarySchema>;
+
+// @public (undocumented)
+const VariantSummarySchema: z.ZodObject<{
+    id: z.ZodString;
+    size: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
+    color: z.ZodString;
+    stockQuantity: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+    color: string;
+    stockQuantity: number;
+}, {
+    id: string;
+    size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+    color: string;
+    stockQuantity: number;
+}>;
 
 // (No @packageDocumentation comment for this package)
 
