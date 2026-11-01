@@ -5,16 +5,17 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
-import type { CartItemWithDetails } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import type { ShippingAddress, DeliveryMethod } from '@softx/engine'
 import { createOrderAction } from '@/app/actions/order'
 import { getColorHex } from '@/lib/color-utils'
+import { amount } from '@/lib/price'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 
 interface CheckoutPageClientProps {
-  items: CartItemWithDetails[]
-  total: number
+  items: v1.CartItemDTO[]
+  total: v1.Money
   itemCount: number
   userEmail?: string
   isAuthenticated: boolean
@@ -49,9 +50,10 @@ export default function CheckoutPageClient({
     phone: '',
   })
 
-  // Calculate shipping based on delivery method
-  const shipping = deliveryMethod === 'SHIP' ? (total >= 100 ? 0 : 9.99) : 0
-  const finalTotal = total + shipping
+  // Calculate shipping based on delivery method (Money total → major units)
+  const totalAmount = amount(total)
+  const shipping = deliveryMethod === 'SHIP' ? (totalAmount >= 100 ? 0 : 9.99) : 0
+  const finalTotal = totalAmount + shipping
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -184,7 +186,7 @@ export default function CheckoutPageClient({
                         <div className="text-xs text-black-700 mt-1">📦 Delivery within 4-5 business days</div>
                       </div>
                       <div className="text-sm font-medium text-black-700">
-                        {total >= 100 ? t('free') : 'Rs 9.99'}
+                        {totalAmount >= 100 ? t('free') : 'Rs 9.99'}
                       </div>
                     </label>
 
@@ -351,11 +353,11 @@ export default function CheckoutPageClient({
               {/* Items */}
               <div className="space-y-3 mb-6">
                 {items.map((item) => (
-                  <div key={item.id} className="flex gap-3">
+                  <div key={item.variantId} className="flex gap-3">
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                      {(item.variant.images?.[0] || item.product.images?.[0]) ? (
+                      {item.product.images?.[0] ? (
                         <Image
-                          src={item.variant.images?.[0] || item.product.images[0]}
+                          src={item.product.images[0]}
                           alt={item.product.name}
                           fill
                           className="object-cover"
@@ -386,7 +388,7 @@ export default function CheckoutPageClient({
                       </div>
                     </div>
                     <div className="text-sm font-medium text-black-700">
-                      Rs {(item.product.stockPrice * item.quantity).toFixed(2)}
+                      Rs {(amount(item.product.price.stock) * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 ))}
@@ -396,7 +398,7 @@ export default function CheckoutPageClient({
               <div className="space-y-3 border-t border-gray-200 pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('subtotalItems', { count: itemCount })}</span>
-                  <span className="font-medium text-black-700">Rs {total.toFixed(2)}</span>
+                  <span className="font-medium text-black-700">Rs {totalAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <div>

@@ -12,3 +12,7 @@ export function getEngine(): Engine {
 export function getCatalog() {
   return getEngine().for({ clientId: process.env.CLIENT_ID || 'factorybay' }).catalog
 }
+
+export function getCartService() {
+  return getEngine().for({ clientId: process.env.CLIENT_ID || 'factorybay' }).cart
+}
