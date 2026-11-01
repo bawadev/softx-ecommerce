@@ -63,9 +63,10 @@ function buildProductFilterQuery(filters?: ProductFilters): { conditions: string
  */
 export async function getAllProducts(
   filters?: ProductFilters,
-  limit: number = 50
+  limit: number = 50,
+  database?: string
 ): Promise<ProductWithVariants[]> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const { conditions, params } = buildProductFilterQuery(filters)
     params.limit = neo4j.int(limit)
@@ -94,8 +95,8 @@ export async function getAllProducts(
 /**
  * Get a single product by ID with all its variants
  */
-export async function getProductById(id: string): Promise<ProductWithVariants | null> {
-  const session = getSession()
+export async function getProductById(id: string, database?: string): Promise<ProductWithVariants | null> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -121,10 +122,11 @@ export async function getProductById(id: string): Promise<ProductWithVariants | 
  */
 export async function getProductsByCategory(
   category: ProductCategory,
-  limit: number = 50
+  limit: number = 50,
+  database?: string
 ): Promise<ProductWithVariants[]> {
   console.warn(`getProductsByCategory is deprecated. Category field "${category}" should use filter relationships instead.`)
-  return getAllProducts({ category }, limit)
+  return getAllProducts({ category }, limit, database)
 }
 
 /**
@@ -132,16 +134,17 @@ export async function getProductsByCategory(
  */
 export async function searchProducts(
   query: string,
-  limit: number = 50
+  limit: number = 50,
+  database?: string
 ): Promise<ProductWithVariants[]> {
-  return getAllProducts({ search: query }, limit)
+  return getAllProducts({ search: query }, limit, database)
 }
 
 /**
  * Get unique brands from all products
  */
-export async function getAllBrands(): Promise<string[]> {
-  const session = getSession()
+export async function getAllBrands(database?: string): Promise<string[]> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -160,8 +163,8 @@ export async function getAllBrands(): Promise<string[]> {
 /**
  * Get product variant by ID
  */
-export async function getVariantById(variantId: string): Promise<ProductVariant | null> {
-  const session = getSession()
+export async function getVariantById(variantId: string, database?: string): Promise<ProductVariant | null> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -181,7 +184,7 @@ export async function getVariantById(variantId: string): Promise<ProductVariant 
 /**
  * Get variant with its associated product details
  */
-export async function getVariantWithProduct(variantId: string): Promise<{
+export async function getVariantWithProduct(variantId: string, database?: string): Promise<{
   variant: ProductVariant
   product: {
     id: string
@@ -195,7 +198,7 @@ export async function getVariantWithProduct(variantId: string): Promise<{
     images: string[]
   }
 } | null> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -223,8 +226,8 @@ export async function getVariantWithProduct(variantId: string): Promise<{
 /**
  * Get product count (for statistics)
  */
-export async function getProductCount(filters?: ProductFilters): Promise<number> {
-  const session = getSession()
+export async function getProductCount(filters?: ProductFilters, database?: string): Promise<number> {
+  const session = getSession(database)
   try {
     const { conditions, params } = buildProductFilterQuery(filters)
 
@@ -246,8 +249,8 @@ export async function getProductCount(filters?: ProductFilters): Promise<number>
 /**
  * Delete a product and all its variants
  */
-export async function deleteProduct(productId: string): Promise<void> {
-  const session = getSession()
+export async function deleteProduct(productId: string, database?: string): Promise<void> {
+  const session = getSession(database)
   try {
     // Delete all variants first, then the product
     await session.run(
@@ -268,7 +271,8 @@ export async function deleteProduct(productId: string): Promise<void> {
  */
 export async function createProduct(
   product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>,
-  variants: Omit<ProductVariant, 'id' | 'productId'>[]
+  variants: Omit<ProductVariant, 'id' | 'productId'>[],
+  database?: string
 ): Promise<ProductWithVariants> {
   if (variants.length === 0) {
     throw new Error('At least one variant is required')
@@ -280,7 +284,7 @@ export async function createProduct(
     throw new Error('Retail price must be greater than 0')
   }
 
-  const session = getSession()
+  const session = getSession(database)
   try {
     const productId = crypto.randomUUID()
     const now = new Date().toISOString()
@@ -343,7 +347,7 @@ export async function createProduct(
     }
 
     // Return the created product with variants
-    const result = await getProductById(productId)
+    const result = await getProductById(productId, database)
     if (!result) {
       throw new Error('Failed to create product')
     }
@@ -358,9 +362,10 @@ export async function createProduct(
  */
 export async function updateProduct(
   productId: string,
-  updates: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>
+  updates: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>,
+  database?: string
 ): Promise<Product> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const now = new Date().toISOString()
 
@@ -392,9 +397,10 @@ export async function updateProduct(
  */
 export async function updateVariant(
   variantId: string,
-  updates: Partial<Omit<ProductVariant, 'id' | 'productId'>>
+  updates: Partial<Omit<ProductVariant, 'id' | 'productId'>>,
+  database?: string
 ): Promise<ProductVariant> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -423,9 +429,10 @@ export async function updateVariant(
  */
 export async function addVariant(
   productId: string,
-  variant: Omit<ProductVariant, 'id' | 'productId'>
+  variant: Omit<ProductVariant, 'id' | 'productId'>,
+  database?: string
 ): Promise<ProductVariant> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const variantId = crypto.randomUUID()
 
@@ -452,7 +459,7 @@ export async function addVariant(
       }
     )
 
-    const result = await getVariantById(variantId)
+    const result = await getVariantById(variantId, database)
     if (!result) {
       throw new Error('Failed to create variant')
     }
@@ -465,8 +472,8 @@ export async function addVariant(
 /**
  * Delete a variant
  */
-export async function deleteVariant(variantId: string): Promise<void> {
-  const session = getSession()
+export async function deleteVariant(variantId: string, database?: string): Promise<void> {
+  const session = getSession(database)
   try {
     await session.run(
       `
@@ -483,8 +490,8 @@ export async function deleteVariant(variantId: string): Promise<void> {
 /**
  * Add an image to a product
  */
-export async function addProductImage(productId: string, imageUrl: string): Promise<void> {
-  const session = getSession()
+export async function addProductImage(productId: string, imageUrl: string, database?: string): Promise<void> {
+  const session = getSession(database)
   try {
     await session.run(
       `
@@ -509,8 +516,8 @@ export async function addProductImage(productId: string, imageUrl: string): Prom
 /**
  * Remove an image from a product
  */
-export async function removeProductImage(productId: string, imageUrl: string): Promise<void> {
-  const session = getSession()
+export async function removeProductImage(productId: string, imageUrl: string, database?: string): Promise<void> {
+  const session = getSession(database)
   try {
     await session.run(
       `

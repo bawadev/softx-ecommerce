@@ -17,8 +17,8 @@ import { closeDriver } from '../src/db'
  * shared with the fake-engine runner — and torn down via `teardownCypher`
  * (deletes every node whose id starts with 'conformance-').
  *
- * Env: NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD. NEO4J_DATABASE must stay
- * UNSET — the product repository reads the server's default database.
+ * Env: NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD. NEO4J_DATABASE is optional —
+ * product.repository threads the tenant database since Phase 2 Task 1.
  */
 const RUN = process.env.RUN_INTEGRATION === '1'
 
