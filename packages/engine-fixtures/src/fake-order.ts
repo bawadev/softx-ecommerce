@@ -19,12 +19,26 @@ const SHIP_COST_MINOR = 999
 const FIXED_TS = '2026-01-01T00:00:00.000Z'
 
 /** Stored order = OrderDTO + owner (the repo-row shape); userId never enters the DTO. */
-interface StoredOrder extends v1.OrderDTO {
+export interface StoredOrder extends v1.OrderDTO {
   userId: string
 }
 
-function toDTO({ userId: _userId, ...dto }: StoredOrder): v1.OrderDTO {
+/** OrderDTO projection — the single choke point keeping the owner userId inside. */
+export function toOrderDTO({ userId: _userId, ...dto }: StoredOrder): v1.OrderDTO {
   return dto
+}
+
+/**
+ * Shared per-runner fake order state: the stored orders plus the storefront
+ * order service over them. The fake ADMIN order service (fake-admin.ts) needs
+ * the same list — listAllOrders reads every row and updateOrderStatus mutates
+ * the status the storefront owner-read serves — so a runner composing order +
+ * adminOrder services must build ONE state instance and share it, exactly
+ * like `createFakeEngine().for()` does.
+ */
+export interface FakeOrderState {
+  orders: StoredOrder[]
+  orderService: v1.OrderService
 }
 
 /**
@@ -34,11 +48,11 @@ function toDTO({ userId: _userId, ...dto }: StoredOrder): v1.OrderDTO {
  * after a successful write. Reads and proof attachment enforce ownership
  * (UNAUTHORIZED for someone else's order, NOT_FOUND for an unknown id).
  */
-export function createFakeOrderService(state: FakeCartState): v1.OrderService {
+export function createFakeOrderState(state: FakeCartState): FakeOrderState {
   const orders: StoredOrder[] = []
   let seq = 0
 
-  return {
+  const orderService: v1.OrderService = {
     async createOrder(userId, command) {
       const cart = await state.cartService.getCart({ kind: 'user', userId })
       if (!cart.ok) return err('UNAVAILABLE', 'Failed to read cart')
@@ -94,7 +108,7 @@ export function createFakeOrderService(state: FakeCartState): v1.OrderService {
       orders.push(stored)
       // Cart cleared in the SHARED state only after the order is recorded.
       await state.cartService.clearCart({ kind: 'user', userId })
-      return ok(toDTO(stored))
+      return ok(toOrderDTO(stored))
     },
 
     async getOrder(userId, orderId) {
@@ -103,7 +117,7 @@ export function createFakeOrderService(state: FakeCartState): v1.OrderService {
       if (found.userId !== userId) {
         return err('UNAUTHORIZED', 'Order does not belong to user')
       }
-      return ok(toDTO(found))
+      return ok(toOrderDTO(found))
     },
 
     async listOrders(userId) {
@@ -115,7 +129,7 @@ export function createFakeOrderService(state: FakeCartState): v1.OrderService {
           .filter((o) => o.userId === userId)
           .slice()
           .reverse()
-          .map(toDTO),
+          .map(toOrderDTO),
       )
     },
 
@@ -126,7 +140,17 @@ export function createFakeOrderService(state: FakeCartState): v1.OrderService {
         return err('UNAUTHORIZED', 'Order does not belong to user')
       }
       found.paymentProof = proofUrl
-      return ok(toDTO(found))
+      return ok(toOrderDTO(found))
     },
   }
+
+  return { orders, orderService }
+}
+
+/**
+ * Backwards-compatible standalone order service owning its own state — use
+ * createFakeOrderState() directly when an admin service must share the orders.
+ */
+export function createFakeOrderService(state: FakeCartState): v1.OrderService {
+  return createFakeOrderState(state).orderService
 }
