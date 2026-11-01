@@ -37,4 +37,15 @@ export * from './repositories/recommendation.repository'
 // getProductsByCategory is exported by both product.repository (deprecated)
 // and promotional-category.repository; re-export explicitly to resolve the
 // `export *` ambiguity. The app uses the promotional-category version.
-export { getProductsByCategory } from './repositories/promotional-category.repository'
+// addProductToCategory / removeProductFromCategory are ALSO exported by both
+// promotional-category.repository (the versions the app's promo actions use,
+// (category, product[, qty]) arg order) and — since Phase 5 Task 3 —
+// category.repository (product-first arg order, the AdminCatalogService
+// primitives); the promo versions keep winning the flat re-export. Both sets
+// stay reachable via the `internal.repositories` namespace. The whole flat
+// re-export layer is scheduled for removal in Phase 5 Task 7.
+export {
+  getProductsByCategory,
+  addProductToCategory,
+  removeProductFromCategory,
+} from './repositories/promotional-category.repository'

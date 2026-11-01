@@ -539,6 +539,78 @@ export async function assignProductToCategories(
 }
 
 /**
+ * Add a product to a single category (relationship CREATE only).
+ *
+ * The Cypher the app's addProductToCategoryAction ran inline before Phase 5
+ * Task 3 moved the write behind AdminCatalogService.assignProductToCategory.
+ * Leaf validation and the duplicate check stay CALLER-side (the service
+ * returns their specific messages) so this primitive stays unconditional.
+ */
+export async function addProductToCategory(
+  session: Session,
+  productId: string,
+  categoryId: string
+): Promise<void> {
+  await session.run(
+    `MATCH (p:Product {id: $productId})
+     MATCH (c:Category {id: $categoryId})
+     CREATE (p)-[:HAS_CATEGORY]->(c)`,
+    { productId, categoryId }
+  )
+}
+
+/**
+ * Remove a product from a single category.
+ *
+ * The Cypher the app's removeProductFromCategoryAction ran inline before
+ * Phase 5 Task 3; no-op when the relationship does not exist.
+ */
+export async function removeProductFromCategory(
+  session: Session,
+  productId: string,
+  categoryId: string
+): Promise<void> {
+  await session.run(
+    `MATCH (p:Product {id: $productId})-[r:HAS_CATEGORY]->(c:Category {id: $categoryId})
+     DELETE r`,
+    { productId, categoryId }
+  )
+}
+
+/**
+ * Replace a product's category set WITHOUT leaf validation.
+ *
+ * Same replace semantics as assignProductToCategories above (delete all
+ * HAS_CATEGORY, then create the new set), but the passed ids are taken as
+ * authoritative: the admin contract (AdminCatalogService
+ * .assignProductToCategories) lets an admin organize products under any
+ * category, including parents — the admin conformance suite pins an assign
+ * to a root that still has children. The leaf-validated variant remains for
+ * callers that want the form-level guarantee enforced repo-side.
+ */
+export async function setProductCategories(
+  session: Session,
+  productId: string,
+  categoryIds: string[]
+): Promise<void> {
+  await session.run(
+    `MATCH (p:Product {id: $productId})-[r:HAS_CATEGORY]->()
+     DELETE r`,
+    { productId }
+  )
+
+  if (categoryIds.length > 0) {
+    await session.run(
+      `MATCH (p:Product {id: $productId})
+       UNWIND $categoryIds as categoryId
+       MATCH (c:Category {id: categoryId})
+       CREATE (p)-[:HAS_CATEGORY]->(c)`,
+      { productId, categoryIds }
+    )
+  }
+}
+
+/**
  * Get categories for a product
  */
 export async function getCategoriesForProduct(

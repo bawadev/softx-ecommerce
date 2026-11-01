@@ -185,7 +185,7 @@ export async function updateHeroSlide(
     badgeText: string
     title: string
     subtitle: string
-    linkUrl: string
+    linkUrl: string | null
     displayOrder: number
     isActive: boolean
   }>
