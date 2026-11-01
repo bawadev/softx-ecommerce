@@ -7,6 +7,7 @@ import type { HeroSlideDTO } from './hero-slide.dto'
 
 export interface CatalogService {
   listProducts(query?: Partial<ListProductsQuery>): Promise<Result<PagedResult<ProductDTO>>>
+  listNewArrivals(limit?: number): Promise<Result<ProductDTO[]>>
   getProduct(id: string): Promise<Result<ProductDTO>>
   searchProducts(term: string): Promise<Result<ProductDTO[]>>
   listBrands(): Promise<Result<string[]>>

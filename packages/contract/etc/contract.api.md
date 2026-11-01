@@ -47,6 +47,119 @@ interface AccountService {
 }
 
 // @public (undocumented)
+type ActorRef = z.infer<typeof ActorRefSchema>;
+
+// @public
+const ActorRefSchema: z.ZodDiscriminatedUnion<"kind", [z.ZodObject<{
+    kind: z.ZodLiteral<"anonymous">;
+}, "strip", z.ZodTypeAny, {
+    kind: "anonymous";
+}, {
+    kind: "anonymous";
+}>, z.ZodObject<{
+    kind: z.ZodLiteral<"customer">;
+    userId: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    kind: "customer";
+    userId: string;
+}, {
+    kind: "customer";
+    userId: string;
+}>, z.ZodObject<{
+    kind: z.ZodLiteral<"admin">;
+    userId: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    kind: "admin";
+    userId: string;
+}, {
+    kind: "admin";
+    userId: string;
+}>]>;
+
+// @public (undocumented)
+interface AdminCatalogService {
+    // (undocumented)
+    addProductImage(actor: ActorRef, productId: string, imageUrl: string): Promise<Result<ProductDTO>>;
+    // (undocumented)
+    addProductToPromotionalCategory(actor: ActorRef, categoryId: string, productId: string, allocatedQuantity: number): Promise<Result<null>>;
+    // (undocumented)
+    addVariant(actor: ActorRef, productId: string, input: VariantWriteInput): Promise<Result<ProductDTO>>;
+    // (undocumented)
+    assignProductToCategories(actor: ActorRef, productId: string, categoryIds: string[]): Promise<Result<null>>;
+    // (undocumented)
+    assignProductToCategory(actor: ActorRef, productId: string, categoryId: string): Promise<Result<null>>;
+    // (undocumented)
+    checkProductNameExists(actor: ActorRef, name: string, excludeId?: string): Promise<Result<boolean>>;
+    // (undocumented)
+    colorCount(actor: ActorRef): Promise<Result<number>>;
+    // (undocumented)
+    createCategory(actor: ActorRef, input: CategoryCreateInput): Promise<Result<CategoryDTO>>;
+    // (undocumented)
+    createColor(actor: ActorRef, name: string, hex: string): Promise<Result<ColorDTO>>;
+    // (undocumented)
+    createHeroSlide(actor: ActorRef, input: HeroSlideWriteInput): Promise<Result<HeroSlideDTO>>;
+    // (undocumented)
+    createProduct(actor: ActorRef, input: ProductCreateInput): Promise<Result<ProductDTO>>;
+    // (undocumented)
+    createPromotionalCategory(actor: ActorRef, input: PromotionalCategoryWriteInput): Promise<Result<PromotionalCategoryDTO>>;
+    // (undocumented)
+    deleteCategory(actor: ActorRef, id: string): Promise<Result<null>>;
+    // (undocumented)
+    deleteColor(actor: ActorRef, id: string): Promise<Result<null>>;
+    // (undocumented)
+    deleteHeroSlide(actor: ActorRef, id: string): Promise<Result<null>>;
+    // (undocumented)
+    deleteProduct(actor: ActorRef, id: string): Promise<Result<null>>;
+    // (undocumented)
+    deletePromotionalCategory(actor: ActorRef, id: string): Promise<Result<null>>;
+    // (undocumented)
+    listColors(actor: ActorRef): Promise<Result<ColorDTO[]>>;
+    // (undocumented)
+    moveCategory(actor: ActorRef, id: string, newParentId: string | null): Promise<Result<CategoryDTO>>;
+    // (undocumented)
+    moveQuantity(actor: ActorRef, productId: string, fromCategoryId: string, toCategoryId: string, quantity: number): Promise<Result<null>>;
+    // (undocumented)
+    removeProductFromCategory(actor: ActorRef, productId: string, categoryId: string): Promise<Result<null>>;
+    // (undocumented)
+    removeProductFromPromotionalCategory(actor: ActorRef, categoryId: string, productId: string): Promise<Result<null>>;
+    // (undocumented)
+    removeProductImage(actor: ActorRef, productId: string, imageUrl: string): Promise<Result<ProductDTO>>;
+    // (undocumented)
+    reorderHeroSlides(actor: ActorRef, slides: Array<{
+        id: string;
+        displayOrder: number;
+    }>): Promise<Result<null>>;
+    // (undocumented)
+    searchProductsByName(actor: ActorRef, term: string): Promise<Result<ProductDTO[]>>;
+    // (undocumented)
+    seedColors(actor: ActorRef, colors: ColorSeedInput[]): Promise<Result<number>>;
+    // (undocumented)
+    setPromotionalCategoryQuantity(actor: ActorRef, categoryId: string, productId: string, allocatedQuantity: number): Promise<Result<null>>;
+    // (undocumented)
+    toggleColorActive(actor: ActorRef, id: string): Promise<Result<ColorDTO>>;
+    // (undocumented)
+    toggleProductInPromotionalCategory(actor: ActorRef, categoryId: string, productId: string, isActive: boolean): Promise<Result<null>>;
+    // (undocumented)
+    updateCategory(actor: ActorRef, id: string, input: CategoryUpdateInput): Promise<Result<CategoryDTO>>;
+    // (undocumented)
+    updateHeroSlide(actor: ActorRef, id: string, input: HeroSlideUpdateInput): Promise<Result<HeroSlideDTO>>;
+    // (undocumented)
+    updateProduct(actor: ActorRef, id: string, input: ProductUpdateInput): Promise<Result<ProductDTO>>;
+    // (undocumented)
+    updatePromotionalCategory(actor: ActorRef, id: string, input: PromotionalCategoryUpdateInput): Promise<Result<PromotionalCategoryDTO>>;
+    // (undocumented)
+    updateVariant(actor: ActorRef, variantId: string, input: VariantUpdateInput): Promise<Result<ProductDTO>>;
+}
+
+// @public (undocumented)
+interface AdminOrderService {
+    // (undocumented)
+    listAllOrders(actor: ActorRef): Promise<Result<OrderDTO[]>>;
+    // (undocumented)
+    updateOrderStatus(actor: ActorRef, orderId: string, status: z.infer<typeof OrderStatusSchema>): Promise<Result<null>>;
+}
+
+// @public (undocumented)
 type CartDTO = z.infer<typeof CartDTOSchema>;
 
 // @public (undocumented)
@@ -828,6 +941,8 @@ interface CatalogService {
     // (undocumented)
     listHeroSlides(activeOnly?: boolean): Promise<Result<HeroSlideDTO[]>>;
     // (undocumented)
+    listNewArrivals(limit?: number): Promise<Result<ProductDTO[]>>;
+    // (undocumented)
     listProducts(query?: Partial<ListProductsQuery>): Promise<Result<PagedResult<ProductDTO>>>;
     // (undocumented)
     listProductsByCategories(categoryIds: string[]): Promise<Result<ProductDTO[]>>;
@@ -838,6 +953,27 @@ interface CatalogService {
     // (undocumented)
     searchProducts(term: string): Promise<Result<ProductDTO[]>>;
 }
+
+// @public (undocumented)
+type CategoryCreateInput = z.infer<typeof CategoryCreateInputSchema>;
+
+// @public
+const CategoryCreateInputSchema: z.ZodObject<{
+    name: z.ZodString;
+    hierarchy: z.ZodString;
+    parentId: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    isFeatured: z.ZodOptional<z.ZodBoolean>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    hierarchy: string;
+    parentId?: string | null | undefined;
+    isFeatured?: boolean | undefined;
+}, {
+    name: string;
+    hierarchy: string;
+    parentId?: string | null | undefined;
+    isFeatured?: boolean | undefined;
+}>;
 
 // @public (undocumented)
 type CategoryDTO = z.infer<typeof CategorySchema>;
@@ -885,6 +1021,63 @@ const CategorySchema: z.ZodObject<{
 type CategoryTreeDTO = CategoryDTO & {
     children: CategoryTreeDTO[];
 };
+
+// @public (undocumented)
+type CategoryUpdateInput = z.infer<typeof CategoryUpdateInputSchema>;
+
+// @public
+const CategoryUpdateInputSchema: z.ZodObject<{
+    name: z.ZodOptional<z.ZodString>;
+    isActive: z.ZodOptional<z.ZodBoolean>;
+    isFeatured: z.ZodOptional<z.ZodBoolean>;
+}, "strip", z.ZodTypeAny, {
+    name?: string | undefined;
+    isActive?: boolean | undefined;
+    isFeatured?: boolean | undefined;
+}, {
+    name?: string | undefined;
+    isActive?: boolean | undefined;
+    isFeatured?: boolean | undefined;
+}>;
+
+// @public (undocumented)
+type ColorDTO = z.infer<typeof ColorDTOSchema>;
+
+// @public
+const ColorDTOSchema: z.ZodObject<{
+    id: z.ZodString;
+    name: z.ZodString;
+    hex: z.ZodString;
+    isActive: z.ZodBoolean;
+    createdAt: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    name: string;
+    createdAt: string;
+    isActive: boolean;
+    hex: string;
+}, {
+    id: string;
+    name: string;
+    createdAt: string;
+    isActive: boolean;
+    hex: string;
+}>;
+
+// @public (undocumented)
+type ColorSeedInput = z.infer<typeof ColorSeedInputSchema>;
+
+// @public (undocumented)
+const ColorSeedInputSchema: z.ZodObject<{
+    name: z.ZodString;
+    hex: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    hex: string;
+}, {
+    name: string;
+    hex: string;
+}>;
 
 // @public (undocumented)
 type CreateOrderCommand = z.infer<typeof CreateOrderCommandSchema>;
@@ -1152,6 +1345,268 @@ const HeroSlideSchema: z.ZodObject<{
     subtitle: string;
     mobileImageUrl?: string | undefined;
     mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | undefined;
+    mobileColorTheme?: "custom" | "light" | "dark" | undefined;
+    customDesktopStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    customMobileStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    linkUrl?: string | undefined;
+}>;
+
+// @public (undocumented)
+type HeroSlideUpdateInput = z.infer<typeof HeroSlideUpdateInputSchema>;
+
+// @public (undocumented)
+const HeroSlideUpdateInputSchema: z.ZodObject<{
+    imageUrl: z.ZodOptional<z.ZodString>;
+    mobileImageUrl: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    animationType: z.ZodOptional<z.ZodEnum<["left-panel", "top-left-round", "top-right-panel", "bottom-right-quarter"]>>;
+    mobileAnimationType: z.ZodOptional<z.ZodOptional<z.ZodEnum<["bottom-pill", "bottom-full-panel", "top-banner", "center-card"]>>>;
+    colorTheme: z.ZodOptional<z.ZodOptional<z.ZodEnum<["light", "dark", "custom"]>>>;
+    mobileColorTheme: z.ZodOptional<z.ZodOptional<z.ZodEnum<["light", "dark", "custom"]>>>;
+    customDesktopStyle: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+        textColor: z.ZodString;
+        panelColor: z.ZodString;
+        panelOpacity: z.ZodNumber;
+        borderEnabled: z.ZodBoolean;
+        borderColor: z.ZodString;
+        borderOpacity: z.ZodNumber;
+        borderWidth: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }>>>;
+    customMobileStyle: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+        textColor: z.ZodString;
+        panelColor: z.ZodString;
+        panelOpacity: z.ZodNumber;
+        borderEnabled: z.ZodBoolean;
+        borderColor: z.ZodString;
+        borderOpacity: z.ZodNumber;
+        borderWidth: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }>>>;
+    badgeText: z.ZodOptional<z.ZodString>;
+    title: z.ZodOptional<z.ZodString>;
+    subtitle: z.ZodOptional<z.ZodString>;
+    linkUrl: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    displayOrder: z.ZodOptional<z.ZodNumber>;
+    isActive: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+}, "strip", z.ZodTypeAny, {
+    isActive?: boolean | undefined;
+    displayOrder?: number | undefined;
+    imageUrl?: string | undefined;
+    mobileImageUrl?: string | undefined;
+    animationType?: "left-panel" | "top-left-round" | "top-right-panel" | "bottom-right-quarter" | undefined;
+    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | undefined;
+    colorTheme?: "custom" | "light" | "dark" | undefined;
+    mobileColorTheme?: "custom" | "light" | "dark" | undefined;
+    customDesktopStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    customMobileStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    badgeText?: string | undefined;
+    title?: string | undefined;
+    subtitle?: string | undefined;
+    linkUrl?: string | undefined;
+}, {
+    isActive?: boolean | undefined;
+    displayOrder?: number | undefined;
+    imageUrl?: string | undefined;
+    mobileImageUrl?: string | undefined;
+    animationType?: "left-panel" | "top-left-round" | "top-right-panel" | "bottom-right-quarter" | undefined;
+    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | undefined;
+    colorTheme?: "custom" | "light" | "dark" | undefined;
+    mobileColorTheme?: "custom" | "light" | "dark" | undefined;
+    customDesktopStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    customMobileStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    badgeText?: string | undefined;
+    title?: string | undefined;
+    subtitle?: string | undefined;
+    linkUrl?: string | undefined;
+}>;
+
+// @public (undocumented)
+type HeroSlideWriteInput = z.infer<typeof HeroSlideWriteInputSchema>;
+
+// @public
+const HeroSlideWriteInputSchema: z.ZodObject<{
+    imageUrl: z.ZodString;
+    mobileImageUrl: z.ZodOptional<z.ZodString>;
+    animationType: z.ZodEnum<["left-panel", "top-left-round", "top-right-panel", "bottom-right-quarter"]>;
+    mobileAnimationType: z.ZodOptional<z.ZodEnum<["bottom-pill", "bottom-full-panel", "top-banner", "center-card"]>>;
+    colorTheme: z.ZodOptional<z.ZodEnum<["light", "dark", "custom"]>>;
+    mobileColorTheme: z.ZodOptional<z.ZodEnum<["light", "dark", "custom"]>>;
+    customDesktopStyle: z.ZodOptional<z.ZodObject<{
+        textColor: z.ZodString;
+        panelColor: z.ZodString;
+        panelOpacity: z.ZodNumber;
+        borderEnabled: z.ZodBoolean;
+        borderColor: z.ZodString;
+        borderOpacity: z.ZodNumber;
+        borderWidth: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }>>;
+    customMobileStyle: z.ZodOptional<z.ZodObject<{
+        textColor: z.ZodString;
+        panelColor: z.ZodString;
+        panelOpacity: z.ZodNumber;
+        borderEnabled: z.ZodBoolean;
+        borderColor: z.ZodString;
+        borderOpacity: z.ZodNumber;
+        borderWidth: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }, {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    }>>;
+    badgeText: z.ZodString;
+    title: z.ZodString;
+    subtitle: z.ZodString;
+    linkUrl: z.ZodOptional<z.ZodString>;
+    displayOrder: z.ZodNumber;
+    isActive: z.ZodOptional<z.ZodBoolean>;
+}, "strip", z.ZodTypeAny, {
+    displayOrder: number;
+    imageUrl: string;
+    animationType: "left-panel" | "top-left-round" | "top-right-panel" | "bottom-right-quarter";
+    badgeText: string;
+    title: string;
+    subtitle: string;
+    isActive?: boolean | undefined;
+    mobileImageUrl?: string | undefined;
+    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | undefined;
+    colorTheme?: "custom" | "light" | "dark" | undefined;
+    mobileColorTheme?: "custom" | "light" | "dark" | undefined;
+    customDesktopStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    customMobileStyle?: {
+        textColor: string;
+        panelColor: string;
+        panelOpacity: number;
+        borderEnabled: boolean;
+        borderColor: string;
+        borderOpacity: number;
+        borderWidth: number;
+    } | undefined;
+    linkUrl?: string | undefined;
+}, {
+    displayOrder: number;
+    imageUrl: string;
+    animationType: "left-panel" | "top-left-round" | "top-right-panel" | "bottom-right-quarter";
+    badgeText: string;
+    title: string;
+    subtitle: string;
+    isActive?: boolean | undefined;
+    mobileImageUrl?: string | undefined;
+    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | undefined;
+    colorTheme?: "custom" | "light" | "dark" | undefined;
     mobileColorTheme?: "custom" | "light" | "dark" | undefined;
     customDesktopStyle?: {
         textColor: string;
@@ -1501,6 +1956,63 @@ type ProductCategory = z.infer<typeof ProductCategorySchema>;
 const ProductCategorySchema: z.ZodEnum<["SHIRT", "PANTS", "JACKET", "DRESS", "SHOES", "ACCESSORIES"]>;
 
 // @public (undocumented)
+type ProductCreateInput = z.infer<typeof ProductCreateInputSchema>;
+
+// @public
+const ProductCreateInputSchema: z.ZodObject<{
+    name: z.ZodString;
+    description: z.ZodString;
+    brand: z.ZodString;
+    gender: z.ZodEnum<["MEN", "WOMEN", "UNISEX"]>;
+    stockPrice: z.ZodNumber;
+    retailPrice: z.ZodNumber;
+    sku: z.ZodString;
+    images: z.ZodArray<z.ZodString, "many">;
+} & {
+    variants: z.ZodArray<z.ZodObject<{
+        size: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
+        color: z.ZodString;
+        stockQuantity: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    }, {
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    }>, "many">;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    description: string;
+    brand: string;
+    gender: "MEN" | "WOMEN" | "UNISEX";
+    sku: string;
+    images: string[];
+    variants: {
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    }[];
+    stockPrice: number;
+    retailPrice: number;
+}, {
+    name: string;
+    description: string;
+    brand: string;
+    gender: "MEN" | "WOMEN" | "UNISEX";
+    sku: string;
+    images: string[];
+    variants: {
+        size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+        color: string;
+        stockQuantity: number;
+    }[];
+    stockPrice: number;
+    retailPrice: number;
+}>;
+
+// @public (undocumented)
 type ProductDTO = z.infer<typeof ProductSchema>;
 
 // @public (undocumented)
@@ -1712,6 +2224,39 @@ const ProductSummarySchema: z.ZodObject<{
 }>;
 
 // @public (undocumented)
+type ProductUpdateInput = z.infer<typeof ProductUpdateInputSchema>;
+
+// @public (undocumented)
+const ProductUpdateInputSchema: z.ZodObject<{
+    name: z.ZodOptional<z.ZodString>;
+    description: z.ZodOptional<z.ZodString>;
+    brand: z.ZodOptional<z.ZodString>;
+    gender: z.ZodOptional<z.ZodEnum<["MEN", "WOMEN", "UNISEX"]>>;
+    stockPrice: z.ZodOptional<z.ZodNumber>;
+    retailPrice: z.ZodOptional<z.ZodNumber>;
+    sku: z.ZodOptional<z.ZodString>;
+    images: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+}, "strip", z.ZodTypeAny, {
+    name?: string | undefined;
+    description?: string | undefined;
+    brand?: string | undefined;
+    gender?: "MEN" | "WOMEN" | "UNISEX" | undefined;
+    sku?: string | undefined;
+    images?: string[] | undefined;
+    stockPrice?: number | undefined;
+    retailPrice?: number | undefined;
+}, {
+    name?: string | undefined;
+    description?: string | undefined;
+    brand?: string | undefined;
+    gender?: "MEN" | "WOMEN" | "UNISEX" | undefined;
+    sku?: string | undefined;
+    images?: string[] | undefined;
+    stockPrice?: number | undefined;
+    retailPrice?: number | undefined;
+}>;
+
+// @public (undocumented)
 type ProductVariantDTO = z.infer<typeof ProductVariantSchema>;
 
 // @public (undocumented)
@@ -1730,6 +2275,39 @@ const ProductVariantSchema: z.ZodObject<{
     size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
     color: string;
     stockQuantity: number;
+}>;
+
+// @public (undocumented)
+type ProductWriteInput = z.infer<typeof ProductWriteInputSchema>;
+
+// @public
+const ProductWriteInputSchema: z.ZodObject<{
+    name: z.ZodString;
+    description: z.ZodString;
+    brand: z.ZodString;
+    gender: z.ZodEnum<["MEN", "WOMEN", "UNISEX"]>;
+    stockPrice: z.ZodNumber;
+    retailPrice: z.ZodNumber;
+    sku: z.ZodString;
+    images: z.ZodArray<z.ZodString, "many">;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    description: string;
+    brand: string;
+    gender: "MEN" | "WOMEN" | "UNISEX";
+    sku: string;
+    images: string[];
+    stockPrice: number;
+    retailPrice: number;
+}, {
+    name: string;
+    description: string;
+    brand: string;
+    gender: "MEN" | "WOMEN" | "UNISEX";
+    sku: string;
+    images: string[];
+    stockPrice: number;
+    retailPrice: number;
 }>;
 
 // @public (undocumented)
@@ -1779,6 +2357,66 @@ const PromotionalCategorySchema: z.ZodObject<{
     isActive: boolean;
     displayOrder: number;
     description?: string | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+}>;
+
+// @public (undocumented)
+type PromotionalCategoryUpdateInput = z.infer<typeof PromotionalCategoryUpdateInputSchema>;
+
+// @public (undocumented)
+const PromotionalCategoryUpdateInputSchema: z.ZodObject<{
+    name: z.ZodOptional<z.ZodString>;
+    slug: z.ZodOptional<z.ZodString>;
+    description: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    displayOrder: z.ZodOptional<z.ZodNumber>;
+    isActive: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    startDate: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    endDate: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+}, "strip", z.ZodTypeAny, {
+    name?: string | undefined;
+    description?: string | undefined;
+    slug?: string | undefined;
+    isActive?: boolean | undefined;
+    displayOrder?: number | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+}, {
+    name?: string | undefined;
+    description?: string | undefined;
+    slug?: string | undefined;
+    isActive?: boolean | undefined;
+    displayOrder?: number | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+}>;
+
+// @public (undocumented)
+type PromotionalCategoryWriteInput = z.infer<typeof PromotionalCategoryWriteInputSchema>;
+
+// @public
+const PromotionalCategoryWriteInputSchema: z.ZodObject<{
+    name: z.ZodString;
+    slug: z.ZodString;
+    description: z.ZodOptional<z.ZodString>;
+    displayOrder: z.ZodNumber;
+    isActive: z.ZodOptional<z.ZodBoolean>;
+    startDate: z.ZodOptional<z.ZodString>;
+    endDate: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    slug: string;
+    displayOrder: number;
+    description?: string | undefined;
+    isActive?: boolean | undefined;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+}, {
+    name: string;
+    slug: string;
+    displayOrder: number;
+    description?: string | undefined;
+    isActive?: boolean | undefined;
     startDate?: string | undefined;
     endDate?: string | undefined;
 }>;
@@ -2011,7 +2649,37 @@ declare namespace v1 {
         UserMeasurementsSchema,
         UserMeasurementsDTO,
         AccountService,
-        ProfileService
+        ProfileService,
+        ActorRefSchema,
+        ActorRef,
+        ProductWriteInputSchema,
+        ProductWriteInput,
+        ProductCreateInputSchema,
+        ProductCreateInput,
+        VariantWriteInputSchema,
+        VariantWriteInput,
+        ProductUpdateInputSchema,
+        ProductUpdateInput,
+        VariantUpdateInputSchema,
+        VariantUpdateInput,
+        CategoryCreateInputSchema,
+        CategoryCreateInput,
+        CategoryUpdateInputSchema,
+        CategoryUpdateInput,
+        PromotionalCategoryWriteInputSchema,
+        PromotionalCategoryWriteInput,
+        PromotionalCategoryUpdateInputSchema,
+        PromotionalCategoryUpdateInput,
+        HeroSlideWriteInputSchema,
+        HeroSlideWriteInput,
+        HeroSlideUpdateInputSchema,
+        HeroSlideUpdateInput,
+        ColorDTOSchema,
+        ColorDTO,
+        ColorSeedInputSchema,
+        ColorSeedInput,
+        AdminCatalogService,
+        AdminOrderService
     }
 }
 
@@ -2031,6 +2699,42 @@ const VariantSummarySchema: z.ZodObject<{
     stockQuantity: number;
 }, {
     id: string;
+    size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+    color: string;
+    stockQuantity: number;
+}>;
+
+// @public (undocumented)
+type VariantUpdateInput = z.infer<typeof VariantUpdateInputSchema>;
+
+// @public (undocumented)
+const VariantUpdateInputSchema: z.ZodObject<{
+    size: z.ZodOptional<z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>>;
+    color: z.ZodOptional<z.ZodString>;
+    stockQuantity: z.ZodOptional<z.ZodNumber>;
+}, "strip", z.ZodTypeAny, {
+    size?: "XS" | "S" | "M" | "L" | "XL" | "XXL" | undefined;
+    color?: string | undefined;
+    stockQuantity?: number | undefined;
+}, {
+    size?: "XS" | "S" | "M" | "L" | "XL" | "XXL" | undefined;
+    color?: string | undefined;
+    stockQuantity?: number | undefined;
+}>;
+
+// @public (undocumented)
+type VariantWriteInput = z.infer<typeof VariantWriteInputSchema>;
+
+// @public
+const VariantWriteInputSchema: z.ZodObject<{
+    size: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
+    color: z.ZodString;
+    stockQuantity: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
+    color: string;
+    stockQuantity: number;
+}, {
     size: "XS" | "S" | "M" | "L" | "XL" | "XXL";
     color: string;
     stockQuantity: number;

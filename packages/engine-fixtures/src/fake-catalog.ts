@@ -30,6 +30,15 @@ export function createFakeCatalogService(): v1.CatalogService {
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
       return v1.ok({ items: filtered.slice(offset, offset + limit), total: filtered.length, limit, offset })
     },
+    async listNewArrivals(limit = 10) {
+      const inStock = (p: v1.ProductDTO) => p.variants.some((v) => v.stockQuantity > 0)
+      return v1.ok(
+        products
+          .filter(inStock)
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+          .slice(0, limit)
+      )
+    },
     async getProduct(id) {
       const p = products.find((x) => x.id === id)
       return p ? v1.ok(p) : v1.err('NOT_FOUND', `Product ${id} not found`)
