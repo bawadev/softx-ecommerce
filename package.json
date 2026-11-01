@@ -9,7 +9,8 @@
     "postcss-selector-parser": "7.1.6"
   },
   "workspaces": [
-    "apps/*",
+    "apps/factorybay",
+    "apps/acornbay",
     "packages/*"
   ],
   "scripts": {
