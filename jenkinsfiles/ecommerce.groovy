@@ -11,8 +11,9 @@
 // Pre-deploy checks. This file is a scripted pipeline (a bare shared-library
 // call); deployKamalApp creates its own node/stages, so the checks stage
 // acquires its own node and runs before the deploy call.
+// Agent: infra-ci — the controller has no Node.js (build #24: "npm: not found").
 stage('checks') {
-    node('') {
+    node('infra-ci') {
         checkout scm
         sh 'npm ci'
         sh 'JWT_SECRET=build-time-placeholder NEO4J_PASSWORD=dummy MINIO_ACCESS_KEY=dummy MINIO_SECRET_KEY=dummy MINIO_BUCKET_NAME=product-images MINIO_USE_SSL=false npm run build'
