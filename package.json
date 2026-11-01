@@ -9,7 +9,8 @@
     "postcss-selector-parser": "7.1.6"
   },
   "workspaces": [
-    "apps/*",
+    "apps/factorybay",
+    "apps/acornbay",
     "packages/*"
   ],
   "scripts": {
@@ -21,6 +22,9 @@
     "test:integration": "RUN_INTEGRATION=1 vitest run packages/engine/test",
     "test:smoke": "npm run test:smoke -w factorybay",
     "test:watch": "vitest",
+    "new-client": "tsx scripts/new-client.ts",
+    "verify:tenants": "tsx scripts/verify-tenants.ts",
+    "build:all": "npm run build -w factorybay && npm run build -w acornbay",
     "audit:api": "npm run audit:api -w @softx/contract",
     "db:init": "npm run db:init -w factorybay",
     "db:seed": "npm run db:seed -w factorybay",
@@ -38,6 +42,7 @@
     "setup:categories": "npm run setup:categories -w factorybay"
   },
   "devDependencies": {
+    "tsx": "^4.20.6",
     "vitest": "^4.1.12"
   }
 }

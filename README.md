@@ -10,6 +10,18 @@ Monorepo: the Next.js app lives in `apps/factorybay`; shared packages live in `p
 - `packages/engine` — the real Neo4j implementation of the contract, including the admin services with engine-side authorization (`ActorRef`).
 - `packages/engine-fixtures` — in-memory fake engine used to run the same conformance suites hermetically in unit tests.
 
+### Multi-Client
+
+The platform hosts several storefront clients on one codebase — different UI, same contract. Current apps: `apps/factorybay` (canonical storefront, http://localhost:3000) and `apps/acornbay` (pilot client, http://localhost:3100). Each client is a separate Next.js app consuming the shared `@softx/engine` + `@softx/contract` packages against its OWN Neo4j container (container-per-client) and a `<id>-media` MinIO bucket prefix.
+
+```bash
+npm run new-client -- --client <id>   # onboard a new client — container + bucket prefix + app (from apps/_template, dev port pinned) + seed; idempotent
+npm run build:all                    # build ALL client apps
+npm run verify:tenants               # tenant-isolation regression check (both tenants' containers up)
+```
+
+See CLAUDE.md "Multi-Client (Phase 6)" for the tenant model details.
+
 ---
 
 ## 🎯 Project Vision
