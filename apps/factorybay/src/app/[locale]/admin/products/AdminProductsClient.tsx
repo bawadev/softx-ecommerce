@@ -34,7 +34,6 @@ import ProductFormDialog, { type FormData, type VariantFormData } from '@/compon
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { amount } from '@/lib/price'
-import { toProductDTO } from '@softx/engine'
 import {
   emptyProductForm,
   repositoryProductToForm,
@@ -438,7 +437,9 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
           // Assign product to selected categories
           await assignProductToCategoriesAction(result.data.product.id, formDataParam.categoryIds)
 
-          setProducts([toProductDTO(result.data.product, process.env.DEFAULT_CURRENCY || 'LKR'), ...products])
+          // createProductAction now returns the engine's ProductDTO — use it
+          // directly for the optimistic list insert.
+          setProducts([result.data.product, ...products])
           showNotification('success', 'Product created successfully with variants!')
           resetForm()
         } else {

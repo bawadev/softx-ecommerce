@@ -2,44 +2,37 @@
 
 import { getSession } from '@softx/engine'
 import { getCurrentUser } from '@/lib/auth'
-import { ActionResponse, PromotionalCategory } from '@softx/engine'
+import { ActionResponse } from '@softx/engine'
 import * as promoCategoryRepo from '@softx/engine'
 import { ProductWithVariants } from '@softx/engine'
+import { PromotionalCategory } from '@softx/engine'
 import type { v1 } from '@softx/contract'
-import { getCatalog } from '@/lib/engine'
+import { getCatalog, getAdminCatalog, currentActor } from '@/lib/engine'
+
+/** Failed service Result → the action's envelope message (UNAUTHORIZED keeps this family's exact string). */
+function resultMessage(r: { error: { code: string; message: string } }): string {
+  return r.error.code === 'UNAUTHORIZED' ? 'Unauthorized. Admin access required.' : r.error.message
+}
 
 /**
- * Create a new promotional category (Admin only)
+ * Create a new promotional category (Admin only — enforced engine-side via the actor)
  */
-export async function createPromotionalCategoryAction(data: {
-  name: string
-  slug: string
-  description?: string
-  displayOrder: number
-  isActive?: boolean
-  startDate?: string
-  endDate?: string
-}): Promise<ActionResponse<PromotionalCategory>> {
-  const session = getSession()
-
+export async function createPromotionalCategoryAction(data: v1.PromotionalCategoryWriteInput): Promise<ActionResponse<v1.PromotionalCategoryDTO>> {
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().createPromotionalCategory(await currentActor(), data)
 
-    const category = await promoCategoryRepo.createPromotionalCategory(session, data)
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
+    }
 
     return {
       success: true,
       message: 'Promotional category created successfully',
-      data: category,
+      data: r.data,
     }
   } catch (error: any) {
     console.error('Error creating promotional category:', error)
     return { success: false, message: error.message || 'Failed to create promotional category' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -117,65 +110,41 @@ export async function getPromotionalCategoryBySlugAction(
 }
 
 /**
- * Update promotional category (Admin only)
+ * Update promotional category (Admin only — enforced engine-side via the actor)
  */
 export async function updatePromotionalCategoryAction(
   categoryId: string,
-  data: Partial<{
-    name: string
-    slug: string
-    description: string
-    displayOrder: number
-    isActive: boolean
-    startDate: string
-    endDate: string
-  }>
-): Promise<ActionResponse<PromotionalCategory>> {
-  const session = getSession()
-
+  data: v1.PromotionalCategoryUpdateInput
+): Promise<ActionResponse<v1.PromotionalCategoryDTO>> {
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().updatePromotionalCategory(await currentActor(), categoryId, data)
 
-    const category = await promoCategoryRepo.updatePromotionalCategory(session, categoryId, data)
-
-    if (!category) {
-      return { success: false, message: 'Promotional category not found' }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     return {
       success: true,
       message: 'Promotional category updated successfully',
-      data: category,
+      data: r.data,
     }
   } catch (error: any) {
     console.error('Error updating promotional category:', error)
     return { success: false, message: error.message || 'Failed to update promotional category' }
-  } finally {
-    await session.close()
   }
 }
 
 /**
- * Delete promotional category (Admin only)
+ * Delete promotional category (Admin only — enforced engine-side via the actor)
  */
 export async function deletePromotionalCategoryAction(
   categoryId: string
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().deletePromotionalCategory(await currentActor(), categoryId)
 
-    const deleted = await promoCategoryRepo.deletePromotionalCategory(session, categoryId)
-
-    if (!deleted) {
-      return { success: false, message: 'Promotional category not found' }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     return {
@@ -185,28 +154,28 @@ export async function deletePromotionalCategoryAction(
   } catch (error: any) {
     console.error('Error deleting promotional category:', error)
     return { success: false, message: error.message || 'Failed to delete promotional category' }
-  } finally {
-    await session.close()
   }
 }
 
 /**
- * Add product to promotional category (Admin only)
+ * Add product to promotional category (Admin only — enforced engine-side via the actor)
  */
 export async function addProductToCategoryAction(
   categoryId: string,
   productId: string,
   allocatedQuantity: number
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().addProductToPromotionalCategory(
+      await currentActor(),
+      categoryId,
+      productId,
+      allocatedQuantity
+    )
 
-    await promoCategoryRepo.addProductToCategory(session, categoryId, productId, allocatedQuantity)
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
+    }
 
     return {
       success: true,
@@ -215,30 +184,25 @@ export async function addProductToCategoryAction(
   } catch (error: any) {
     console.error('Error adding product to category:', error)
     return { success: false, message: error.message || 'Failed to add product to category' }
-  } finally {
-    await session.close()
   }
 }
 
 /**
- * Remove product from promotional category (Admin only)
+ * Remove product from promotional category (Admin only — enforced engine-side via the actor)
  */
 export async function removeProductFromCategoryAction(
   categoryId: string,
   productId: string
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().removeProductFromPromotionalCategory(
+      await currentActor(),
+      categoryId,
+      productId
+    )
 
-    const removed = await promoCategoryRepo.removeProductFromCategory(session, categoryId, productId)
-
-    if (!removed) {
-      return { success: false, message: 'Product not found in category' }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     return {
@@ -248,36 +212,27 @@ export async function removeProductFromCategoryAction(
   } catch (error: any) {
     console.error('Error removing product from category:', error)
     return { success: false, message: error.message || 'Failed to remove product from category' }
-  } finally {
-    await session.close()
   }
 }
 
 /**
- * Update product quantity in category (Admin only)
+ * Update product quantity in category (Admin only — enforced engine-side via the actor)
  */
 export async function updateCategoryItemQuantityAction(
   categoryId: string,
   productId: string,
   allocatedQuantity: number
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
-
-    const item = await promoCategoryRepo.updateCategoryItemQuantity(
-      session,
+    const r = await getAdminCatalog().setPromotionalCategoryQuantity(
+      await currentActor(),
       categoryId,
       productId,
       allocatedQuantity
     )
 
-    if (!item) {
-      return { success: false, message: 'Product not found in category' }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     return {
@@ -287,8 +242,6 @@ export async function updateCategoryItemQuantityAction(
   } catch (error: any) {
     console.error('Error updating category item quantity:', error)
     return { success: false, message: error.message || 'Failed to update quantity' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -316,30 +269,23 @@ export async function getProductsByCategoryAction(
 }
 
 /**
- * Toggle product visibility in a promotional category (Admin only)
+ * Toggle product visibility in a promotional category (Admin only — enforced engine-side via the actor)
  */
 export async function toggleProductInCategoryAction(
   categoryId: string,
   productId: string,
   isActive: boolean
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
-
-    const updated = await promoCategoryRepo.toggleProductInCategory(
-      session,
+    const r = await getAdminCatalog().toggleProductInPromotionalCategory(
+      await currentActor(),
       categoryId,
       productId,
       isActive
     )
 
-    if (!updated) {
-      return { success: false, message: 'Product not found in category' }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     return {
@@ -349,8 +295,6 @@ export async function toggleProductInCategoryAction(
   } catch (error: any) {
     console.error('Error toggling product in category:', error)
     return { success: false, message: error.message || 'Failed to toggle product visibility' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -426,7 +370,7 @@ export async function getProductCategoriesAction(productId: string): Promise<
 }
 
 /**
- * Move quantity between categories (Admin only)
+ * Move quantity between categories (Admin only — enforced engine-side via the actor)
  */
 export async function moveQuantityBetweenCategoriesAction(
   productId: string,
@@ -434,27 +378,17 @@ export async function moveQuantityBetweenCategoriesAction(
   toCategoryId: string,
   quantity: number
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
-
-    const moved = await promoCategoryRepo.moveQuantityBetweenCategories(
-      session,
+    const r = await getAdminCatalog().moveQuantity(
+      await currentActor(),
       productId,
       fromCategoryId,
       toCategoryId,
       quantity
     )
 
-    if (!moved) {
-      return {
-        success: false,
-        message: 'Failed to move quantity. Check if sufficient quantity is available.',
-      }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     return {
@@ -464,7 +398,5 @@ export async function moveQuantityBetweenCategoriesAction(
   } catch (error: any) {
     console.error('Error moving quantity between categories:', error)
     return { success: false, message: error.message || 'Failed to move quantity' }
-  } finally {
-    await session.close()
   }
 }

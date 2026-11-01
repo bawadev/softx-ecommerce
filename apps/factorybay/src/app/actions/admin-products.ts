@@ -2,22 +2,18 @@
 
 import { isAdmin } from '@/lib/auth'
 import {
-  getAllProducts,
   getProductById,
-  deleteProduct,
-  createProduct,
-  updateProduct,
-  addVariant,
   updateVariant,
-  deleteVariant,
-  getAllBrands,
-  addProductImage,
-  removeProductImage,
   type ProductWithVariants,
 } from '@softx/engine'
 import type { ActionResponse, Product, ProductVariant } from '@softx/engine'
 import type { v1 } from '@softx/contract'
-import { getCatalog } from '@/lib/engine'
+import { getCatalog, getAdminCatalog, currentActor } from '@/lib/engine'
+
+/** Failed service Result → the action's envelope message (UNAUTHORIZED keeps this family's exact string). */
+function resultMessage(r: { error: { code: string; message: string } }): string {
+  return r.error.code === 'UNAUTHORIZED' ? 'Unauthorized' : r.error.message
+}
 
 /**
  * Get all products for admin view (engine catalog read → v1.ProductDTO)
@@ -58,6 +54,11 @@ export async function getAdminProductsAction(): Promise<
 
 /**
  * Get a single product for admin editing
+ *
+ * Repository-shaped read on purpose: the write-path form
+ * (repositoryProductToForm) works in the repository boundary's MAJOR-unit
+ * prices, which the contract's Money-based ProductDTO cannot express. Moves
+ * when the form retypes onto the contract write inputs (Phase 5 Task 7).
  */
 export async function getAdminProductAction(
   productId: string
@@ -100,17 +101,15 @@ export async function getAdminProductAction(
 export async function deleteProductAction(
   productId: string
 ): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
   try {
-    await deleteProduct(productId)
+    const r = await getAdminCatalog().deleteProduct(await currentActor(), productId)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
 
     return {
       success: true,
@@ -131,23 +130,30 @@ export async function deleteProductAction(
 export async function createProductAction(
   product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>,
   variants: Omit<ProductVariant, 'id' | 'productId'>[]
-): Promise<ActionResponse<{ product: ProductWithVariants }>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
+): Promise<ActionResponse<{ product: v1.ProductDTO }>> {
   try {
-    const newProduct = await createProduct(product, variants)
+    const r = await getAdminCatalog().createProduct(await currentActor(), {
+      ...product,
+      // Variant-level images are dead post-Phase-1 (product-level images
+      // only) — the write input carries just size/color/stockQuantity.
+      variants: variants.map((variant) => ({
+        size: variant.size,
+        color: variant.color,
+        stockQuantity: variant.stockQuantity,
+      })),
+    })
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
 
     return {
       success: true,
       message: 'Product created successfully',
-      data: { product: newProduct },
+      data: { product: r.data },
     }
   } catch (error) {
     console.error('Create product error:', error)
@@ -165,17 +171,15 @@ export async function updateProductAction(
   productId: string,
   updates: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>
 ): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
   try {
-    await updateProduct(productId, updates)
+    const r = await getAdminCatalog().updateProduct(await currentActor(), productId, updates)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
 
     return {
       success: true,
@@ -191,58 +195,24 @@ export async function updateProductAction(
 }
 
 /**
- * Update a product variant
- */
-export async function updateVariantAction(
-  variantId: string,
-  updates: Partial<Omit<ProductVariant, 'id' | 'productId'>>
-): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
-  try {
-    await updateVariant(variantId, updates)
-
-    return {
-      success: true,
-      message: 'Variant updated successfully',
-    }
-  } catch (error) {
-    console.error('Update variant error:', error)
-    return {
-      success: false,
-      message: 'Failed to update variant',
-    }
-  }
-}
-
-/**
  * Search products by name (for autocomplete)
  */
 export async function searchProductsByNameAction(
   searchTerm: string
-): Promise<ActionResponse<{ products: ProductWithVariants[] }>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
+): Promise<ActionResponse<{ products: v1.ProductDTO[] }>> {
   try {
-    const products = await getAllProducts({ search: searchTerm }, 10)
+    const r = await getAdminCatalog().searchProductsByName(await currentActor(), searchTerm)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
 
     return {
       success: true,
-      data: { products },
+      data: { products: r.data },
     }
   } catch (error) {
     console.error('Search products error:', error)
@@ -259,29 +229,21 @@ export async function searchProductsByNameAction(
 export async function checkProductNameExistsAction(
   name: string,
   excludeId?: string
-): Promise<ActionResponse<{ exists: boolean; product?: ProductWithVariants }>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
+): Promise<ActionResponse<{ exists: boolean }>> {
   try {
-    const products = await getAllProducts({ search: name }, 10)
+    const r = await getAdminCatalog().checkProductNameExists(await currentActor(), name, excludeId)
 
-    // Find exact match (case-insensitive)
-    const exactMatch = products.find(
-      p => p.name.toLowerCase() === name.toLowerCase() && p.id !== excludeId
-    )
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
 
     return {
       success: true,
       data: {
-        exists: !!exactMatch,
-        product: exactMatch,
+        exists: r.data,
       },
     }
   } catch (error) {
@@ -307,11 +269,18 @@ export async function getAllBrandsAction(): Promise<ActionResponse<{ brands: str
   }
 
   try {
-    const brands = await getAllBrands()
+    const r = await getCatalog().listBrands()
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: 'Failed to fetch brands',
+      }
+    }
 
     return {
       success: true,
-      data: { brands },
+      data: { brands: r.data },
     }
   } catch (error) {
     console.error('Get brands error:', error)
@@ -421,17 +390,15 @@ export async function addProductImageAction(
   productId: string,
   imageUrl: string
 ): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
   try {
-    await addProductImage(productId, imageUrl)
+    const r = await getAdminCatalog().addProductImage(await currentActor(), productId, imageUrl)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
 
     return {
       success: true,
@@ -453,17 +420,15 @@ export async function removeProductImageAction(
   productId: string,
   imageUrl: string
 ): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
   try {
-    await removeProductImage(productId, imageUrl)
+    const r = await getAdminCatalog().removeProductImage(await currentActor(), productId, imageUrl)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
 
     return {
       success: true,

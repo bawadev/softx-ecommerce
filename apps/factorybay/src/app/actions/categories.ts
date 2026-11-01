@@ -5,7 +5,12 @@ import { isAdmin } from '@/lib/auth'
 import { convertNeo4jIntegers } from '@softx/engine'
 import * as categoryRepo from '@softx/engine'
 import type { v1 } from '@softx/contract'
-import { getCatalog } from '@/lib/engine'
+import { getCatalog, getAdminCatalog, currentActor } from '@/lib/engine'
+
+/** Failed service Result → the action's envelope message (UNAUTHORIZED keeps this family's exact string). */
+function resultMessage(r: { error: { code: string; message: string } }): string {
+  return r.error.code === 'UNAUTHORIZED' ? 'Unauthorized' : r.error.message
+}
 
 /**
  * Collect nodes matching a predicate across the whole tree (depth-first).
@@ -186,25 +191,20 @@ export async function createCategoryAction(
   parentId: string | null = null,
   isFeatured: boolean = false
 ) {
-  if (!(await isAdmin())) {
-    return { success: false, message: 'Unauthorized' }
-}
-
-  const session = getSession()
   try {
-    const category = await categoryRepo.createCategory(
-      session,
+    const r = await getAdminCatalog().createCategory(await currentActor(), {
       name,
       hierarchy,
       parentId,
-      isFeatured
-    )
-    return { success: true, data: category }
+      isFeatured,
+    })
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
+    }
+    return { success: true, data: r.data }
   } catch (error: unknown) {
     console.error('Error creating category:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -219,19 +219,15 @@ export async function updateCategoryAction(
     isFeatured?: boolean
   }
 ) {
-  if (!(await isAdmin())) {
-    return { success: false, message: 'Unauthorized' }
-}
-
-  const session = getSession()
   try {
-    const category = await categoryRepo.updateCategory(session, id, updates)
-    return { success: true, data: category }
+    const r = await getAdminCatalog().updateCategory(await currentActor(), id, updates)
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
+    }
+    return { success: true, data: r.data }
   } catch (error: unknown) {
     console.error('Error updating category:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -239,46 +235,15 @@ export async function updateCategoryAction(
  * Delete category (Admin only)
  */
 export async function deleteCategoryAction(id: string) {
-  if (!(await isAdmin())) {
-    return { success: false, message: 'Unauthorized' }
-}
-
-  const session = getSession()
   try {
-    const result = await categoryRepo.deleteCategory(session, id)
-    // Map 'message' to 'error' for consistency with other actions
-    if (!result.success && result.message) {
-      return { success: false, message: result.message }
+    const r = await getAdminCatalog().deleteCategory(await currentActor(), id)
+    if (!r.ok) {
+      return { success: false, message: r.error.message }
     }
-    return { success: result.success }
+    return { success: true }
   } catch (error: unknown) {
     console.error('Error deleting category:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
-  }
-}
-
-/**
- * Move category to new parent (Admin only)
- */
-export async function moveCategoryAction(
-  categoryId: string,
-  newParentId: string | null
-) {
-  if (!(await isAdmin())) {
-    return { success: false, message: 'Unauthorized' }
-}
-
-  const session = getSession()
-  try {
-    const category = await categoryRepo.moveCategory(session, categoryId, newParentId)
-    return { success: true, data: category }
-  } catch (error: unknown) {
-    console.error('Error moving category:', error)
-    return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -326,7 +291,7 @@ export async function getFullProductsByCategoriesAction(categoryIds: string[]) {
 export async function findDuplicateNamesAction() {
   if (!(await isAdmin())) {
     return { success: false, message: 'Unauthorized' }
-}
+  }
 
   const session = getSession()
   try {
@@ -346,7 +311,7 @@ export async function findDuplicateNamesAction() {
 export async function getCategoryStatisticsAction() {
   if (!(await isAdmin())) {
     return { success: false, message: 'Unauthorized' }
-}
+  }
 
   const session = getSession()
   try {
@@ -413,18 +378,43 @@ export async function validateLeafCategoryAction(categoryId: string) {
 /**
  * Assign product to categories (Admin only)
  * IMPORTANT: Only leaf categories (without children) can have products
+ *
+ * Replace semantics implemented on top of the VALIDATED single-assign
+ * primitive (never the unvalidated bulk): newly selected categories are
+ * assigned one-by-one — each call re-enforces the leaf invariant and the
+ * duplicate check engine-side — and then deselected categories are removed.
+ * Mirrors the old repository bulk's validate-first ordering: an invalid
+ * selection fails before any deselection is applied.
  */
 export async function assignProductToCategoriesAction(
   productId: string,
   categoryIds: string[]
 ) {
-  if (!(await isAdmin())) {
-    return { success: false, message: 'Unauthorized' }
-}
-
+  const actor = await currentActor()
+  const adminCatalog = getAdminCatalog()
   const session = getSession()
   try {
-    await categoryRepo.assignProductToCategories(session, productId, categoryIds)
+    const existing = await categoryRepo.getCategoriesForProduct(session, productId)
+    const selected = new Set(categoryIds)
+
+    for (const categoryId of categoryIds) {
+      if (!existing.includes(categoryId)) {
+        const r = await adminCatalog.assignProductToCategory(actor, productId, categoryId)
+        if (!r.ok) {
+          return { success: false, message: resultMessage(r) }
+        }
+      }
+    }
+
+    for (const categoryId of existing) {
+      if (!selected.has(categoryId)) {
+        const r = await adminCatalog.removeProductFromCategory(actor, productId, categoryId)
+        if (!r.ok) {
+          return { success: false, message: resultMessage(r) }
+        }
+      }
+    }
+
     return { success: true }
   } catch (error: unknown) {
     console.error('Error assigning product to categories:', error)
@@ -440,7 +430,7 @@ export async function assignProductToCategoriesAction(
 export async function getCategoryProductsAction(categoryId: string) {
   if (!(await isAdmin())) {
     return { success: false, message: 'Unauthorized' }
-}
+  }
 
   const session = getSession()
   try {
@@ -470,23 +460,19 @@ export async function removeProductFromCategoryAction(
   productId: string,
   categoryId: string
 ) {
-  if (!(await isAdmin())) {
-    return { success: false, message: 'Unauthorized' }
-}
-
-  const session = getSession()
   try {
-    await session.run(
-      `MATCH (p:Product {id: $productId})-[r:HAS_CATEGORY]->(c:Category {id: $categoryId})
-       DELETE r`,
-      { productId, categoryId }
+    const r = await getAdminCatalog().removeProductFromCategory(
+      await currentActor(),
+      productId,
+      categoryId
     )
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
+    }
     return { success: true }
   } catch (error: unknown) {
     console.error('Error removing product from category:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -497,43 +483,21 @@ export async function addProductToCategoryAction(
   productId: string,
   categoryId: string
 ) {
-  if (!(await isAdmin())) {
-    return { success: false, message: 'Unauthorized' }
-}
-
-  const session = getSession()
   try {
-    // Validate category is a leaf
-    const validation = await categoryRepo.validateLeafCategoryForProduct(session, categoryId)
-    if (!validation.valid) {
-      return { success: false, message: validation.error }
-    }
-
-    // Check if relationship already exists
-    const existingResult = await session.run(
-      `MATCH (p:Product {id: $productId})-[r:HAS_CATEGORY]->(c:Category {id: $categoryId})
-       RETURN r`,
-      { productId, categoryId }
+    // Engine-side: leaf validation + duplicate-assignment rejection, with
+    // this action's exact messages.
+    const r = await getAdminCatalog().assignProductToCategory(
+      await currentActor(),
+      productId,
+      categoryId
     )
-
-    if (existingResult.records.length > 0) {
-      return { success: false, message: 'Product is already assigned to this category' }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
-
-    // Create relationship
-    await session.run(
-      `MATCH (p:Product {id: $productId})
-       MATCH (c:Category {id: $categoryId})
-       CREATE (p)-[:HAS_CATEGORY]->(c)`,
-      { productId, categoryId }
-    )
-
     return { success: true }
   } catch (error: unknown) {
     console.error('Error adding product to category:', error)
     return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
   }
 }
 
@@ -543,7 +507,7 @@ export async function addProductToCategoryAction(
 export async function getUnassignedProductsAction(categoryId: string) {
   if (!(await isAdmin())) {
     return { success: false, message: 'Unauthorized' }
-}
+  }
 
   const session = getSession()
   try {

@@ -1,34 +1,28 @@
 'use server'
 
-import { isAdmin } from '@/lib/auth'
-import {
-  getAllOrders,
-  updateOrderStatus,
-  type OrderWithItems,
-} from '@softx/engine'
 import type { ActionResponse, OrderStatus } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { getAdminOrder, currentActor } from '@/lib/engine'
 
 /**
  * Get all orders for admin view
  */
 export async function getAdminOrdersAction(): Promise<
-  ActionResponse<{ orders: OrderWithItems[] }>
+  ActionResponse<{ orders: v1.OrderDTO[] }>
 > {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
   try {
-    const orders = await getAllOrders()
+    const r = await getAdminOrder().listAllOrders(await currentActor())
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: r.error.code === 'UNAUTHORIZED' ? 'Unauthorized' : r.error.message,
+      }
+    }
 
     return {
       success: true,
-      data: { orders },
+      data: { orders: r.data },
     }
   } catch (error) {
     console.error('Get admin orders error:', error)
@@ -46,17 +40,15 @@ export async function updateAdminOrderStatusAction(
   orderId: string,
   status: OrderStatus
 ): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
   try {
-    await updateOrderStatus(orderId, status)
+    const r = await getAdminOrder().updateOrderStatus(await currentActor(), orderId, status)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: r.error.code === 'UNAUTHORIZED' ? 'Unauthorized' : r.error.message,
+      }
+    }
 
     return {
       success: true,

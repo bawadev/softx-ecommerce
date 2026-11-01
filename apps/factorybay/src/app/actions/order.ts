@@ -1,8 +1,7 @@
 'use server'
 
-import { getCurrentUserId, isAdmin } from '@/lib/auth'
-import { getOrderService } from '@/lib/engine'
-import { updateOrderStatus } from '@softx/engine'
+import { getCurrentUserId } from '@/lib/auth'
+import { getOrderService, getAdminOrder, currentActor } from '@/lib/engine'
 import type { OrderStatus, ActionResponse } from '@softx/engine'
 import type { v1 } from '@softx/contract'
 
@@ -140,31 +139,33 @@ export async function getUserOrdersAction(): Promise<
 }
 
 /**
- * Update order status (admin only - TODO: add admin check)
+ * Update order status (admin only — enforced engine-side via the actor)
  */
 export async function updateOrderStatusAction(
   orderId: string,
   status: OrderStatus
 ): Promise<ActionResponse> {
   try {
-    const userId = await getCurrentUserId()
+    const actor = await currentActor()
 
-    if (!userId) {
+    if (actor.kind === 'anonymous') {
       return {
         success: false,
         message: 'You must be logged in',
       }
     }
 
-    const adminAccess = await isAdmin()
-    if (!adminAccess) {
+    const r = await getAdminOrder().updateOrderStatus(actor, orderId, status)
+
+    if (!r.ok) {
       return {
         success: false,
-        message: 'Unauthorized: Admin access required',
+        message:
+          r.error.code === 'UNAUTHORIZED'
+            ? 'Unauthorized: Admin access required'
+            : r.error.message,
       }
     }
-
-    await updateOrderStatus(orderId, status)
 
     return {
       success: true,
