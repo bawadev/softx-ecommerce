@@ -4,12 +4,13 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { updateUserPreferencesAction, updateUserMeasurementsAction } from '@/app/actions/user-profile'
-import type { User, UserPreference, UserMeasurements, ProductCategory, SizeOption, MeasurementUnit } from '@softx/engine'
+import type { User, ProductCategory, SizeOption, MeasurementUnit } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 
 interface ProfileClientProps {
   user: User
-  initialPreferences: UserPreference | null
-  initialMeasurements: UserMeasurements | null
+  initialPreferences: v1.UserPreferencesDTO | null
+  initialMeasurements: v1.UserMeasurementsDTO | null
 }
 
 export default function ProfileClient({

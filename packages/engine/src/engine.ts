@@ -2,6 +2,8 @@ import type { v1 } from '@softx/contract'
 import { createCatalogService } from './catalog'
 import { createCartService } from './cart'
 import { createOrderService } from './order'
+import { createAccountService } from './account'
+import { createProfileService } from './profile'
 
 export interface EngineConfig {
   neo4j: {
@@ -23,6 +25,8 @@ export interface TenantEngine {
   readonly catalog: v1.CatalogService
   readonly cart: v1.CartService
   readonly order: v1.OrderService
+  readonly account: v1.AccountService
+  readonly profile: v1.ProfileService
 }
 
 export interface Engine {
@@ -41,6 +45,12 @@ export function createEngine(config: EngineConfig): Engine {
         },
         get order(): v1.OrderService {
           return createOrderService(config, tenant)
+        },
+        get account(): v1.AccountService {
+          return createAccountService(config, tenant)
+        },
+        get profile(): v1.ProfileService {
+          return createProfileService(config, tenant)
         },
       }
     },

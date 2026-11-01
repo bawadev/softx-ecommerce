@@ -9,9 +9,10 @@ import type { ProductCategory } from '../types'
  */
 export async function getRecommendationsForUser(
   userId: string,
-  limit: number = 10
+  limit: number = 10,
+  database?: string
 ): Promise<ProductWithVariants[]> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -54,9 +55,10 @@ export async function getRecommendationsForUser(
  */
 export async function getSimilarProducts(
   productId: string,
-  limit: number = 6
+  limit: number = 6,
+  database?: string
 ): Promise<ProductWithVariants[]> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -95,8 +97,11 @@ export async function getSimilarProducts(
 /**
  * Get trending products based on recent views across all users
  */
-export async function getTrendingProducts(limit: number = 10): Promise<ProductWithVariants[]> {
-  const session = getSession()
+export async function getTrendingProducts(
+  limit: number = 10,
+  database?: string
+): Promise<ProductWithVariants[]> {
+  const session = getSession(database)
   try {
     // Get views from the last 7 days
     const sevenDaysAgo = new Date()
@@ -128,8 +133,11 @@ export async function getTrendingProducts(limit: number = 10): Promise<ProductWi
 /**
  * Get new arrivals (recently added products)
  */
-export async function getNewArrivals(limit: number = 10): Promise<ProductWithVariants[]> {
-  const session = getSession()
+export async function getNewArrivals(
+  limit: number = 10,
+  database?: string
+): Promise<ProductWithVariants[]> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -160,9 +168,10 @@ export async function getRecommendationsByPreferences(
   preferredColors: string[],
   priceMin?: number,
   priceMax?: number,
-  limit: number = 10
+  limit: number = 10,
+  database?: string
 ): Promise<ProductWithVariants[]> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const params: Record<string, any> = { limit: neo4j.int(limit) }
     const conditions: string[] = []

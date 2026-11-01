@@ -4,8 +4,11 @@ import type { UserPreference, UserMeasurements, ProductCategory, SizeOption, Mea
 /**
  * Get user preferences
  */
-export async function getUserPreferences(userId: string): Promise<UserPreference | null> {
-  const session = getSession()
+export async function getUserPreferences(
+  userId: string,
+  database?: string
+): Promise<UserPreference | null> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -27,9 +30,10 @@ export async function getUserPreferences(userId: string): Promise<UserPreference
  */
 export async function upsertUserPreferences(
   userId: string,
-  preferences: Omit<UserPreference, 'id' | 'userId'>
+  preferences: Omit<UserPreference, 'id' | 'userId'>,
+  database?: string
 ): Promise<UserPreference> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const preferenceId = crypto.randomUUID()
 
@@ -76,8 +80,11 @@ export async function upsertUserPreferences(
 /**
  * Get user measurements
  */
-export async function getUserMeasurements(userId: string): Promise<UserMeasurements | null> {
-  const session = getSession()
+export async function getUserMeasurements(
+  userId: string,
+  database?: string
+): Promise<UserMeasurements | null> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -99,9 +106,10 @@ export async function getUserMeasurements(userId: string): Promise<UserMeasureme
  */
 export async function upsertUserMeasurements(
   userId: string,
-  measurements: Omit<UserMeasurements, 'id' | 'userId'>
+  measurements: Omit<UserMeasurements, 'id' | 'userId'>,
+  database?: string
 ): Promise<UserMeasurements> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const measurementId = crypto.randomUUID()
 

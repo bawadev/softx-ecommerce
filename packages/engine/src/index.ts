@@ -8,6 +8,11 @@ export const packageName = '@softx/engine'
 export { createEngine, engineConfigFromEnv } from './engine'
 export type { Engine, EngineConfig, TenantEngine, TenantRef } from './engine'
 
+// The one ProductDTO mapper engine-wide (Phase 4): exposed for app read paths
+// not yet served by an engine service (new arrivals, admin-created products)
+// now that the app-side product adapter is retired.
+export { toProductDTO } from './mappers/catalog.mapper'
+
 /**
  * @internal Migration escape hatch for code not yet on the contract
  * (admin write actions, cart/checkout, scripts). Removed in Phase 5.

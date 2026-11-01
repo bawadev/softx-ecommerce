@@ -7,6 +7,46 @@
 import { z } from 'zod';
 
 // @public (undocumented)
+type AccountDTO = z.infer<typeof AccountSchema>;
+
+// @public
+const AccountSchema: z.ZodObject<{
+    id: z.ZodString;
+    email: z.ZodString;
+    role: z.ZodEnum<["CUSTOMER", "ADMIN"]>;
+    firstName: z.ZodString;
+    lastName: z.ZodString;
+    phone: z.ZodOptional<z.ZodString>;
+    createdAt: z.ZodString;
+    updatedAt: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    email: string;
+    role: "CUSTOMER" | "ADMIN";
+    firstName: string;
+    lastName: string;
+    phone?: string | undefined;
+}, {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    email: string;
+    role: "CUSTOMER" | "ADMIN";
+    firstName: string;
+    lastName: string;
+    phone?: string | undefined;
+}>;
+
+// @public (undocumented)
+interface AccountService {
+    authenticate(credentials: Credentials): Promise<Result<AccountDTO>>;
+    getProfile(userId: string): Promise<Result<AccountDTO>>;
+    signUp(command: SignUpCommand): Promise<Result<AccountDTO>>;
+}
+
+// @public (undocumented)
 type CartDTO = z.infer<typeof CartDTOSchema>;
 
 // @public (undocumented)
@@ -910,6 +950,21 @@ const CreateOrderCommandSchema: z.ZodObject<{
 }>;
 
 // @public (undocumented)
+type Credentials = z.infer<typeof CredentialsSchema>;
+
+// @public (undocumented)
+const CredentialsSchema: z.ZodObject<{
+    email: z.ZodString;
+    password: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    email: string;
+    password: string;
+}, {
+    email: string;
+    password: string;
+}>;
+
+// @public (undocumented)
 type CustomPanelStyleDTO = z.infer<typeof CustomPanelStyleSchema>;
 
 // @public (undocumented)
@@ -1148,6 +1203,12 @@ const ListProductsQuerySchema: z.ZodObject<{
     limit?: number | undefined;
     offset?: number | undefined;
 }>;
+
+// @public (undocumented)
+type MeasurementUnit = z.infer<typeof MeasurementUnitSchema>;
+
+// @public (undocumented)
+const MeasurementUnitSchema: z.ZodEnum<["METRIC", "IMPERIAL"]>;
 
 // @public (undocumented)
 type Money = z.infer<typeof MoneySchema>;
@@ -1419,6 +1480,27 @@ interface PagedResult<T> {
 }
 
 // @public (undocumented)
+type PriceRange = z.infer<typeof PriceRangeSchema>;
+
+// @public (undocumented)
+const PriceRangeSchema: z.ZodObject<{
+    min: z.ZodNumber;
+    max: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+    min: number;
+    max: number;
+}, {
+    min: number;
+    max: number;
+}>;
+
+// @public (undocumented)
+type ProductCategory = z.infer<typeof ProductCategorySchema>;
+
+// @public
+const ProductCategorySchema: z.ZodEnum<["SHIRT", "PANTS", "JACKET", "DRESS", "SHOES", "ACCESSORIES"]>;
+
+// @public (undocumented)
 type ProductDTO = z.infer<typeof ProductSchema>;
 
 // @public (undocumented)
@@ -1651,6 +1733,18 @@ const ProductVariantSchema: z.ZodObject<{
 }>;
 
 // @public (undocumented)
+interface ProfileService {
+    getMeasurements(userId: string): Promise<Result<UserMeasurementsDTO>>;
+    getPreferences(userId: string): Promise<Result<UserPreferencesDTO>>;
+    listRecentlyViewed(userId: string, limit?: number): Promise<Result<ProductDTO[]>>;
+    listRecommendations(userId: string, limit?: number): Promise<Result<ProductDTO[]>>;
+    listSimilarProducts(productId: string, limit?: number): Promise<Result<ProductDTO[]>>;
+    trackProductView(userId: string, productId: string): Promise<Result<null>>;
+    updateMeasurements(userId: string, measurements: UserMeasurementsDTO): Promise<Result<UserMeasurementsDTO>>;
+    updatePreferences(userId: string, preferences: UserPreferencesDTO): Promise<Result<UserPreferencesDTO>>;
+}
+
+// @public (undocumented)
 type PromotionalCategoryDTO = z.infer<typeof PromotionalCategorySchema>;
 
 // @public (undocumented)
@@ -1732,7 +1826,112 @@ const ShippingAddressSchema: z.ZodObject<{
 }>;
 
 // @public (undocumented)
+type SignUpCommand = z.infer<typeof SignUpCommandSchema>;
+
+// @public
+const SignUpCommandSchema: z.ZodObject<{
+    email: z.ZodString;
+    password: z.ZodString;
+    firstName: z.ZodString;
+    lastName: z.ZodString;
+    phone: z.ZodOptional<z.ZodString>;
+    role: z.ZodOptional<z.ZodEnum<["CUSTOMER", "ADMIN"]>>;
+}, "strip", z.ZodTypeAny, {
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    phone?: string | undefined;
+    role?: "CUSTOMER" | "ADMIN" | undefined;
+}, {
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    phone?: string | undefined;
+    role?: "CUSTOMER" | "ADMIN" | undefined;
+}>;
+
+// @public (undocumented)
 const SizeOptionSchema: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
+
+// @public (undocumented)
+type UserMeasurementsDTO = z.infer<typeof UserMeasurementsSchema>;
+
+// @public
+const UserMeasurementsSchema: z.ZodObject<{
+    chest: z.ZodOptional<z.ZodNumber>;
+    waist: z.ZodOptional<z.ZodNumber>;
+    hips: z.ZodOptional<z.ZodNumber>;
+    shoulders: z.ZodOptional<z.ZodNumber>;
+    inseam: z.ZodOptional<z.ZodNumber>;
+    height: z.ZodOptional<z.ZodNumber>;
+    weight: z.ZodOptional<z.ZodNumber>;
+    preferredSize: z.ZodOptional<z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>>;
+    unit: z.ZodEnum<["METRIC", "IMPERIAL"]>;
+}, "strip", z.ZodTypeAny, {
+    unit: "METRIC" | "IMPERIAL";
+    chest?: number | undefined;
+    waist?: number | undefined;
+    hips?: number | undefined;
+    shoulders?: number | undefined;
+    inseam?: number | undefined;
+    height?: number | undefined;
+    weight?: number | undefined;
+    preferredSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL" | undefined;
+}, {
+    unit: "METRIC" | "IMPERIAL";
+    chest?: number | undefined;
+    waist?: number | undefined;
+    hips?: number | undefined;
+    shoulders?: number | undefined;
+    inseam?: number | undefined;
+    height?: number | undefined;
+    weight?: number | undefined;
+    preferredSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL" | undefined;
+}>;
+
+// @public (undocumented)
+type UserPreferencesDTO = z.infer<typeof UserPreferencesSchema>;
+
+// @public
+const UserPreferencesSchema: z.ZodObject<{
+    preferredBrands: z.ZodArray<z.ZodString, "many">;
+    preferredColors: z.ZodArray<z.ZodString, "many">;
+    preferredCategories: z.ZodArray<z.ZodEnum<["SHIRT", "PANTS", "JACKET", "DRESS", "SHOES", "ACCESSORIES"]>, "many">;
+    priceRange: z.ZodObject<{
+        min: z.ZodNumber;
+        max: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        min: number;
+        max: number;
+    }, {
+        min: number;
+        max: number;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    preferredBrands: string[];
+    preferredColors: string[];
+    preferredCategories: ("SHIRT" | "PANTS" | "JACKET" | "DRESS" | "SHOES" | "ACCESSORIES")[];
+    priceRange: {
+        min: number;
+        max: number;
+    };
+}, {
+    preferredBrands: string[];
+    preferredColors: string[];
+    preferredCategories: ("SHIRT" | "PANTS" | "JACKET" | "DRESS" | "SHOES" | "ACCESSORIES")[];
+    priceRange: {
+        min: number;
+        max: number;
+    };
+}>;
+
+// @public (undocumented)
+type UserRole = z.infer<typeof UserRoleSchema>;
+
+// @public
+const UserRoleSchema: z.ZodEnum<["CUSTOMER", "ADMIN"]>;
 
 declare namespace v1 {
     export {
@@ -1792,7 +1991,27 @@ declare namespace v1 {
         OrderDTO,
         CreateOrderCommandSchema,
         CreateOrderCommand,
-        OrderService
+        OrderService,
+        UserRoleSchema,
+        UserRole,
+        AccountSchema,
+        AccountDTO,
+        SignUpCommandSchema,
+        SignUpCommand,
+        CredentialsSchema,
+        Credentials,
+        ProductCategorySchema,
+        ProductCategory,
+        PriceRangeSchema,
+        PriceRange,
+        UserPreferencesSchema,
+        UserPreferencesDTO,
+        MeasurementUnitSchema,
+        MeasurementUnit,
+        UserMeasurementsSchema,
+        UserMeasurementsDTO,
+        AccountService,
+        ProfileService
     }
 }
 

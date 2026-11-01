@@ -6,8 +6,12 @@ import type { ProductWithVariants } from './product.repository'
 /**
  * Track a product view
  */
-export async function trackProductView(userId: string, productId: string): Promise<void> {
-  const session = getSession()
+export async function trackProductView(
+  userId: string,
+  productId: string,
+  database?: string
+): Promise<void> {
+  const session = getSession(database)
   try {
     const viewId = crypto.randomUUID()
     const now = new Date().toISOString()
@@ -37,9 +41,10 @@ export async function trackProductView(userId: string, productId: string): Promi
  */
 export async function getUserBrowsingHistory(
   userId: string,
-  limit: number = 20
+  limit: number = 20,
+  database?: string
 ): Promise<ProductView[]> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -62,9 +67,10 @@ export async function getUserBrowsingHistory(
  */
 export async function getRecentlyViewedProducts(
   userId: string,
-  limit: number = 10
+  limit: number = 10,
+  database?: string
 ): Promise<ProductWithVariants[]> {
-  const session = getSession()
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -95,8 +101,11 @@ export async function getRecentlyViewedProducts(
 /**
  * Get user's preferred brands based on browsing history
  */
-export async function getPreferredBrandsFromHistory(userId: string): Promise<string[]> {
-  const session = getSession()
+export async function getPreferredBrandsFromHistory(
+  userId: string,
+  database?: string
+): Promise<string[]> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -117,8 +126,11 @@ export async function getPreferredBrandsFromHistory(userId: string): Promise<str
 /**
  * Get user's preferred categories based on browsing history
  */
-export async function getPreferredCategoriesFromHistory(userId: string): Promise<string[]> {
-  const session = getSession()
+export async function getPreferredCategoriesFromHistory(
+  userId: string,
+  database?: string
+): Promise<string[]> {
+  const session = getSession(database)
   try {
     const result = await session.run(
       `
@@ -139,8 +151,11 @@ export async function getPreferredCategoriesFromHistory(userId: string): Promise
 /**
  * Clear old browsing history (keep last 100 views)
  */
-export async function cleanupOldBrowsingHistory(userId: string): Promise<void> {
-  const session = getSession()
+export async function cleanupOldBrowsingHistory(
+  userId: string,
+  database?: string
+): Promise<void> {
+  const session = getSession(database)
   try {
     await session.run(
       `
