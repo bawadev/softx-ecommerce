@@ -767,6 +767,7 @@ interface CartService {
     // (undocumented)
     clearCart(owner: CartOwner): Promise<Result<CartMutation>>;
     getCart(owner: CartOwner): Promise<Result<CartMutation>>;
+    mergeCarts(from: CartOwner, toUserId: string): Promise<Result<CartMutation>>;
     // (undocumented)
     removeItem(owner: CartOwner, variantId: string): Promise<Result<CartMutation>>;
     updateItem(owner: CartOwner, variantId: string, quantity: number): Promise<Result<CartMutation>>;
@@ -846,6 +847,69 @@ type CategoryTreeDTO = CategoryDTO & {
 };
 
 // @public (undocumented)
+type CreateOrderCommand = z.infer<typeof CreateOrderCommandSchema>;
+
+// @public (undocumented)
+const CreateOrderCommandSchema: z.ZodObject<{
+    shippingAddress: z.ZodObject<{
+        fullName: z.ZodString;
+        addressLine1: z.ZodString;
+        addressLine2: z.ZodOptional<z.ZodString>;
+        city: z.ZodString;
+        state: z.ZodString;
+        postalCode: z.ZodString;
+        country: z.ZodString;
+        phone: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    }, {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    }>;
+    deliveryMethod: z.ZodEnum<["SHIP", "COLLECT"]>;
+    email: z.ZodOptional<z.ZodString>;
+}, "strip", z.ZodTypeAny, {
+    shippingAddress: {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    };
+    deliveryMethod: "SHIP" | "COLLECT";
+    email?: string | undefined;
+}, {
+    shippingAddress: {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    };
+    deliveryMethod: "SHIP" | "COLLECT";
+    email?: string | undefined;
+}>;
+
+// @public (undocumented)
 type CustomPanelStyleDTO = z.infer<typeof CustomPanelStyleSchema>;
 
 // @public (undocumented)
@@ -874,6 +938,9 @@ const CustomPanelStyleSchema: z.ZodObject<{
     borderOpacity: number;
     borderWidth: number;
 }>;
+
+// @public (undocumented)
+const DeliveryMethodSchema: z.ZodEnum<["SHIP", "COLLECT"]>;
 
 // @public (undocumented)
 interface DomainError {
@@ -1102,6 +1169,239 @@ const MoneySchema: z.ZodObject<{
 
 // @public (undocumented)
 function ok<T>(data: T): Result<T>;
+
+// @public (undocumented)
+type OrderDTO = z.infer<typeof OrderSchema>;
+
+// @public (undocumented)
+type OrderItemDTO = z.infer<typeof OrderItemSchema>;
+
+// @public (undocumented)
+const OrderItemSchema: z.ZodObject<{
+    variantId: z.ZodString;
+    quantity: z.ZodNumber;
+    priceAtPurchase: z.ZodObject<{
+        amountMinor: z.ZodNumber;
+        currency: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        amountMinor: number;
+        currency: string;
+    }, {
+        amountMinor: number;
+        currency: string;
+    }>;
+    productName: z.ZodString;
+    productImage: z.ZodOptional<z.ZodString>;
+    productId: z.ZodString;
+    productBrand: z.ZodString;
+    variantSize: z.ZodString;
+    variantColor: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    variantId: string;
+    quantity: number;
+    priceAtPurchase: {
+        amountMinor: number;
+        currency: string;
+    };
+    productName: string;
+    productId: string;
+    productBrand: string;
+    variantSize: string;
+    variantColor: string;
+    productImage?: string | undefined;
+}, {
+    variantId: string;
+    quantity: number;
+    priceAtPurchase: {
+        amountMinor: number;
+        currency: string;
+    };
+    productName: string;
+    productId: string;
+    productBrand: string;
+    variantSize: string;
+    variantColor: string;
+    productImage?: string | undefined;
+}>;
+
+// @public (undocumented)
+const OrderSchema: z.ZodObject<{
+    id: z.ZodString;
+    orderNumber: z.ZodString;
+    status: z.ZodEnum<["PENDING", "CONFIRMED", "FULFILLED", "CANCELLED"]>;
+    totalAmount: z.ZodObject<{
+        amountMinor: z.ZodNumber;
+        currency: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        amountMinor: number;
+        currency: string;
+    }, {
+        amountMinor: number;
+        currency: string;
+    }>;
+    shippingAddress: z.ZodObject<{
+        fullName: z.ZodString;
+        addressLine1: z.ZodString;
+        addressLine2: z.ZodOptional<z.ZodString>;
+        city: z.ZodString;
+        state: z.ZodString;
+        postalCode: z.ZodString;
+        country: z.ZodString;
+        phone: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    }, {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    }>;
+    deliveryMethod: z.ZodEnum<["SHIP", "COLLECT"]>;
+    paymentProof: z.ZodOptional<z.ZodString>;
+    items: z.ZodArray<z.ZodObject<{
+        variantId: z.ZodString;
+        quantity: z.ZodNumber;
+        priceAtPurchase: z.ZodObject<{
+            amountMinor: z.ZodNumber;
+            currency: z.ZodString;
+        }, "strip", z.ZodTypeAny, {
+            amountMinor: number;
+            currency: string;
+        }, {
+            amountMinor: number;
+            currency: string;
+        }>;
+        productName: z.ZodString;
+        productImage: z.ZodOptional<z.ZodString>;
+        productId: z.ZodString;
+        productBrand: z.ZodString;
+        variantSize: z.ZodString;
+        variantColor: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        variantId: string;
+        quantity: number;
+        priceAtPurchase: {
+            amountMinor: number;
+            currency: string;
+        };
+        productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
+        productImage?: string | undefined;
+    }, {
+        variantId: string;
+        quantity: number;
+        priceAtPurchase: {
+            amountMinor: number;
+            currency: string;
+        };
+        productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
+        productImage?: string | undefined;
+    }>, "many">;
+    createdAt: z.ZodString;
+    updatedAt: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    status: "PENDING" | "CONFIRMED" | "FULFILLED" | "CANCELLED";
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    items: {
+        variantId: string;
+        quantity: number;
+        priceAtPurchase: {
+            amountMinor: number;
+            currency: string;
+        };
+        productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
+        productImage?: string | undefined;
+    }[];
+    orderNumber: string;
+    totalAmount: {
+        amountMinor: number;
+        currency: string;
+    };
+    shippingAddress: {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    };
+    deliveryMethod: "SHIP" | "COLLECT";
+    paymentProof?: string | undefined;
+}, {
+    status: "PENDING" | "CONFIRMED" | "FULFILLED" | "CANCELLED";
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    items: {
+        variantId: string;
+        quantity: number;
+        priceAtPurchase: {
+            amountMinor: number;
+            currency: string;
+        };
+        productName: string;
+        productId: string;
+        productBrand: string;
+        variantSize: string;
+        variantColor: string;
+        productImage?: string | undefined;
+    }[];
+    orderNumber: string;
+    totalAmount: {
+        amountMinor: number;
+        currency: string;
+    };
+    shippingAddress: {
+        fullName: string;
+        addressLine1: string;
+        city: string;
+        state: string;
+        postalCode: string;
+        country: string;
+        phone: string;
+        addressLine2?: string | undefined;
+    };
+    deliveryMethod: "SHIP" | "COLLECT";
+    paymentProof?: string | undefined;
+}>;
+
+// @public (undocumented)
+interface OrderService {
+    attachPaymentProof(userId: string, orderId: string, proofUrl: string): Promise<Result<OrderDTO>>;
+    createOrder(userId: string, command: CreateOrderCommand): Promise<Result<OrderDTO>>;
+    getOrder(userId: string, orderId: string): Promise<Result<OrderDTO>>;
+    // (undocumented)
+    listOrders(userId: string): Promise<Result<OrderDTO[]>>;
+}
+
+// @public (undocumented)
+const OrderStatusSchema: z.ZodEnum<["PENDING", "CONFIRMED", "FULFILLED", "CANCELLED"]>;
 
 // @public (undocumented)
 export const packageName = "@softx/contract";
@@ -1399,6 +1699,39 @@ type Result<T> = {
 };
 
 // @public (undocumented)
+type ShippingAddressDTO = z.infer<typeof ShippingAddressSchema>;
+
+// @public (undocumented)
+const ShippingAddressSchema: z.ZodObject<{
+    fullName: z.ZodString;
+    addressLine1: z.ZodString;
+    addressLine2: z.ZodOptional<z.ZodString>;
+    city: z.ZodString;
+    state: z.ZodString;
+    postalCode: z.ZodString;
+    country: z.ZodString;
+    phone: z.ZodString;
+}, "strip", z.ZodTypeAny, {
+    fullName: string;
+    addressLine1: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    phone: string;
+    addressLine2?: string | undefined;
+}, {
+    fullName: string;
+    addressLine1: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    phone: string;
+    addressLine2?: string | undefined;
+}>;
+
+// @public (undocumented)
 const SizeOptionSchema: z.ZodEnum<["XS", "S", "M", "L", "XL", "XXL"]>;
 
 declare namespace v1 {
@@ -1448,7 +1781,18 @@ declare namespace v1 {
         CartDTO,
         CartMutationSchema,
         CartMutation,
-        CartService
+        CartService,
+        OrderStatusSchema,
+        DeliveryMethodSchema,
+        ShippingAddressSchema,
+        ShippingAddressDTO,
+        OrderItemSchema,
+        OrderItemDTO,
+        OrderSchema,
+        OrderDTO,
+        CreateOrderCommandSchema,
+        CreateOrderCommand,
+        OrderService
     }
 }
 

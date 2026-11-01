@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/lib/auth'
 import { uploadFile } from '@/lib/minio'
-import { updateOrderPaymentProof } from '@softx/engine'
+import { getOrderService } from '@/lib/engine'
 import type { ActionResponse } from '@softx/engine'
 
 export async function uploadPaymentProofAction(
@@ -77,8 +77,14 @@ export async function uploadPaymentProofAction(
 
     const proofUrl = await uploadFile(buffer, filename, file.type)
 
-    // Update order with payment proof
-    await updateOrderPaymentProof(orderId, userId, proofUrl)
+    // Record the proof URL on the order (service enforces ownership)
+    const r = await getOrderService().attachPaymentProof(userId, orderId, proofUrl)
+    if (!r.ok) {
+      return {
+        success: false,
+        message: r.error.message,
+      }
+    }
 
     return {
       success: true,

@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
-import type { OrderWithItems } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { amount } from '@/lib/price'
 
 interface OrderConfirmationClientProps {
-  order: OrderWithItems
+  order: v1.OrderDTO
 }
 
 export default function OrderConfirmationClient({ order }: OrderConfirmationClientProps) {
@@ -20,8 +21,10 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
     day: 'numeric',
   })
 
-  const shipping = order.totalAmount < 100 ? 9.99 : 0
-  const subtotal = order.totalAmount - shipping
+  // Money total → major units; shipping recomputed for display like before
+  const total = amount(order.totalAmount)
+  const shipping = total < 100 ? 9.99 : 0
+  const subtotal = total - shipping
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -87,15 +90,15 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
               <h2 className="text-lg font-bold text-black-700 mb-4">{t('items')}</h2>
               <div className="space-y-4">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex gap-4 border-b border-gray-200 pb-4 last:border-0">
+                  <div key={item.variantId} className="flex gap-4 border-b border-gray-200 pb-4 last:border-0">
                     <Link
-                      href={`/${locale}/product/${item.product.id}`}
+                      href={`/${locale}/product/${item.productId}`}
                       className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
                     >
-                      {(item.variant.images?.[0] || item.product.images?.[0]) ? (
+                      {item.productImage ? (
                         <Image
-                          src={item.variant.images?.[0] || item.product.images[0]}
-                          alt={item.product.name}
+                          src={item.productImage}
+                          alt={item.productName}
                           fill
                           className="object-cover"
                           sizes="80px"
@@ -109,24 +112,24 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
 
                     <div className="flex-1">
                       <Link
-                        href={`/${locale}/product/${item.product.id}`}
+                        href={`/${locale}/product/${item.productId}`}
                         className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
                       >
-                        {item.product.name}
+                        {item.productName}
                       </Link>
-                      <p className="text-xs text-gray-600 mt-1">{item.product.brand}</p>
+                      <p className="text-xs text-gray-600 mt-1">{item.productBrand}</p>
                       <p className="text-xs text-gray-600 mt-1">
-                        Size: {item.variant.size} • Color: {item.variant.color}
+                        Size: {item.variantSize} • Color: {item.variantColor}
                       </p>
                       <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
                     </div>
 
                     <div className="text-right">
                       <p className="text-sm font-bold text-black-700">
-                        Rs {(item.priceAtPurchase * item.quantity).toFixed(2)}
+                        Rs {(amount(item.priceAtPurchase) * item.quantity).toFixed(2)}
                       </p>
                       <p className="text-xs text-gray-500">
-                        Rs {item.priceAtPurchase.toFixed(2)} {t('each')}
+                        Rs {amount(item.priceAtPurchase).toFixed(2)} {t('each')}
                       </p>
                     </div>
                   </div>
@@ -169,13 +172,13 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                       shipping === 0 ? 'text-green-600' : 'text-black-700'
                     }`}
                   >
-                    {shipping === 0 ? t('free') : `$Rs {shipping.toFixed(2)}`}
+                    {shipping === 0 ? t('free') : `Rs ${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-3">
                   <span className="text-base font-bold text-black-700">{t('total')}</span>
                   <span className="text-2xl font-bold text-black-700">
-                    Rs {order.totalAmount.toFixed(2)}
+                    Rs {total.toFixed(2)}
                   </span>
                 </div>
               </div>

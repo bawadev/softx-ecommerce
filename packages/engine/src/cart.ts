@@ -130,5 +130,28 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
         return err('UNAVAILABLE', 'Failed to clear cart', { cause: String(e) })
       }
     },
+
+    // Move the source owner's lines into the user cart. The source lines are
+    // hydrated exactly like guestResult does (vanished variants self-heal
+    // out — guest lines via getVariantWithProduct, user lines via the cart
+    // JOIN), each surviving line is added with addToCart (which increments
+    // an existing line), a user source cart is cleared afterwards, and the
+    // USER cart is returned — user carts never echo guestItems.
+    async mergeCarts(from, toUserId) {
+      try {
+        const source =
+          from.kind === 'guest'
+            ? await hydrateGuest(from.items)
+            : (await cartRepo.getCartItems(from.userId, db)).map((r) => toCartItemDTO(r, currency))
+        for (const line of source) {
+          await cartRepo.addToCart(toUserId, line.variantId, line.quantity, db)
+        }
+        if (from.kind === 'user') await cartRepo.clearCart(from.userId, db)
+        const rows = await cartRepo.getCartItems(toUserId, db)
+        return ok({ cart: cartFrom(rows.map((r) => toCartItemDTO(r, currency))) })
+      } catch (e) {
+        return err('UNAVAILABLE', 'Failed to merge carts', { cause: String(e) })
+      }
+    },
   }
 }

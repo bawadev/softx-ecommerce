@@ -15,12 +15,10 @@ import {
   emailExists,
 } from '@softx/engine'
 import {
-  addToCart,
-} from '@softx/engine'
-import {
   getGuestCart,
   clearGuestCart,
 } from '@/lib/guest-cart'
+import { getCartService } from '@/lib/engine'
 import type { AuthResponse, CreateUserInput, LoginInput } from '@softx/engine'
 
 /**
@@ -137,20 +135,16 @@ export async function loginAction(input: LoginInput): Promise<AuthResponse> {
     // Set auth cookie
     await setAuthCookie(token)
 
-    // Migrate guest cart to user cart
+    // Migrate guest cart to user cart (heals vanished variants; one bad line
+    // no longer aborts the rest — the service skips what it cannot validate)
     try {
-      const guestCart = await getGuestCart()
+      const guestCart = (await getGuestCart()).filter((l) => l.quantity >= 1)
       if (guestCart.length > 0) {
-        // Add each guest cart item to user's cart
-        for (const item of guestCart) {
-          await addToCart(user.id, item.variantId, item.quantity)
-        }
-        // Clear guest cart after migration
-        await clearGuestCart()
+        const r = await getCartService().mergeCarts({ kind: 'guest', items: guestCart }, user.id)
+        if (r.ok) await clearGuestCart().catch(() => {})
       }
     } catch (error) {
-      console.error('Cart migration error:', error)
-      // Don't fail login if cart migration fails
+      console.error('Cart migration error:', error) // don't fail login if migration fails
     }
 
     return {

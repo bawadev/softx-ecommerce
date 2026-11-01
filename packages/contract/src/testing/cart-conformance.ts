@@ -81,5 +81,46 @@ export function runCartConformance(
       await s.clearCart(user)
       await s.addItem(user, 'conformance-v1', 2)
     })
+
+    it('guest updateItem on a vanished-variant line heals it away', async () => {
+      const s = makeService()
+      const r = await s.updateItem(
+        guest([{ variantId: 'vanished-variant', quantity: 2 }]),
+        'vanished-variant',
+        3,
+      )
+      // Either NOT_FOUND (missing-line reading) or a healed empty cart is contract-valid;
+      // what is NOT valid is a mutation that keeps the dead line.
+      if (r.ok) {
+        expect(r.data.cart.items).toEqual([])
+        expect(r.data.guestItems).toEqual([])
+      } else {
+        expect(r.error.code).toBe('NOT_FOUND')
+      }
+    })
+
+    it('user updateItem on a missing line → NOT_FOUND', async () => {
+      const s = makeService()
+      const r = await s.updateItem(user, 'no-such-variant-in-cart', 2)
+      expect(r.ok).toBe(false)
+      if (!r.ok) expect(r.error.code).toBe('NOT_FOUND')
+    })
+
+    it('guest updateItem round-trips the updated guestItems', async () => {
+      const s = makeService()
+      const u = await s.updateItem(
+        guest([
+          { variantId: 'conformance-v1', quantity: 2 },
+          { variantId: 'conformance-v3', quantity: 1 },
+        ]),
+        'conformance-v1',
+        5,
+      )
+      expect(u.ok).toBe(true)
+      if (!u.ok) return
+      expect(u.data.guestItems).toContainEqual({ variantId: 'conformance-v1', quantity: 5 })
+      expect(u.data.guestItems).toContainEqual({ variantId: 'conformance-v3', quantity: 1 })
+      expect(u.data.cart.itemCount).toBe(6)
+    })
   })
 }

@@ -4,12 +4,13 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
-import type { OrderWithItems } from '@softx/engine'
+import type { v1 } from '@softx/contract'
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 import { shopConfig } from '@/config/shop'
+import { amount } from '@/lib/price'
 
 interface PaymentPageClientProps {
-  order: OrderWithItems
+  order: v1.OrderDTO
 }
 
 export default function PaymentPageClient({ order }: PaymentPageClientProps) {
@@ -152,7 +153,7 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                 <div className="p-4 bg-gray-100 border border-gray-200 rounded-lg">
                   <p className="text-sm text-black-700 font-medium">{t('paymentAmount')}</p>
                   <p className="text-3xl font-bold text-black-600 mt-1">
-                    Rs {order.totalAmount.toFixed(2)}
+                    Rs {amount(order.totalAmount).toFixed(2)}
                   </p>
                   <p className="text-xs text-black-700 mt-2">{t('paymentNote')}</p>
                 </div>
@@ -240,12 +241,12 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
               {/* Items */}
               <div className="space-y-3 mb-4">
                 {order.items.map((item) => (
-                  <div key={item.id} className="flex gap-3">
+                  <div key={item.variantId} className="flex gap-3">
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                      {(item.variant.images?.[0] || item.product.images?.[0]) ? (
+                      {item.productImage ? (
                         <Image
-                          src={item.variant.images?.[0] || item.product.images[0]}
-                          alt={item.product.name}
+                          src={item.productImage}
+                          alt={item.productName}
                           fill
                           className="object-cover"
                           sizes="64px"
@@ -257,8 +258,8 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-black-700 truncate">{item.product.name}</p>
-                      <p className="text-xs text-gray-600">{item.product.brand}</p>
+                      <p className="text-sm font-medium text-black-700 truncate">{item.productName}</p>
+                      <p className="text-xs text-gray-600">{item.productBrand}</p>
                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                     </div>
                   </div>
@@ -269,7 +270,7 @@ export default function PaymentPageClient({ order }: PaymentPageClientProps) {
               <div className="border-t border-gray-200 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('total')}</span>
-                  <span className="font-bold text-black-700">Rs {order.totalAmount.toFixed(2)}</span>
+                  <span className="font-bold text-black-700">Rs {amount(order.totalAmount).toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600">{t('deliveryMethod')}</span>

@@ -76,6 +76,8 @@ The storefront's catalog read path does not touch repositories directly: `apps/f
 
 Cart (Phase 2): user + guest carts are served by `CartService` (`packages/engine/src/cart.ts`); the zustand store is a projection of `CartMutation.cart`; guest cookie lines are normalized by the engine and persisted by the actions.
 
+Orders/checkout (Phase 3): OrderService computes totals server-side (free SHIP over 100.00, else 9.99), enforces ownership, records payment proofs; login merges the guest cart through the service.
+
 ### Tech Stack
 - **Frontend:** Next.js 15.1.4 (App Router), React 19, TypeScript 5.7
 - **Styling:** Tailwind CSS 3.4, Framer Motion 11.15

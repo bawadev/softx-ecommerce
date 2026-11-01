@@ -24,16 +24,29 @@ function guestAdd(items: v1.GuestCartLine[], variantId: string, quantity: number
 }
 
 /**
- * Fake cart service v1. Users get in-memory carts keyed by userId (guest lines
- * double as the storage shape); guests get the pure cookie-line reducer.
- * Hydration reads the catalog fixture world directly, so prices and totals
- * always come from worldProducts' actual price.stock values — never
- * re-hardcoded here. Semantics mirror the engine's CartService (the contract):
- * guest mutations echo HEALED guestItems, addItem on an unknown variant fails
- * NOT_FOUND before any user state is touched, and updateItem on a missing
- * line is NOT_FOUND for both owner kinds.
+ * Shared per-runner fake cart state: the user-carts storage map plus the cart
+ * service that reads and mutates it. The fake ORDER service (fake-order.ts)
+ * needs the same cart state — createOrder reads the user's cart to compute
+ * totals and a successful order clears it — so a runner composing cart +
+ * order services must build ONE state instance and share it, exactly like
+ * `createFakeEngine().for()` and the order conformance runner do.
  */
-export function createFakeCartService(): v1.CartService {
+export interface FakeCartState {
+  userCarts: Map<string, v1.GuestCartLine[]>
+  cartService: v1.CartService
+}
+
+/**
+ * Fake cart service state v1. Users get in-memory carts keyed by userId
+ * (guest lines double as the storage shape); guests get the pure cookie-line
+ * reducer. Hydration reads the catalog fixture world directly, so prices and
+ * totals always come from worldProducts' actual price.stock values — never
+ * re-hardcoded here. Semantics mirror the engine's CartService (the
+ * contract): guest mutations echo HEALED guestItems, addItem on an unknown
+ * variant fails NOT_FOUND before any user state is touched, and updateItem on
+ * a missing line is NOT_FOUND for both owner kinds.
+ */
+export function createFakeCartState(): FakeCartState {
   // Pre-seeded to mirror cartWorld.seedCypher (conformance-cart-user holds
   // 2 × conformance-v1); the Cypher is not parseable, so the state is stated.
   const userCarts = new Map<string, v1.GuestCartLine[]>([
@@ -93,7 +106,7 @@ export function createFakeCartService(): v1.CartService {
     return ok({ cart: cartFrom(hydrate(userCarts.get(userId) ?? [])) })
   }
 
-  return {
+  const cartService: v1.CartService = {
     async getCart(owner) {
       if (owner.kind === 'guest') return guestResult(owner.items)
       return userResult(owner.userId)
@@ -135,5 +148,32 @@ export function createFakeCartService(): v1.CartService {
       userCarts.set(owner.userId, [])
       return userResult(owner.userId)
     },
+
+    // Merge: hydrate the source lines exactly like guest flows (dead variants
+    // heal away), then move each surviving line into the user's map via
+    // guestAdd (increment-if-exists — the same reducer addItem uses). A user
+    // source is drained: its lines are moved, not copied, mirroring the
+    // guest cookie being consumed on login-merge (guest callers clear their
+    // cookie themselves; guest state is not ours to mutate). Returns the
+    // USER cart only — no guestItems echo (contract doc).
+    async mergeCarts(from, toUserId) {
+      const source = from.kind === 'guest' ? from.items : (userCarts.get(from.userId) ?? [])
+      if (from.kind === 'user') userCarts.set(from.userId, [])
+      for (const line of source) {
+        if (!worldVariant(line.variantId)) continue // self-heal: vanished variant drops out
+        userCarts.set(toUserId, guestAdd(userCarts.get(toUserId) ?? [], line.variantId, line.quantity))
+      }
+      return userResult(toUserId)
+    },
   }
+
+  return { userCarts, cartService }
+}
+
+/**
+ * Backwards-compatible standalone cart service owning its own state — use
+ * createFakeCartState() directly when an order service must share the cart.
+ */
+export function createFakeCartService(): v1.CartService {
+  return createFakeCartState().cartService
 }
