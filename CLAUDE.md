@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Ecom is a modern e-commerce platform for branded clothing at wholesale prices. Built with Next.js 15 (App Router), TypeScript, Neo4j graph database, and MinIO for object storage. The platform features internationalization (i18n) with English and Sinhala support.
 
-Monorepo: the Next.js app lives in `apps/factorybay`; shared packages live in `packages/*` (contract, engine). Build/deploy from the repo root.
+Monorepo: the Next.js app lives in `apps/factorybay`; shared packages live in `packages/*` (contract, engine). Build/deploy from the repo root. Multi-client: `apps/acornbay` is the Phase 6 pilot client (see "Multi-Client" below); new clients onboard via `npm run new-client -- --client <id>`.
 
 ## Essential Commands
 
@@ -36,6 +36,14 @@ npm test                 # vitest across workspaces (unit + fixtures conformance
 npm run test:integration # real-engine conformance (needs docker compose up; NEO4J_PASSWORD=ecommerce123; product graph must be otherwise empty)
 npm run test:smoke       # Playwright smoke (needs seeded products; see apps/factorybay/e2e/smoke.spec.ts header)
 npm run audit:api        # @softx/contract public-API snapshot check (gate: git diff --exit-code -- packages/contract/etc)
+```
+
+### Multi-Client
+```bash
+npm run new-client -- --client <id> # onboard client N+1 (idempotent; see "Multi-Client" section below)
+npm run build:all                   # build BOTH apps (factorybay + acornbay)
+npm run test:pilot -w acornbay      # pilot's 2 Playwright specs (needs acornbay's container up)
+npm run verify:tenants              # tenant-isolation regression check (both tenants' containers up, factorybay DB seeded)
 ```
 
 ### Database Management
@@ -81,6 +89,26 @@ Orders/checkout (Phase 3): OrderService computes totals server-side (free SHIP o
 Auth/profile (Phase 4): account signup/login and profile reads/writes run through the engine's `AccountService` + `ProfileService` (validation, duplicate-check, bcrypt hashing, preferences/measurements/browsing-history all engine-side; password hashes never cross the boundary) — JWT minting, auth cookies, and guest-cart migration stay app-owned.
 
 Admin (Phase 5): every admin write goes through the engine's `AdminCatalogService` + `AdminOrderService`. The app's admin actions are thin wrappers: `lib/engine.ts`'s `currentActor()` derives an `ActorRef` (anonymous/customer/admin) from the session JWT and passes it as each service call's first argument — authorization is enforced ENGINE-side (every admin method returns `UNAUTHORIZED` for non-admin actors before touching the database), never in the action. Action names, envelopes, and messages are unchanged. `admin.ts` (role assignment) and `upload.ts` (MinIO) stay app-side by design (account-domain policy / transport). `@softx/engine` still exports a narrow `internal` escape hatch for the reads with no contract home yet (raw-Cypher admin reads, repository-boundary reads like the MAJOR-unit product edit form, and the maintenance/seed scripts); its exact consumer list is documented at `packages/engine/src/index.ts` and it should shrink over time — new code goes through the contract services.
+
+### Multi-Client (Phase 6)
+
+The platform is multi-client: every storefront ("client") is its own Next.js app consuming exactly `@softx/contract` v1 through `@softx/engine` configured for its tenant — different UI, same contract. Current apps:
+
+- `apps/factorybay` — the canonical, full storefront (auth, cart, orders, admin). Default target of `npm run dev` / `build` / `start`; the Dockerfile deploys factorybay only.
+- `apps/acornbay` — the Phase 6 pilot client: deliberately different dark theme/layout, catalog-only (no cart/login yet — documented pilot scope), zero shared UI code with factorybay beyond the packages.
+- `apps/_template` — the minimal contract-only storefront template (home/shop/PDP over `catalog.*`) that new clients are scaffolded from.
+
+**Tenant model:** container-per-client. Each client gets its OWN Neo4j container (`ecom-<id>-neo4j`, bolt on a host port in the 7600-7699 range — factorybay keeps `docker-compose.yml` on 7687; acornbay's is `docker-compose.acornbay.yml` on 7601) and its own pinned dev port in 3100-3199 (written into the app's package.json `dev`/`start` scripts by the provisioning script; factorybay keeps Next's default 3000). Media tenancy is a MinIO bucket prefix `<clientId>-media` on the configured endpoint; per-client principals on the shared SoftX MinIO instance are a TRACKED INFRA TASK (not app code) for when that instance lands.
+
+**Onboarding client N+1** is one command, never hand-assembled:
+
+```bash
+npm run new-client -- --client <id>   # [--port <neo4j-bolt-port>] [--seed <cypher-file>]
+```
+
+`scripts/new-client.ts` is IDEMPOTENT (safe re-run; an existing app keeps its files, port, and data). It provisions the Neo4j container, the MinIO bucket prefix (only if `mc` + `MC_*` env are present — otherwise prints the manual step and continues), instantiates `apps/<id>` from `apps/_template` with env files and a pinned dev port, wires the workspace, applies `scripts/seed-client.cypher`, and prints exactly what it did.
+
+**Isolation regression check:** `npm run verify:tenants` builds one engine per tenant and asserts the catalogs are DISJOINT (name- and id-level) with each side's expected products present. Run it whenever tenant wiring changes; it needs both containers up and factorybay's dev DB seeded (e.g. with `apps/factorybay/scripts/seed-smoke-products.cypher`).
 
 ### Tech Stack
 - **Frontend:** Next.js 15.1.4 (App Router), React 19, TypeScript 5.7
