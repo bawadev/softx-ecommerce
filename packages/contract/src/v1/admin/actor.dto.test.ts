@@ -4,6 +4,7 @@ import {
   ProductWriteInputSchema,
   ColorDTOSchema,
   HeroSlideWriteInputSchema,
+  HeroSlideUpdateInputSchema,
 } from './admin.service'
 
 describe('ActorRefSchema', () => {
@@ -73,5 +74,20 @@ describe('HeroSlideWriteInputSchema', () => {
     expect(HeroSlideWriteInputSchema.safeParse(minimal).success).toBe(true)
     const { displayOrder, ...withoutOrder } = minimal
     expect(HeroSlideWriteInputSchema.safeParse(withoutOrder).success).toBe(false)
+    // Update input: clearable fields accept null (the UI clears with null);
+    // non-clearable fields reject it.
+    expect(
+      HeroSlideUpdateInputSchema.safeParse({
+        title: 'Winter drop',
+        mobileImageUrl: null,
+        mobileAnimationType: null,
+        mobileColorTheme: null,
+        customDesktopStyle: null,
+        customMobileStyle: null,
+        linkUrl: null,
+      }).success
+    ).toBe(true)
+    expect(HeroSlideUpdateInputSchema.safeParse({ title: null }).success).toBe(false)
+    expect(HeroSlideUpdateInputSchema.safeParse({ animationType: null }).success).toBe(false)
   })
 })

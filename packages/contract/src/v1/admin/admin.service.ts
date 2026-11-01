@@ -132,7 +132,29 @@ export const HeroSlideWriteInputSchema = z.object({
 })
 export type HeroSlideWriteInput = z.infer<typeof HeroSlideWriteInputSchema>
 
-export const HeroSlideUpdateInputSchema = HeroSlideWriteInputSchema.partial()
+/**
+ * Hero slide update payload. Built explicitly (NOT `.partial()` of the create
+ * schema) because the real update action (and HeroSlidesClient) uses `null`
+ * to CLEAR the optional fields — `mobileImageUrl: form.mobileImageUrl || null`,
+ * custom styles nulled when the theme isn't 'custom', etc. Clearable fields
+ * are optional AND nullable; the rest are merely optional (null is invalid).
+ */
+export const HeroSlideUpdateInputSchema = z.object({
+  imageUrl: z.string().min(1).optional(),
+  mobileImageUrl: z.string().nullable().optional(),
+  animationType: HeroAnimationTypeSchema.optional(),
+  mobileAnimationType: HeroMobileAnimationTypeSchema.nullable().optional(),
+  colorTheme: HeroColorThemeSchema.optional(),
+  mobileColorTheme: HeroColorThemeSchema.nullable().optional(),
+  customDesktopStyle: CustomPanelStyleSchema.nullable().optional(),
+  customMobileStyle: CustomPanelStyleSchema.nullable().optional(),
+  badgeText: z.string().optional(),
+  title: z.string().optional(),
+  subtitle: z.string().optional(),
+  linkUrl: z.string().nullable().optional(),
+  displayOrder: z.number().int().optional(),
+  isActive: z.boolean().optional(),
+})
 export type HeroSlideUpdateInput = z.infer<typeof HeroSlideUpdateInputSchema>
 
 /** Color row as returned by the color repository ({id, name, hex, isActive, createdAt}). */

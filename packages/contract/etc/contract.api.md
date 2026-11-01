@@ -1370,15 +1370,15 @@ const HeroSlideSchema: z.ZodObject<{
 // @public (undocumented)
 type HeroSlideUpdateInput = z.infer<typeof HeroSlideUpdateInputSchema>;
 
-// @public (undocumented)
+// @public
 const HeroSlideUpdateInputSchema: z.ZodObject<{
     imageUrl: z.ZodOptional<z.ZodString>;
-    mobileImageUrl: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    mobileImageUrl: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     animationType: z.ZodOptional<z.ZodEnum<["left-panel", "top-left-round", "top-right-panel", "bottom-right-quarter"]>>;
-    mobileAnimationType: z.ZodOptional<z.ZodOptional<z.ZodEnum<["bottom-pill", "bottom-full-panel", "top-banner", "center-card"]>>>;
-    colorTheme: z.ZodOptional<z.ZodOptional<z.ZodEnum<["light", "dark", "custom"]>>>;
-    mobileColorTheme: z.ZodOptional<z.ZodOptional<z.ZodEnum<["light", "dark", "custom"]>>>;
-    customDesktopStyle: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+    mobileAnimationType: z.ZodOptional<z.ZodNullable<z.ZodEnum<["bottom-pill", "bottom-full-panel", "top-banner", "center-card"]>>>;
+    colorTheme: z.ZodOptional<z.ZodEnum<["light", "dark", "custom"]>>;
+    mobileColorTheme: z.ZodOptional<z.ZodNullable<z.ZodEnum<["light", "dark", "custom"]>>>;
+    customDesktopStyle: z.ZodOptional<z.ZodNullable<z.ZodObject<{
         textColor: z.ZodString;
         panelColor: z.ZodString;
         panelOpacity: z.ZodNumber;
@@ -1403,7 +1403,7 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
         borderOpacity: number;
         borderWidth: number;
     }>>>;
-    customMobileStyle: z.ZodOptional<z.ZodOptional<z.ZodObject<{
+    customMobileStyle: z.ZodOptional<z.ZodNullable<z.ZodObject<{
         textColor: z.ZodString;
         panelColor: z.ZodString;
         panelOpacity: z.ZodNumber;
@@ -1431,18 +1431,18 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
     badgeText: z.ZodOptional<z.ZodString>;
     title: z.ZodOptional<z.ZodString>;
     subtitle: z.ZodOptional<z.ZodString>;
-    linkUrl: z.ZodOptional<z.ZodOptional<z.ZodString>>;
+    linkUrl: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     displayOrder: z.ZodOptional<z.ZodNumber>;
-    isActive: z.ZodOptional<z.ZodOptional<z.ZodBoolean>>;
+    isActive: z.ZodOptional<z.ZodBoolean>;
 }, "strip", z.ZodTypeAny, {
     isActive?: boolean | undefined;
     displayOrder?: number | undefined;
     imageUrl?: string | undefined;
-    mobileImageUrl?: string | undefined;
+    mobileImageUrl?: string | null | undefined;
     animationType?: "left-panel" | "top-left-round" | "top-right-panel" | "bottom-right-quarter" | undefined;
-    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | undefined;
+    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | null | undefined;
     colorTheme?: "custom" | "light" | "dark" | undefined;
-    mobileColorTheme?: "custom" | "light" | "dark" | undefined;
+    mobileColorTheme?: "custom" | "light" | "dark" | null | undefined;
     customDesktopStyle?: {
         textColor: string;
         panelColor: string;
@@ -1451,7 +1451,7 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
         borderColor: string;
         borderOpacity: number;
         borderWidth: number;
-    } | undefined;
+    } | null | undefined;
     customMobileStyle?: {
         textColor: string;
         panelColor: string;
@@ -1460,20 +1460,20 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
         borderColor: string;
         borderOpacity: number;
         borderWidth: number;
-    } | undefined;
+    } | null | undefined;
     badgeText?: string | undefined;
     title?: string | undefined;
     subtitle?: string | undefined;
-    linkUrl?: string | undefined;
+    linkUrl?: string | null | undefined;
 }, {
     isActive?: boolean | undefined;
     displayOrder?: number | undefined;
     imageUrl?: string | undefined;
-    mobileImageUrl?: string | undefined;
+    mobileImageUrl?: string | null | undefined;
     animationType?: "left-panel" | "top-left-round" | "top-right-panel" | "bottom-right-quarter" | undefined;
-    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | undefined;
+    mobileAnimationType?: "bottom-pill" | "bottom-full-panel" | "top-banner" | "center-card" | null | undefined;
     colorTheme?: "custom" | "light" | "dark" | undefined;
-    mobileColorTheme?: "custom" | "light" | "dark" | undefined;
+    mobileColorTheme?: "custom" | "light" | "dark" | null | undefined;
     customDesktopStyle?: {
         textColor: string;
         panelColor: string;
@@ -1482,7 +1482,7 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
         borderColor: string;
         borderOpacity: number;
         borderWidth: number;
-    } | undefined;
+    } | null | undefined;
     customMobileStyle?: {
         textColor: string;
         panelColor: string;
@@ -1491,11 +1491,11 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
         borderColor: string;
         borderOpacity: number;
         borderWidth: number;
-    } | undefined;
+    } | null | undefined;
     badgeText?: string | undefined;
     title?: string | undefined;
     subtitle?: string | undefined;
-    linkUrl?: string | undefined;
+    linkUrl?: string | null | undefined;
 }>;
 
 // @public (undocumented)
