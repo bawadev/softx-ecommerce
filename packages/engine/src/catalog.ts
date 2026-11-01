@@ -4,6 +4,7 @@ import type { EngineConfig, TenantRef } from './engine'
 import { getSession } from './db'
 import { toProductDTO, toCategoryDTO, toPromotionalCategoryDTO, toHeroSlideDTO } from './mappers/catalog.mapper'
 import * as productRepo from './repositories/product.repository'
+import * as recommendationRepo from './repositories/recommendation.repository'
 import * as categoryRepo from './repositories/category.repository'
 import * as promoRepo from './repositories/promotional-category.repository'
 import * as heroRepo from './repositories/hero-slide.repository'
@@ -79,6 +80,20 @@ export function createCatalogService(config: EngineConfig, _tenant: TenantRef): 
         return ok({ items, total, limit, offset })
       } catch (e) {
         return err('UNAVAILABLE', 'Failed to list products', { cause: String(e) })
+      }
+    },
+
+    async listNewArrivals(limit = 10) {
+      try {
+        // Newest-first products with at least one in-stock variant — the
+        // homepage's getNewArrivals read, now behind the contract.
+        const products = await recommendationRepo.getNewArrivals(
+          limit,
+          config.neo4j.database
+        )
+        return ok(products.map((p) => toProductDTO(p, currency)))
+      } catch (e) {
+        return err('UNAVAILABLE', 'Failed to list new arrivals', { cause: String(e) })
       }
     },
 

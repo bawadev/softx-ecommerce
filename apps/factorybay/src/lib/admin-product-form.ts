@@ -1,19 +1,20 @@
-import type { Product, ProductWithVariants } from '@softx/engine'
-import type { FormData } from '@/components/admin/ProductFormDialog'
+import type { ProductWithVariants } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import type { ProductFormData } from '@/components/admin/ProductFormDialog'
 
 /**
  * Admin product form mappers.
  *
- * The admin product form still talks to the repository write actions
- * (create/updateProductAction take repository Product shapes), while the
- * product list it edits from is served as v1.ProductDTO by the engine read
- * path. These mappers keep both translations (repository product → form,
- * form → repository write payload) in one non-UI module so components only
- * deal in DTOs and form values. Collapses when the write path moves to the
- * engine (Phase 5).
+ * The form's write payloads are typed by the CONTRACT (ProductWriteInput /
+ * ProductUpdateInput carry the repository boundary's MAJOR-unit prices, which
+ * is exactly what the form collects). The edit-form READ stays
+ * repository-shaped this phase (getAdminProductAction on
+ * internal.repositories.productRepository) because the form's initial values
+ * come from the same major-unit boundary — retyping that read onto
+ * Money-based ProductDTOs is a future contract decision.
  */
 
-export function emptyProductForm(): FormData {
+export function emptyProductForm(): ProductFormData {
   return {
     name: '',
     description: '',
@@ -27,7 +28,7 @@ export function emptyProductForm(): FormData {
   }
 }
 
-export function repositoryProductToForm(p: ProductWithVariants, categoryIds: string[]): FormData {
+export function repositoryProductToForm(p: ProductWithVariants, categoryIds: string[]): ProductFormData {
   return {
     name: p.name,
     description: p.description,
@@ -44,7 +45,7 @@ export function repositoryProductToForm(p: ProductWithVariants, categoryIds: str
 export type FormPrices = { stock: number; retail: number }
 
 /** Parse + validate the form's price inputs; null when invalid or non-positive. */
-export function parseFormPrices(form: FormData): FormPrices | null {
+export function parseFormPrices(form: ProductFormData): FormPrices | null {
   const stock = parseFloat(form.stockPrice)
   const retail = parseFloat(form.retailPrice)
   if (isNaN(stock) || isNaN(retail) || stock <= 0 || retail <= 0) {
@@ -54,9 +55,9 @@ export function parseFormPrices(form: FormData): FormPrices | null {
 }
 
 export function formToUpdatePayload(
-  form: FormData,
+  form: ProductFormData,
   prices: FormPrices
-): Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>> {
+): v1.ProductUpdateInput {
   return {
     name: form.name.trim(),
     description: form.description.trim(),
@@ -70,10 +71,10 @@ export function formToUpdatePayload(
 }
 
 export function formToCreatePayload(
-  form: FormData,
+  form: ProductFormData,
   prices: FormPrices,
   sku: string
-): Omit<Product, 'id' | 'createdAt' | 'updatedAt'> {
+): v1.ProductWriteInput {
   return {
     name: form.name.trim(),
     description: form.description.trim(),

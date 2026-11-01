@@ -14,11 +14,10 @@
  */
 
 import dotenv from 'dotenv'
-import { getSession } from '@softx/engine'
-import {
-  createCategory,
-  getCategoryTree
-} from '@softx/engine'
+import { internal } from '@softx/engine'
+
+const { getSession } = internal.db
+const { createCategory, getCategoryTree } = internal.repositories.categoryRepository
 
 // Load environment variables
 dotenv.config({ path: '.env.local' })

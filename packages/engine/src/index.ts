@@ -1,4 +1,3 @@
-import * as types from './types'
 import * as repositories from './repositories'
 import * as db from './db'
 import * as neo4jUtils from './neo4j-utils'
@@ -8,33 +7,69 @@ export const packageName = '@softx/engine'
 export { createEngine, engineConfigFromEnv } from './engine'
 export type { Engine, EngineConfig, TenantEngine, TenantRef } from './engine'
 
-// The one ProductDTO mapper engine-wide (Phase 4): exposed for app read paths
-// not yet served by an engine service (new arrivals, admin-created products)
-// now that the app-side product adapter is retired.
-export { toProductDTO } from './mappers/catalog.mapper'
+// ---------------------------------------------------------------------------
+// Legacy view types — explicit, pinned list (Phase 5 Task 7 collapse audit).
+// The `export *` scaffolding and the toProductDTO export are GONE; these exact
+// names remain because the app UI/scripts still import them. Every name here
+// had at least one live importer at audit time (2026-11-02). Nothing
+// value-shaped leaks from this module except `internal` below.
+// ---------------------------------------------------------------------------
+export type {
+  ActionResponse, // app action envelopes (every actions/*.ts)
+  User, // profile page / lib/auth
+  CreateUserInput, // actions/auth.ts
+  LoginInput, // actions/auth.ts
+  AuthResponse, // actions/auth.ts
+  JWTPayload, // lib/auth.ts
+  ProductCategory, // profile preferences UI + CategoryFilterChips
+  ProductGender, // admin product form
+  SizeOption, // admin product form + profile measurements
+  MeasurementUnit, // profile measurements
+  OrderStatus, // order/admin-order actions
+  DeliveryMethod, // checkout
+  ShippingAddress, // checkout
+  HeroAnimationType, // hero slides admin + seed script
+  HeroMobileAnimationType, // hero mobile slides
+  HeroColorTheme, // hero theming
+  CustomPanelStyle, // hero panel theme editor
+  PromotionalCategory, // promotional-categories action (joined read shape)
+} from './types'
+export type {
+  ProductWithVariants, // admin edit-form read + promo joined reads
+  ProductFilters, // actions/products.ts
+} from './repositories/product.repository'
+export type { Category } from './repositories/category.repository' // ProductFormDialog category picker
+export type { Color } from './repositories/color.repository' // admin ColorsClient
 
 /**
- * @internal Migration escape hatch for code not yet on the contract
- * (admin write actions, cart/checkout, scripts). Removed in Phase 5.
+ * @internal Narrow escape hatch for the reads with no contract home yet
+ * (Phase 5 Task 7 audit). The flat `export *` layers are gone; the remaining
+ * value-shaped consumers are exactly:
+ *
+ * - `db` — Neo4j session lifecycle (`getSession`/`closeDriver`) in the app's
+ *   raw-read actions and the maintenance/seed scripts; `runQuery` in
+ *   lib/schema.ts (db:init).
+ * - `neo4jUtils.convertNeo4jIntegers` — the raw-Cypher admin reads in
+ *   categories.ts (getCategoryProductsAction/getUnassignedProductsAction).
+ * - `repositories.productRepository` — `getProductCount` (admin dashboard),
+ *   `getProductById` (admin edit-form read: repository-boundary MAJOR-unit
+ *   prices the form still works in — retype is a future contract decision),
+ *   `createProduct` (add-products script).
+ * - `repositories.categoryRepository` — `findDuplicateNames` /
+ *   `getCategoryStatistics` / `getCategoriesForProduct` /
+ *   `validateLeafCategoryForProduct` (categories.ts reads + bulk-assign
+ *   pre-validation), `getLeafCategories` / `assignProductToCategories` /
+ *   `createCategory` / `getCategoryTree` (maintenance scripts).
+ * - `repositories.userRepository` — `findUserById` (profile page full-user
+ *   read), `updateUser` / `findUserByEmail` (app-side admin role actions).
+ *   db:seed no longer consumes this repository — it creates its users
+ *   through `account.signUp` (`createUser` currently has no consumers).
+ * - `repositories.heroSlideRepository` — `getAllHeroSlides` /
+ *   `createHeroSlide` (hero-slide seed script).
+ * - `repositories.promotionalCategoryRepository` —
+ *   `getCategoryItemsWithDetails` / `getProductCategories` (promo admin
+ *   joined reads with no DTO home).
+ *
+ * New code must go through the contract services (`createEngine`) instead.
  */
-export const internal = { types, repositories, db, neo4jUtils }
-
-// Flat re-exports for not-yet-migrated imports (removed in Phase 5)
-export * from './types'
-export { getDriver, getSession, closeDriver, runQuery, testConnection } from './db'
-export { convertNeo4jIntegers } from './neo4j-utils'
-export * from './repositories/product.repository'
-export * from './repositories/category.repository'
-export * from './repositories/promotional-category.repository'
-export * from './repositories/hero-slide.repository'
-export * from './repositories/cart.repository'
-export * from './repositories/order.repository'
-export * from './repositories/user.repository'
-export * from './repositories/user-profile.repository'
-export * from './repositories/color.repository'
-export * from './repositories/browsing-history.repository'
-export * from './repositories/recommendation.repository'
-// getProductsByCategory is exported by both product.repository (deprecated)
-// and promotional-category.repository; re-export explicitly to resolve the
-// `export *` ambiguity. The app uses the promotional-category version.
-export { getProductsByCategory } from './repositories/promotional-category.repository'
+export const internal = { repositories, db, neo4jUtils }

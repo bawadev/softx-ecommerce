@@ -1,12 +1,14 @@
 'use server'
 
-import { getSession } from '@softx/engine'
-import { getCurrentUser } from '@/lib/auth'
 import { deleteFile } from '@/lib/minio'
-import { ActionResponse, HeroSlide, HeroAnimationType, HeroMobileAnimationType, HeroColorTheme, CustomPanelStyle } from '@softx/engine'
-import * as heroSlideRepo from '@softx/engine'
+import type { ActionResponse } from '@softx/engine'
 import type { v1 } from '@softx/contract'
-import { getCatalog } from '@/lib/engine'
+import { getCatalog, getAdminCatalog, currentActor } from '@/lib/engine'
+
+/** Failed service Result → the action's envelope message (UNAUTHORIZED keeps this family's exact string). */
+function resultMessage(r: { error: { code: string; message: string } }): string {
+  return r.error.code === 'UNAUTHORIZED' ? 'Unauthorized. Admin access required.' : r.error.message
+}
 
 /**
  * Get all hero slides (public for frontend, all for admin)
@@ -30,120 +32,78 @@ export async function getAllHeroSlidesAction(
 }
 
 /**
- * Create a new hero slide (Admin only)
+ * Create a new hero slide (Admin only — enforced engine-side via the actor)
  */
-export async function createHeroSlideAction(data: {
-  imageUrl: string
-  mobileImageUrl?: string
-  animationType: HeroAnimationType
-  mobileAnimationType?: HeroMobileAnimationType
-  colorTheme?: HeroColorTheme
-  mobileColorTheme?: HeroColorTheme
-  customDesktopStyle?: CustomPanelStyle
-  customMobileStyle?: CustomPanelStyle
-  badgeText: string
-  title: string
-  subtitle: string
-  linkUrl?: string
-  displayOrder: number
-  isActive?: boolean
-}): Promise<ActionResponse<HeroSlide>> {
-  const session = getSession()
-
+export async function createHeroSlideAction(
+  data: v1.HeroSlideWriteInput
+): Promise<ActionResponse<v1.HeroSlideDTO>> {
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().createHeroSlide(await currentActor(), data)
 
-    const slide = await heroSlideRepo.createHeroSlide(session, data)
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
+    }
 
     return {
       success: true,
       message: 'Hero slide created successfully',
-      data: slide,
+      data: r.data,
     }
   } catch (error: any) {
     console.error('Error creating hero slide:', error)
     return { success: false, message: error.message || 'Failed to create hero slide' }
-  } finally {
-    await session.close()
   }
 }
 
 /**
- * Update a hero slide (Admin only)
+ * Update a hero slide (Admin only — enforced engine-side via the actor).
+ * Optional fields pass `null` to CLEAR (mobile image, custom styles, link) —
+ * the update input is null-clearable by design.
  */
 export async function updateHeroSlideAction(
   id: string,
-  data: Partial<{
-    imageUrl: string
-    mobileImageUrl: string | null
-    animationType: HeroAnimationType
-    mobileAnimationType: HeroMobileAnimationType | null
-    colorTheme: HeroColorTheme
-    mobileColorTheme: HeroColorTheme | null
-    customDesktopStyle: CustomPanelStyle | null
-    customMobileStyle: CustomPanelStyle | null
-    badgeText: string
-    title: string
-    subtitle: string
-    linkUrl: string
-    displayOrder: number
-    isActive: boolean
-  }>
-): Promise<ActionResponse<HeroSlide>> {
-  const session = getSession()
-
+  data: v1.HeroSlideUpdateInput
+): Promise<ActionResponse<v1.HeroSlideDTO>> {
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().updateHeroSlide(await currentActor(), id, data)
 
-    const slide = await heroSlideRepo.updateHeroSlide(session, id, data)
-
-    if (!slide) {
-      return { success: false, message: 'Hero slide not found' }
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     return {
       success: true,
       message: 'Hero slide updated successfully',
-      data: slide,
+      data: r.data,
     }
   } catch (error: any) {
     console.error('Error updating hero slide:', error)
     return { success: false, message: error.message || 'Failed to update hero slide' }
-  } finally {
-    await session.close()
   }
 }
 
 /**
- * Delete a hero slide (Admin only) — also deletes image from MinIO
+ * Delete a hero slide (Admin only — enforced engine-side via the actor) —
+ * also deletes image from MinIO (object storage is transport, stays app-side)
  */
 export async function deleteHeroSlideAction(
   id: string
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
+    // Get the slide first to retrieve the image URLs (contract read path)
+    const listResult = await getCatalog().listHeroSlides(false)
+    if (!listResult.ok) {
+      return { success: false, message: listResult.error.message || 'Failed to delete hero slide' }
     }
-
-    // Get the slide first to retrieve the image URL
-    const slide = await heroSlideRepo.getHeroSlideById(session, id)
+    const slide = listResult.data.find((s) => s.id === id)
     if (!slide) {
       return { success: false, message: 'Hero slide not found' }
     }
 
     // Delete from DB
-    const deleted = await heroSlideRepo.deleteHeroSlide(session, id)
-    if (!deleted) {
-      return { success: false, message: 'Failed to delete hero slide' }
+    const r = await getAdminCatalog().deleteHeroSlide(await currentActor(), id)
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
     }
 
     // Delete images from MinIO (best effort — don't fail if image deletion fails)
@@ -165,26 +125,21 @@ export async function deleteHeroSlideAction(
   } catch (error: any) {
     console.error('Error deleting hero slide:', error)
     return { success: false, message: error.message || 'Failed to delete hero slide' }
-  } finally {
-    await session.close()
   }
 }
 
 /**
- * Reorder hero slides (Admin only)
+ * Reorder hero slides (Admin only — enforced engine-side via the actor)
  */
 export async function reorderHeroSlidesAction(
   slides: Array<{ id: string; displayOrder: number }>
 ): Promise<ActionResponse<void>> {
-  const session = getSession()
-
   try {
-    const user = await getCurrentUser()
-    if (!user || user.role !== 'ADMIN') {
-      return { success: false, message: 'Unauthorized. Admin access required.' }
-    }
+    const r = await getAdminCatalog().reorderHeroSlides(await currentActor(), slides)
 
-    await heroSlideRepo.reorderHeroSlides(session, slides)
+    if (!r.ok) {
+      return { success: false, message: resultMessage(r) }
+    }
 
     return {
       success: true,
@@ -193,7 +148,5 @@ export async function reorderHeroSlidesAction(
   } catch (error: any) {
     console.error('Error reordering hero slides:', error)
     return { success: false, message: error.message || 'Failed to reorder hero slides' }
-  } finally {
-    await session.close()
   }
 }

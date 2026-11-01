@@ -68,44 +68,6 @@ export async function saveGuestCart(items: GuestCartItem[]): Promise<void> {
 }
 
 /**
- * Add item to guest cart
- */
-export async function addToGuestCart(variantId: string, quantity: number): Promise<void> {
-  const cart = await getGuestCart()
-  const existingItem = cart.find(item => item.variantId === variantId)
-
-  if (existingItem) {
-    existingItem.quantity += quantity
-  } else {
-    cart.push({ variantId, quantity })
-  }
-
-  await saveGuestCart(cart)
-}
-
-/**
- * Remove item from guest cart
- */
-export async function removeFromGuestCart(variantId: string): Promise<void> {
-  const cart = await getGuestCart()
-  const updatedCart = cart.filter(item => item.variantId !== variantId)
-  await saveGuestCart(updatedCart)
-}
-
-/**
- * Update guest cart item quantity
- */
-export async function updateGuestCartQuantity(variantId: string, quantity: number): Promise<void> {
-  const cart = await getGuestCart()
-  const item = cart.find(item => item.variantId === variantId)
-
-  if (item) {
-    item.quantity = quantity
-    await saveGuestCart(cart)
-  }
-}
-
-/**
  * Clear guest cart
  */
 export async function clearGuestCart(): Promise<void> {

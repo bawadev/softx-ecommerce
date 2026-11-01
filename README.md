@@ -4,7 +4,11 @@
 
 A modern e-commerce platform built with Next.js, TypeScript, Neo4j, and Tailwind CSS. Ecom offers premium branded clothing at wholesale prices with intelligent recommendations and personalized shopping experiences.
 
-Monorepo: the Next.js app lives in `apps/factorybay`; shared packages live in `packages/*` (contract, engine). Build/deploy from the repo root.
+Monorepo: the Next.js app lives in `apps/factorybay`; shared packages live in `packages/*`. Build/deploy from the repo root.
+
+- `packages/contract` — the versioned service contract (DTOs, `Result` envelope, shared conformance suites): catalog, cart, order, account, profile, plus the actor-gated admin services (`AdminCatalogService` / `AdminOrderService`).
+- `packages/engine` — the real Neo4j implementation of the contract, including the admin services with engine-side authorization (`ActorRef`).
+- `packages/engine-fixtures` — in-memory fake engine used to run the same conformance suites hermetically in unit tests.
 
 ---
 

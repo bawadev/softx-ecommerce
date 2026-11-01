@@ -57,6 +57,9 @@ export function createOrderService(config: EngineConfig, _tenant: TenantRef): v1
 
   return {
     async createOrder(userId, command) {
+      // Falsy userId (missing session upstream) must never read or clear a
+      // cart — parity with the app action's guard message.
+      if (!userId) return err('UNAUTHORIZED', 'You must be logged in to place an order')
       try {
         const items = await userCartItems(userId)
         if (items.length === 0) return err('VALIDATION', 'Cart is empty')

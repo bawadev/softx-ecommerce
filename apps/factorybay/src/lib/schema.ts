@@ -3,7 +3,9 @@
  * This file contains all the Cypher queries to set up the Neo4j database
  */
 
-import { runQuery } from '@softx/engine'
+import { internal } from '@softx/engine'
+
+const { runQuery } = internal.db
 
 // Create constraints and indexes
 export const constraints = [

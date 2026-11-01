@@ -60,18 +60,19 @@ export function toPreferencesDTO(p: UserPreference | null): v1.UserPreferencesDT
     }
   }
   // Read-path trap: priceRange arrives as a JSON string (upsert stringifies,
-  // read doesn't parse). Parse defensively; fall back to the default on any
-  // non-object result.
+  // read doesn't parse). Parse defensively; fall back to a COPY of the
+  // default on any non-object result — never the shared DEFAULT_PREFERENCES
+  // object itself, or a caller mutating the DTO would corrupt the default.
   let priceRange: unknown = p.priceRange
   if (typeof priceRange === 'string') {
     try {
       priceRange = JSON.parse(priceRange)
     } catch {
-      priceRange = DEFAULT_PRICE_RANGE
+      priceRange = { ...DEFAULT_PRICE_RANGE }
     }
   }
   if (typeof priceRange !== 'object' || priceRange === null) {
-    priceRange = DEFAULT_PRICE_RANGE
+    priceRange = { ...DEFAULT_PRICE_RANGE }
   }
   return {
     preferredBrands: Array.isArray(p.preferredBrands) ? p.preferredBrands : [],

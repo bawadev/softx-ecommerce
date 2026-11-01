@@ -1,6 +1,4 @@
 import { describe, it, expect } from 'vitest'
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import { v1 } from '@softx/contract'
 import {
   isValidEmail,
@@ -10,12 +8,13 @@ import {
 import { toPreferencesDTO, toMeasurementsDTO } from './profile'
 import type { User, UserMeasurements } from './types'
 
-// Parity pins (Phase 4 Task 3): the literals below were copied from
-// apps/factorybay/src/lib/auth.ts at write time. The last describe block
-// re-reads that app file and fails if it drifts from this engine port, so
-// editing one copy without the other breaks `npm test`.
+// Validator pins: these literals were ORIGINALLY ported verbatim from
+// apps/factorybay/src/lib/auth.ts (Phase 4 Task 3). Since Phase 5 Task 7 the
+// engine is the SINGLE home for them — the app copies are deleted — and the
+// tests below pin the engine's own regex, messages and rule order directly
+// (the old cross-file drift tripwire read the app file and is gone with it).
 
-describe('isValidEmail (parity port of lib/auth.ts)', () => {
+describe('isValidEmail (engine-owned validator)', () => {
   it('accepts well-formed addresses', () => {
     expect(isValidEmail('user@example.com')).toBe(true)
     expect(isValidEmail('first.last@sub.domain.co')).toBe(true)
@@ -32,7 +31,7 @@ describe('isValidEmail (parity port of lib/auth.ts)', () => {
   })
 })
 
-describe('validatePassword (parity port of lib/auth.ts)', () => {
+describe('validatePassword (engine-owned validator)', () => {
   it('pins the three rules with their exact messages', () => {
     expect(validatePassword('Short1!')).toBe('Password must be at least 8 characters long')
     expect(validatePassword('alllowercase1')).toBe('Password must contain at least one uppercase letter')
@@ -145,27 +144,5 @@ describe('toMeasurementsDTO (missing-not-null trap)', () => {
   it("defaults a missing unit to 'METRIC'", () => {
     const raw = { id: 'm1', userId: 'u1', chest: 100 } as unknown as UserMeasurements
     expect(toMeasurementsDTO(raw).unit).toBe('METRIC')
-  })
-})
-
-describe('parity drift tripwire against apps/factorybay/src/lib/auth.ts', () => {
-  it('the app file still carries the exact regex, messages and rule order ported into account.ts', () => {
-    // Resolved from this file's location (not cwd) so the check works from
-    // any vitest invocation directory.
-    const appAuthPath = fileURLToPath(
-      new URL('../../../apps/factorybay/src/lib/auth.ts', import.meta.url)
-    )
-    const appAuth = readFileSync(appAuthPath, 'utf8')
-
-    expect(appAuth).toContain('const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/')
-    const lengthAt = appAuth.indexOf('Password must be at least 8 characters long')
-    const upperAt = appAuth.indexOf('Password must contain at least one uppercase letter')
-    const numberAt = appAuth.indexOf('Password must contain at least one number')
-    expect(lengthAt).toBeGreaterThan(-1)
-    expect(upperAt).toBeGreaterThan(-1)
-    expect(numberAt).toBeGreaterThan(-1)
-    // order matters for determinism: length → uppercase → number
-    expect(lengthAt).toBeLessThan(upperAt)
-    expect(upperAt).toBeLessThan(numberAt)
   })
 })

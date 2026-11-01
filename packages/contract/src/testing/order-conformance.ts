@@ -60,6 +60,13 @@ export function runOrderConformance(
       if (!r.ok) expect(r.error.code).toBe('VALIDATION')
     })
 
+    it('createOrder with a falsy userId → UNAUTHORIZED (never reads a cart)', async () => {
+      const s = makeService()
+      const r = await s.createOrder('', { shippingAddress: address, deliveryMethod: 'SHIP' })
+      expect(r.ok).toBe(false)
+      if (!r.ok) expect(r.error.code).toBe('UNAUTHORIZED')
+    })
+
     it('getOrder enforces ownership; listOrders returns the user’s orders', async () => {
       const s = makeService()
       const user = 'conformance-cart-user'
@@ -107,6 +114,20 @@ export function runOrderConformance(
       if (!r.ok) return
       expect(r.data.cart.itemCount).toBe(2)
       expect(r.data.guestItems).toBeUndefined() // user carts never echo guest lines
+      await s.clearCart({ kind: 'user', userId: user })
+    })
+
+    it('user→same-user self-merge leaves the cart intact (no doubling, no wipe)', async () => {
+      const s = makeService()
+      const user = 'conformance-cart-user'
+      await s.clearCart({ kind: 'user', userId: user })
+      await s.addItem({ kind: 'user', userId: user }, 'conformance-v1', 2)
+      const before = await s.getCart({ kind: 'user', userId: user })
+      const r = await s.mergeCarts({ kind: 'user', userId: user }, user)
+      expect(r.ok).toBe(true)
+      if (!r.ok || !before.ok) return
+      expect(r.data.cart).toEqual(before.data.cart) // same lines, same quantities
+      expect(r.data.guestItems).toBeUndefined()
       await s.clearCart({ kind: 'user', userId: user })
     })
   })

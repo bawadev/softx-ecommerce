@@ -8,11 +8,14 @@
 import dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
-import { getSession, closeDriver } from '@softx/engine'
+import { internal } from '@softx/engine'
 import { uploadFile, initializeBucket } from '../src/lib/minio'
-import * as heroSlideRepo from '@softx/engine'
+
 import type { HeroAnimationType } from '@softx/engine'
 import { shopConfig } from '../src/config/shop'
+
+const { getSession, closeDriver } = internal.db
+const heroSlideRepo = internal.repositories.heroSlideRepository
 
 // Load environment variables
 dotenv.config({ path: '.env.local' })
@@ -69,8 +72,15 @@ export async function seedHeroSlides() {
       return
     }
 
-    // Ensure MinIO bucket exists
-    await initializeBucket()
+    // Ensure MinIO bucket exists — SOFT FAIL: an unreachable MinIO must not
+    // abort db:seed (users still need to seed); warn and skip the slides.
+    try {
+      await initializeBucket()
+    } catch (error) {
+      console.warn('   ⚠️  MinIO unavailable — skipping hero slide seeding (start MinIO and rerun `npm run seed:hero-slides`).')
+      console.warn(`      (${error instanceof Error ? error.message : String(error)})`)
+      return
+    }
 
     let created = 0
 
@@ -84,9 +94,16 @@ export async function seedHeroSlides() {
         continue
       }
 
-      // Read image file and upload to MinIO
+      // Read image file and upload to MinIO — per-slide soft fail so one
+      // failed upload skips that slide, not the whole seeding run.
       const imageBuffer = fs.readFileSync(imagePath)
-      const imageUrl = await uploadFile(imageBuffer, slide.imageFile, 'image/jpeg')
+      let imageUrl: string
+      try {
+        imageUrl = await uploadFile(imageBuffer, slide.imageFile, 'image/jpeg')
+      } catch (error) {
+        console.warn(`   ⚠️  Skipped slide ${i + 1}: MinIO upload failed (${error instanceof Error ? error.message : String(error)})`)
+        continue
+      }
 
       // Create HeroSlide node in Neo4j
       await heroSlideRepo.createHeroSlide(session, {

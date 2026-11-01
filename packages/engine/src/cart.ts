@@ -131,14 +131,22 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
       }
     },
 
-    // Move the source owner's lines into the user cart. The source lines are
-    // hydrated exactly like guestResult does (vanished variants self-heal
-    // out — guest lines via getVariantWithProduct, user lines via the cart
-    // JOIN), each surviving line is added with addToCart (which increments
-    // an existing line), a user source cart is cleared afterwards, and the
-    // USER cart is returned — user carts never echo guestItems.
+    // Move the source owner's lines into the user cart. A user→SAME-user
+    // merge is a NO-OP returning the cart unchanged (naively replaying the
+    // moves would double quantities and then wipe the cart via the source
+    // clear — pinned by the conformance suite). Otherwise the source lines
+    // are hydrated exactly like guestResult does (vanished variants
+    // self-heal out — guest lines via getVariantWithProduct, user lines via
+    // the cart JOIN), each surviving line is added with addToCart (which
+    // increments an existing line), a user source cart is cleared
+    // afterwards, and the USER cart is returned — user carts never echo
+    // guestItems.
     async mergeCarts(from, toUserId) {
       try {
+        if (from.kind === 'user' && from.userId === toUserId) {
+          const own = await cartRepo.getCartItems(toUserId, db)
+          return ok({ cart: cartFrom(own.map((r) => toCartItemDTO(r, currency))) })
+        }
         const source =
           from.kind === 'guest'
             ? await hydrateGuest(from.items)

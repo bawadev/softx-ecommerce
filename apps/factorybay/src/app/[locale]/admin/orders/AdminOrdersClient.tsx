@@ -5,12 +5,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from 'next-intl'
 import { updateAdminOrderStatusAction } from '@/app/actions/admin-orders'
-import type { OrderWithItems } from '@softx/engine'
-import type { OrderStatus } from '@softx/engine'
+import type { v1 } from '@softx/contract'
+import { amount } from '@/lib/price'
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 
+type OrderStatus = v1.OrderDTO['status']
+
 interface AdminOrdersClientProps {
-  orders: OrderWithItems[]
+  orders: v1.OrderDTO[]
 }
 
 export default function AdminOrdersClient({ orders: initialOrders }: AdminOrdersClientProps) {
@@ -75,7 +77,7 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
   const pendingCount = orders.filter(o => o.status === 'PENDING').length
   const confirmedCount = orders.filter(o => o.status === 'CONFIRMED').length
   const fulfilledCount = orders.filter(o => o.status === 'FULFILLED').length
-  const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0)
+  const totalRevenue = orders.reduce((sum, o) => sum + amount(o.totalAmount), 0)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -145,7 +147,7 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                       <div>
                         <p className="text-xs text-gray-600">Total</p>
                         <p className="text-sm font-semibold text-black-700">
-                          Rs {order.totalAmount.toFixed(2)}
+                          Rs {amount(order.totalAmount).toFixed(2)}
                         </p>
                       </div>
                       <div>
@@ -178,45 +180,46 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                 <div className="px-6 py-4">
                   <div className="space-y-3 mb-4">
                     {order.items.map((item) => {
-                      // The product/variant blocks hydrate from an OPTIONAL
-                      // MATCH — null when the ITEM_OF_VARIANT→VARIANT_OF chain
-                      // was severed (admin deleteVariant/deleteProduct). Render
-                      // placeholders instead of crashing the admin orders page.
-                      const image = item.variant?.images?.[0] || item.product?.images?.[0] || undefined
-                      const productName = item.product?.name ?? '(unavailable)'
+                      // The flat display fields hydrate from an OPTIONAL
+                      // MATCH — placeholders when the ITEM_OF_VARIANT→VARIANT_OF
+                      // chain was severed (admin deleteVariant/deleteProduct).
+                      // Render placeholders instead of crashing the admin
+                      // orders page (same discipline as the storefront pages).
+                      const image = item.productImage || undefined
+                      const productName = item.productName || '(unavailable)'
                       return (
-                      <div key={item.id} className="flex gap-3">
-                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                          {image ? (
-                            <Image
-                              src={image}
-                              alt={productName}
-                              fill
-                              className="object-cover"
-                              sizes="64px"
-                            />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-gray-400 text-xs">
-                              No Image
-                            </div>
-                          )}
+                        <div key={item.variantId} className="flex gap-3">
+                          <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                            {image ? (
+                              <Image
+                                src={image}
+                                alt={productName}
+                                fill
+                                className="object-cover"
+                                sizes="64px"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center text-gray-400 text-xs">
+                                No Image
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-black-700 truncate">{productName}</p>
+                            <p className="text-xs text-gray-600">{item.productBrand}</p>
+                            <p className="text-xs text-gray-500">
+                              {item.variantSize
+                                ? `Size: ${item.variantSize} • Color: ${item.variantColor} • `
+                                : ''}
+                              Qty: {item.quantity}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-semibold text-black-700">
+                              Rs {(amount(item.priceAtPurchase) * item.quantity).toFixed(2)}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-black-700 truncate">{productName}</p>
-                          <p className="text-xs text-gray-600">{item.product?.brand}</p>
-                          <p className="text-xs text-gray-500">
-                            {item.variant
-                              ? `Size: ${item.variant.size} • Color: ${item.variant.color} • `
-                              : ''}
-                            Qty: {item.quantity}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-semibold text-black-700">
-                            Rs {(item.priceAtPurchase * item.quantity).toFixed(2)}
-                          </p>
-                        </div>
-                      </div>
                       )
                     })}
                   </div>
