@@ -20,7 +20,7 @@ describe('order DTOs', () => {
     const bad = { ...validOrder, status: 'SHIPPED' }
     expect(OrderSchema.safeParse(bad).success).toBe(false)
   })
-  it('rejects COLLECT order missing optional line2 but keeps it optional', () => {
+  it('accepts a COLLECT command — addressLine2 stays optional', () => {
     const cmd = CreateOrderCommandSchema.safeParse({
       shippingAddress: validOrder.shippingAddress, deliveryMethod: 'COLLECT',
     })

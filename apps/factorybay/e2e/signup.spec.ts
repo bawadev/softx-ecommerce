@@ -23,9 +23,9 @@ import { test, expect } from '@playwright/test'
  * - Profile (page.tsx + ProfileClient.tsx): redirects anonymous users to
  *   /en/login; for a signed-in user it renders "My Profile" with three tabs
  *   (Account Info / Shopping Preferences / Measurements). The Account Info
- *   tab shows firstName/lastName/email/role as DISABLED inputs — and those
- *   <label>s carry NO htmlFor/id, so getByLabel cannot reach them; the
- *   assertions target each input via its adjacent label text instead. NOTE:
+ *   tab shows firstName/lastName/email/role as DISABLED inputs, each label
+ *   associated with its input via htmlFor/id (Phase 5 Task 7 a11y fix), so
+ *   getByLabel reaches them. NOTE:
  *   ProfileClient does NOT render a recently-viewed section (recently-viewed
  *   is a home-page section for authenticated users), so this spec asserts
  *   the account identity (name + email) on /en/profile instead. Visiting the
@@ -68,9 +68,9 @@ test('signup lands signed-in and reaches the profile page', async ({
   // --- Profile page: fresh account renders its own identity ---
   await page.goto('/en/profile')
   await expect(page.getByRole('heading', { name: 'My Profile' })).toBeVisible()
-  // Account Info tab is the default; fields are disabled inputs with values.
-  // The labels have no htmlFor/id association, so target input-by-label-text.
-  await expect(page.locator('label:text-is("First Name") + input')).toHaveValue('Smoke')
-  await expect(page.locator('label:text-is("Last Name") + input')).toHaveValue('Signup')
-  await expect(page.locator('label:text-is("Email") + input')).toHaveValue(email)
+  // Account Info tab is the default; fields are disabled inputs with values,
+  // each label associated via htmlFor/id so getByLabel reaches them.
+  await expect(page.getByLabel('First Name')).toHaveValue('Smoke')
+  await expect(page.getByLabel('Last Name')).toHaveValue('Signup')
+  await expect(page.getByLabel('Email')).toHaveValue(email)
 })

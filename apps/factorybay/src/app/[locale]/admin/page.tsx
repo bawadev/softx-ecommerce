@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { isAdmin } from '@/lib/auth'
 import { getTranslations, getLocale } from 'next-intl/server'
 import Link from 'next/link'
-import { getProductCount } from '@softx/engine'
+import { internal } from '@softx/engine'
 import { shopConfig } from '@/config/shop'
 
 export default async function AdminDashboardPage() {
@@ -16,7 +16,7 @@ export default async function AdminDashboardPage() {
   const t = await getTranslations('admin.dashboard')
 
   // Fetch actual stats
-  const totalProducts = await getProductCount()
+  const totalProducts = await internal.repositories.productRepository.getProductCount()
 
   return (
     <div className="min-h-screen bg-gray-50">

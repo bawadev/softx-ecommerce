@@ -11,8 +11,6 @@ import {
   searchProductsByNameAction,
   checkProductNameExistsAction,
   getAllBrandsAction,
-  addVariantImageAction,
-  removeVariantImageAction,
   getAdminProductAction,
 } from '@/app/actions/admin-products'
 import { getProductAction } from '@/app/actions/products'
@@ -30,7 +28,7 @@ import type { ProductWithVariants } from '@softx/engine'
 import type { ProductGender, SizeOption } from '@softx/engine'
 import type { v1 } from '@softx/contract'
 import CategoryPickerDialog from '@/components/category/CategoryPickerDialog'
-import ProductFormDialog, { type FormData, type VariantFormData } from '@/components/admin/ProductFormDialog'
+import ProductFormDialog, { type ProductFormData, type VariantFormData } from '@/components/admin/ProductFormDialog'
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import { amount } from '@/lib/price'
@@ -57,7 +55,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
   const [isEditing, setIsEditing] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editingProduct, setEditingProduct] = useState<ProductWithVariants | null>(null)
-  const [formData, setFormData] = useState<FormData>(emptyProductForm())
+  const [formData, setFormData] = useState<ProductFormData>(emptyProductForm())
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -370,7 +368,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
     setEditingVariantIndex(null)
   }
 
-  const handleSubmit = async (formDataParam: FormData, variantsParam: VariantFormData[]) => {
+  const handleSubmit = async (formDataParam: ProductFormData, variantsParam: VariantFormData[]) => {
     // Validation
     if (!formDataParam.name.trim() || !formDataParam.brand.trim()) {
       showNotification('warning', 'Missing required fields', 'Please fill in all required fields (Name, Brand)')
@@ -397,7 +395,7 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
 
     try {
       if (isEditing && editingId) {
-        // Update existing product (write path stays on repository shapes)
+        // Update existing product (payload typed by the contract write input)
         const updates = formToUpdatePayload(formDataParam, prices)
 
         const result = await updateProductAction(editingId, updates)
@@ -423,12 +421,11 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
 
         const newProduct = formToCreatePayload(formDataParam, prices, effectiveSku)
 
-        // Convert variants to the format expected by createProductAction
+        // Convert variants to the contract's VariantWriteInput shape
         const variantsToCreate = variantsParam.map(v => ({
           size: v.size,
           color: v.color,
           stockQuantity: v.stockQuantity,
-          images: [] as string[]
         }))
 
         const result = await createProductAction(newProduct, variantsToCreate)

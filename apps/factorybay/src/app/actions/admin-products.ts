@@ -1,14 +1,15 @@
 'use server'
 
 import { isAdmin } from '@/lib/auth'
-import {
-  getProductById,
-  updateVariant,
-  type ProductWithVariants,
-} from '@softx/engine'
-import type { ActionResponse, Product, ProductVariant } from '@softx/engine'
+import { internal, type ProductWithVariants } from '@softx/engine'
+import type { ActionResponse } from '@softx/engine'
 import type { v1 } from '@softx/contract'
 import { getCatalog, getAdminCatalog, currentActor } from '@/lib/engine'
+
+// Edit-form by-id read: repository boundary (MAJOR-unit prices) — the form
+// still works in those units, so this read stays on the repository primitive
+// until the form retypes onto the contract write inputs (future decision).
+const { getProductById } = internal.repositories.productRepository
 
 /** Failed service Result → the action's envelope message (UNAUTHORIZED keeps this family's exact string). */
 function resultMessage(r: { error: { code: string; message: string } }): string {
@@ -128,19 +129,13 @@ export async function deleteProductAction(
  * Create a new product with variants
  */
 export async function createProductAction(
-  product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>,
-  variants: Omit<ProductVariant, 'id' | 'productId'>[]
+  product: v1.ProductWriteInput,
+  variants: v1.VariantWriteInput[]
 ): Promise<ActionResponse<{ product: v1.ProductDTO }>> {
   try {
     const r = await getAdminCatalog().createProduct(await currentActor(), {
       ...product,
-      // Variant-level images are dead post-Phase-1 (product-level images
-      // only) — the write input carries just size/color/stockQuantity.
-      variants: variants.map((variant) => ({
-        size: variant.size,
-        color: variant.color,
-        stockQuantity: variant.stockQuantity,
-      })),
+      variants,
     })
 
     if (!r.ok) {
@@ -169,7 +164,7 @@ export async function createProductAction(
  */
 export async function updateProductAction(
   productId: string,
-  updates: Partial<Omit<Product, 'id' | 'createdAt' | 'updatedAt'>>
+  updates: v1.ProductUpdateInput
 ): Promise<ActionResponse<null>> {
   try {
     const r = await getAdminCatalog().updateProduct(await currentActor(), productId, updates)
@@ -287,98 +282,6 @@ export async function getAllBrandsAction(): Promise<ActionResponse<{ brands: str
     return {
       success: false,
       message: 'Failed to fetch brands',
-    }
-  }
-}
-
-/**
- * Add an image to a product variant
- */
-export async function addVariantImageAction(
-  variantId: string,
-  imageUrl: string
-): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
-  try {
-    // Get current variant to access existing images
-    const { getVariantById } = await import('@softx/engine')
-    const variant = await getVariantById(variantId)
-
-    if (!variant) {
-      return {
-        success: false,
-        message: 'Variant not found',
-      }
-    }
-
-    // Add new image to existing images
-    const updatedImages = [...(variant.images || []), imageUrl]
-
-    await updateVariant(variantId, { images: updatedImages })
-
-    return {
-      success: true,
-      message: 'Image added successfully',
-    }
-  } catch (error) {
-    console.error('Add variant image error:', error)
-    return {
-      success: false,
-      message: 'Failed to add image',
-    }
-  }
-}
-
-/**
- * Remove an image from a product variant
- */
-export async function removeVariantImageAction(
-  variantId: string,
-  imageUrl: string
-): Promise<ActionResponse<null>> {
-  const adminAccess = await isAdmin()
-
-  if (!adminAccess) {
-    return {
-      success: false,
-      message: 'Unauthorized',
-    }
-  }
-
-  try {
-    // Get current variant to access existing images
-    const { getVariantById } = await import('@softx/engine')
-    const variant = await getVariantById(variantId)
-
-    if (!variant) {
-      return {
-        success: false,
-        message: 'Variant not found',
-      }
-    }
-
-    // Remove image from existing images
-    const updatedImages = (variant.images || []).filter(img => img !== imageUrl)
-
-    await updateVariant(variantId, { images: updatedImages })
-
-    return {
-      success: true,
-      message: 'Image removed successfully',
-    }
-  } catch (error) {
-    console.error('Remove variant image error:', error)
-    return {
-      success: false,
-      message: 'Failed to remove image',
     }
   }
 }

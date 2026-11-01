@@ -21,9 +21,11 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
     day: 'numeric',
   })
 
-  // Money total → major units; shipping recomputed for display like before
+  // Money total → major units; shipping recomputed for display like before.
+  // COLLECT orders carry no shipping charge — and no shipping LINE below;
+  // SHIP keeps the display parity rule (total >= 100 → free, else 9.99).
   const total = amount(order.totalAmount)
-  const shipping = total < 100 ? 9.99 : 0
+  const shipping = order.deliveryMethod === 'SHIP' ? (total < 100 ? 9.99 : 0) : 0
   const subtotal = total - shipping
 
   return (
@@ -89,34 +91,63 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
             <div className="rounded-lg bg-white p-6 shadow-sm">
               <h2 className="text-lg font-bold text-black-700 mb-4">{t('items')}</h2>
               <div className="space-y-4">
-                {order.items.map((item) => (
+                {order.items.map((item) => {
+                  // productId === '' marks a severed VARIANT_OF/VARIANT_OF
+                  // chain (product/variant deleted post-purchase): keep the
+                  // historical line items but never link to a product page.
+                  const linked = item.productId !== ''
+                  return (
                   <div key={item.variantId} className="flex gap-4 border-b border-gray-200 pb-4 last:border-0">
-                    <Link
-                      href={`/${locale}/product/${item.productId}`}
-                      className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
-                    >
-                      {item.productImage ? (
-                        <Image
-                          src={item.productImage}
-                          alt={item.productName}
-                          fill
-                          className="object-cover"
-                          sizes="80px"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-gray-400 text-xs">
-                          {t('noImage')}
-                        </div>
-                      )}
-                    </Link>
-
-                    <div className="flex-1">
+                    {linked ? (
                       <Link
                         href={`/${locale}/product/${item.productId}`}
-                        className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
+                        className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
                       >
-                        {item.productName}
+                        {item.productImage ? (
+                          <Image
+                            src={item.productImage}
+                            alt={item.productName}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-gray-400 text-xs">
+                            {t('noImage')}
+                          </div>
+                        )}
                       </Link>
+                    ) : (
+                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                        {item.productImage ? (
+                          <Image
+                            src={item.productImage}
+                            alt={item.productName}
+                            fill
+                            className="object-cover"
+                            sizes="80px"
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-gray-400 text-xs">
+                            {t('noImage')}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex-1">
+                      {linked ? (
+                        <Link
+                          href={`/${locale}/product/${item.productId}`}
+                          className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
+                        >
+                          {item.productName}
+                        </Link>
+                      ) : (
+                        <span className="text-sm font-semibold text-black-700">
+                          {item.productName}
+                        </span>
+                      )}
                       <p className="text-xs text-gray-600 mt-1">{item.productBrand}</p>
                       <p className="text-xs text-gray-600 mt-1">
                         Size: {item.variantSize} • Color: {item.variantColor}
@@ -133,7 +164,8 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                       </p>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
@@ -165,16 +197,18 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                   <span className="text-gray-600">{t('subtotal')}</span>
                   <span className="font-medium text-black-700">Rs {subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t('shipping')}</span>
-                  <span
-                    className={`font-medium ${
-                      shipping === 0 ? 'text-green-600' : 'text-black-700'
-                    }`}
-                  >
-                    {shipping === 0 ? t('free') : `Rs ${shipping.toFixed(2)}`}
-                  </span>
-                </div>
+                {order.deliveryMethod === 'SHIP' && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">{t('shipping')}</span>
+                    <span
+                      className={`font-medium ${
+                        shipping === 0 ? 'text-green-600' : 'text-black-700'
+                      }`}
+                    >
+                      {shipping === 0 ? t('free') : `Rs ${shipping.toFixed(2)}`}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between border-t border-gray-200 pt-3">
                   <span className="text-base font-bold text-black-700">{t('total')}</span>
                   <span className="text-2xl font-bold text-black-700">

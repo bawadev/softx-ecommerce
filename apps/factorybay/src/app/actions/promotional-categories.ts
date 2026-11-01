@@ -1,13 +1,18 @@
 'use server'
 
-import { getSession } from '@softx/engine'
+import { internal } from '@softx/engine'
 import { getCurrentUser } from '@/lib/auth'
 import { ActionResponse } from '@softx/engine'
-import * as promoCategoryRepo from '@softx/engine'
 import { ProductWithVariants } from '@softx/engine'
 import { PromotionalCategory } from '@softx/engine'
 import type { v1 } from '@softx/contract'
 import { getCatalog, getAdminCatalog, currentActor } from '@/lib/engine'
+
+// Joined promo reads with no contract home go through the engine's narrow
+// internal escape hatch (see packages/engine/src/index.ts for the audited
+// consumer list).
+const promoCategoryRepo = internal.repositories.promotionalCategoryRepository
+const { getSession } = internal.db
 
 /** Failed service Result → the action's envelope message (UNAUTHORIZED keeps this family's exact string). */
 function resultMessage(r: { error: { code: string; message: string } }): string {

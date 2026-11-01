@@ -1,11 +1,15 @@
 'use server'
 
-import { getSession } from '@softx/engine'
+import { internal } from '@softx/engine'
 import { isAdmin } from '@/lib/auth'
-import { convertNeo4jIntegers } from '@softx/engine'
-import * as categoryRepo from '@softx/engine'
 import type { v1 } from '@softx/contract'
 import { getCatalog, getAdminCatalog, currentActor } from '@/lib/engine'
+
+// Reads with no contract home go through the engine's narrow internal escape
+// hatch (see packages/engine/src/index.ts for the audited consumer list).
+const categoryRepo = internal.repositories.categoryRepository
+const { getSession } = internal.db
+const { convertNeo4jIntegers } = internal.neo4jUtils
 
 /** Failed service Result → the action's envelope message (UNAUTHORIZED keeps this family's exact string). */
 function resultMessage(r: { error: { code: string; message: string } }): string {
@@ -167,22 +171,6 @@ export async function getFeaturedCategoriesAction() {
 }
 
 /**
- * Get category path (breadcrumb)
- */
-export async function getCategoryPathAction(categoryId: string) {
-  const session = getSession()
-  try {
-    const path = await categoryRepo.getCategoryPath(session, categoryId)
-    return { success: true, data: path }
-  } catch (error: unknown) {
-    console.error('Error fetching category path:', error)
-    return { success: false, message: error instanceof Error ? error.message : 'Failed to fetch category path' }
-  } finally {
-    await session.close()
-  }
-}
-
-/**
  * Create a new category (Admin only)
  */
 export async function createCategoryAction(
@@ -326,65 +314,16 @@ export async function getCategoryStatisticsAction() {
 }
 
 /**
- * Get leaf categories (categories without children - can have products)
- */
-export async function getLeafCategoriesAction() {
-  const session = getSession()
-  try {
-    const categories = await categoryRepo.getLeafCategories(session)
-    return { success: true, data: categories }
-  } catch (error: unknown) {
-    console.error('Error fetching leaf categories:', error)
-    return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
-  }
-}
-
-/**
- * Get leaf categories by hierarchy
- */
-export async function getLeafCategoriesByHierarchyAction(
-  hierarchy: string
-) {
-  const session = getSession()
-  try {
-    const categories = await categoryRepo.getLeafCategoriesByHierarchy(session, hierarchy)
-    return { success: true, data: categories }
-  } catch (error: unknown) {
-    console.error('Error fetching leaf categories by hierarchy:', error)
-    return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
-  }
-}
-
-/**
- * Validate if category can accept products (is a leaf)
- */
-export async function validateLeafCategoryAction(categoryId: string) {
-  const session = getSession()
-  try {
-    const validation = await categoryRepo.validateLeafCategoryForProduct(session, categoryId)
-    return { success: true, data: validation }
-  } catch (error: unknown) {
-    console.error('Error validating category:', error)
-    return { success: false, message: error instanceof Error ? error.message : 'Operation failed' }
-  } finally {
-    await session.close()
-  }
-}
-
-/**
  * Assign product to categories (Admin only)
  * IMPORTANT: Only leaf categories (without children) can have products
  *
- * Replace semantics implemented on top of the VALIDATED single-assign
- * primitive (never the unvalidated bulk): newly selected categories are
- * assigned one-by-one — each call re-enforces the leaf invariant and the
- * duplicate check engine-side — and then deselected categories are removed.
- * Mirrors the old repository bulk's validate-first ordering: an invalid
- * selection fails before any deselection is applied.
+ * Replace semantics on top of the VALIDATED single-assign primitive (never
+ * the unvalidated bulk): the (deduplicated) newly selected categories are
+ * pre-validated as leaves BEFORE any mutation — so an invalid selection
+ * fails with the engine's message before a single add or deselection is
+ * applied, never mid-loop after a partial application — then assigned
+ * one-by-one (each call re-enforces the leaf invariant and the duplicate
+ * check engine-side), and finally deselected categories are removed.
  */
 export async function assignProductToCategoriesAction(
   productId: string,
@@ -395,14 +334,24 @@ export async function assignProductToCategoriesAction(
   const session = getSession()
   try {
     const existing = await categoryRepo.getCategoriesForProduct(session, productId)
+    // Dedupe the selection: a repeated id would otherwise hit the engine's
+    // duplicate-assignment rejection on its second pass.
+    const toAssign = [...new Set(categoryIds)].filter((id) => !existing.includes(id))
     const selected = new Set(categoryIds)
 
-    for (const categoryId of categoryIds) {
-      if (!existing.includes(categoryId)) {
-        const r = await adminCatalog.assignProductToCategory(actor, productId, categoryId)
-        if (!r.ok) {
-          return { success: false, message: resultMessage(r) }
-        }
+    // Pre-validate every NEW assignment (leaf invariant) before mutating —
+    // the old repository bulk's validate-first ordering, restored app-side.
+    for (const categoryId of toAssign) {
+      const validation = await categoryRepo.validateLeafCategoryForProduct(session, categoryId)
+      if (!validation.valid) {
+        return { success: false, message: validation.error || 'Invalid category selection' }
+      }
+    }
+
+    for (const categoryId of toAssign) {
+      const r = await adminCatalog.assignProductToCategory(actor, productId, categoryId)
+      if (!r.ok) {
+        return { success: false, message: resultMessage(r) }
       }
     }
 

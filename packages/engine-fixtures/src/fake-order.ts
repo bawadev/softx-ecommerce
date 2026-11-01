@@ -54,6 +54,9 @@ export function createFakeOrderState(state: FakeCartState): FakeOrderState {
 
   const orderService: v1.OrderService = {
     async createOrder(userId, command) {
+      // parity with engine/src/order.ts: falsy userId → UNAUTHORIZED before
+      // any cart read.
+      if (!userId) return err('UNAUTHORIZED', 'You must be logged in to place an order')
       const cart = await state.cartService.getCart({ kind: 'user', userId })
       if (!cart.ok) return err('UNAVAILABLE', 'Failed to read cart')
       const items = cart.data.cart.items

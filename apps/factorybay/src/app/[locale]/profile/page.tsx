@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth'
 import { getUserPreferencesAction, getUserMeasurementsAction } from '@/app/actions/user-profile'
-import { findUserById } from '@softx/engine'
+import { internal } from '@softx/engine'
 import ProfileClient from './ProfileClient'
 
 export default async function ProfilePage({
@@ -17,8 +17,9 @@ export default async function ProfilePage({
     redirect(`/${locale}/login?returnTo=/${locale}/profile`)
   }
 
-  // Fetch full user data
-  const user = await findUserById(currentUser.userId)
+  // Fetch full user data (repository-shaped read — the profile UI's legacy
+  // view model; no contract method carries the raw User yet)
+  const user = await internal.repositories.userRepository.findUserById(currentUser.userId)
 
   if (!user) {
     redirect(`/${locale}/login?returnTo=/${locale}/profile`)

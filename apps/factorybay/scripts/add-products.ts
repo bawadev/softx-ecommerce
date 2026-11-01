@@ -1,12 +1,14 @@
 import dotenv from 'dotenv'
-dotenv.config({ path: '.env.local' })
-
-import { createProduct } from '@softx/engine'
-import { assignProductToCategories } from '@softx/engine'
-import { uploadFile } from '../src/lib/minio'
-import { getSession, closeDriver } from '@softx/engine'
 import fs from 'fs'
 import path from 'path'
+import { internal } from '@softx/engine'
+import { uploadFile } from '../src/lib/minio'
+
+dotenv.config({ path: '.env.local' })
+
+const { createProduct } = internal.repositories.productRepository
+const { assignProductToCategories } = internal.repositories.categoryRepository
+const { getSession, closeDriver } = internal.db
 
 const GENTS_TSHIRTS_CATEGORY_ID = '4b66ac95-60a7-416d-8fe8-1f7d8bd27397'
 

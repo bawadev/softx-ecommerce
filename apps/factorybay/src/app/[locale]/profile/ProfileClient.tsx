@@ -208,8 +208,9 @@ export default function ProfileClient({
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.firstName')}</label>
+                  <label htmlFor="profile-first-name" className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.firstName')}</label>
                   <input
+                    id="profile-first-name"
                     type="text"
                     value={user.firstName}
                     disabled
@@ -217,8 +218,9 @@ export default function ProfileClient({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.lastName')}</label>
+                  <label htmlFor="profile-last-name" className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.lastName')}</label>
                   <input
+                    id="profile-last-name"
                     type="text"
                     value={user.lastName}
                     disabled
@@ -227,8 +229,9 @@ export default function ProfileClient({
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.email')}</label>
+                <label htmlFor="profile-email" className="block text-sm font-medium text-gray-700 mb-1">{t('accountInfo.email')}</label>
                 <input
+                  id="profile-email"
                   type="email"
                   value={user.email}
                   disabled
@@ -237,8 +240,9 @@ export default function ProfileClient({
               </div>
               {user.phone && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <label htmlFor="profile-phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                   <input
+                    id="profile-phone"
                     type="tel"
                     value={user.phone}
                     disabled

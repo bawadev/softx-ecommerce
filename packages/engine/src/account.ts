@@ -15,24 +15,25 @@ const { ok, err } = v1
  * AccountDTO projection (see `toAccountDTO`); `AccountDTO` has no
  * password/hash field by contract.
  *
- * Validation parity: `isValidEmail` + `validatePassword` below are PORTED
- * VERBATIM from `apps/factorybay/src/lib/auth.ts` (Phase 4 Task 3 write-time
- * content) — same regex, same messages, same rule ORDER (length → uppercase →
- * number), so `VALIDATION` messages match today's app strings exactly. The
- * invalid-email message comes from the app's signupAction/loginAction
- * ('Please provide a valid email address'; the app's isValidEmail helper is
- * regex-only and carries no message). Order of signUp checks mirrors
- * signupAction: email format → password strength → duplicate → hash → create.
+ * Validation: `isValidEmail` + `validatePassword` below were originally
+ * ported verbatim from `apps/factorybay/src/lib/auth.ts` (Phase 4 Task 3);
+ * since Phase 5 Task 7 the app copies are deleted and the ENGINE is the
+ * single home — same regex, messages and rule ORDER (length → uppercase →
+ * number). The invalid-email message comes from the app's
+ * signupAction/loginAction ('Please provide a valid email address'; the
+ * validator itself is regex-only and carries no message). Order of signUp
+ * checks mirrors signupAction: email format → password strength → duplicate
+ * → hash → create.
  */
 
-/** Parity with apps/factorybay/src/lib/auth.ts SALT_ROUNDS (hashPassword). */
+/** bcrypt cost factor — parity with the app's former hashPassword SALT_ROUNDS. */
 const SALT_ROUNDS = 12
 
 const INVALID_EMAIL_MESSAGE = 'Please provide a valid email address'
 
 /**
- * Validate email format.
- * Parity port of apps/factorybay/src/lib/auth.ts isValidEmail (exact regex).
+ * Validate email format (engine-owned; the app's duplicate was removed in
+ * Phase 5 Task 7).
  */
 export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -40,9 +41,9 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Validate password strength and return error message.
- * Parity port of apps/factorybay/src/lib/auth.ts validatePassword (exact
- * rules, messages and order — length first for determinism).
+ * Validate password strength and return error message (engine-owned; the
+ * app's duplicate was removed in Phase 5 Task 7). Length first for
+ * determinism.
  */
 export function validatePassword(password: string): string | null {
   if (password.length < 8) {

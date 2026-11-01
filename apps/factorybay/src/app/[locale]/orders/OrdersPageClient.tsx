@@ -120,34 +120,63 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                 {/* Order Items */}
                 <div className="px-6 py-4">
                   <div className="space-y-4">
-                    {order.items.map((item) => (
+                    {order.items.map((item) => {
+                      // productId === '' marks a severed VARIANT_OF chain
+                      // (product/variant deleted post-purchase): keep the
+                      // historical line but never link to a product page.
+                      const linked = item.productId !== ''
+                      return (
                       <div key={item.variantId} className="flex gap-4">
-                        <Link
-                          href={`/${locale}/product/${item.productId}`}
-                          className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
-                        >
-                          {item.productImage ? (
-                            <Image
-                              src={item.productImage}
-                              alt={item.productName}
-                              fill
-                              className="object-cover"
-                              sizes="80px"
-                            />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-gray-400 text-xs">
-                              {t('noImage')}
-                            </div>
-                          )}
-                        </Link>
-
-                        <div className="flex-1">
+                        {linked ? (
                           <Link
                             href={`/${locale}/product/${item.productId}`}
-                            className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
+                            className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100"
                           >
-                            {item.productName}
+                            {item.productImage ? (
+                              <Image
+                                src={item.productImage}
+                                alt={item.productName}
+                                fill
+                                className="object-cover"
+                                sizes="80px"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center text-gray-400 text-xs">
+                                {t('noImage')}
+                              </div>
+                            )}
                           </Link>
+                        ) : (
+                          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                            {item.productImage ? (
+                              <Image
+                                src={item.productImage}
+                                alt={item.productName}
+                                fill
+                                className="object-cover"
+                                sizes="80px"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center text-gray-400 text-xs">
+                                {t('noImage')}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="flex-1">
+                          {linked ? (
+                            <Link
+                              href={`/${locale}/product/${item.productId}`}
+                              className="text-sm font-semibold text-black-700 hover:text-black-700 transition-colors"
+                            >
+                              {item.productName}
+                            </Link>
+                          ) : (
+                            <span className="text-sm font-semibold text-black-700">
+                              {item.productName}
+                            </span>
+                          )}
                           <p className="text-xs text-gray-600 mt-1">{item.productBrand}</p>
                           <p className="text-xs text-gray-600 mt-1">
                             {t('size')} {item.variantSize} • {t('color')} {item.variantColor} • {t('qty')}{' '}
@@ -161,7 +190,8 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
                           </p>
                         </div>
                       </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               </div>

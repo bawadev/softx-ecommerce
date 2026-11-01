@@ -1,8 +1,12 @@
 'use server'
 
 import { isAdmin } from '@/lib/auth'
-import { updateUser, findUserByEmail } from '@softx/engine'
+import { internal } from '@softx/engine'
 import type { ActionResponse } from '@softx/engine'
+
+// Role assignment stays app-side this phase (account-domain policy); the
+// user reads/writes go through the engine's internal escape hatch.
+const { updateUser, findUserByEmail } = internal.repositories.userRepository
 
 /**
  * Make a user an admin (dev helper)

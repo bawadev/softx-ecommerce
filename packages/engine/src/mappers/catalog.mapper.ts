@@ -19,7 +19,10 @@ export function toProductDTO(p: ProductWithVariants, currency: string): v1.Produ
     gender: src.gender,
     sku: src.sku,
     price: { stock: v1.fromMajorAmount(src.stockPrice, currency), retail: v1.fromMajorAmount(src.retailPrice, currency) },
-    images: src.images,
+    // Products with the images property dropped by Neo4j (null properties
+    // vanish) can surface `images: undefined` — the DTO field is a required
+    // array, so materialize the empty list.
+    images: src.images ?? [],
     createdAt: src.createdAt,
     updatedAt: src.updatedAt,
     variants: src.variants.map((v) => ({

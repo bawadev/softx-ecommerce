@@ -666,26 +666,6 @@ export async function getFeaturedCategories(session: Session): Promise<Category[
 }
 
 /**
- * Get category path (breadcrumb)
- */
-export async function getCategoryPath(
-  session: Session,
-  categoryId: string
-): Promise<Category[]> {
-  const result = await session.run(
-    `MATCH path = (c:Category {id: $categoryId})-[:CHILD_OF*0..]->(ancestor:Category)
-     WHERE ancestor.parentId IS NULL
-     WITH nodes(path) as pathNodes
-     UNWIND pathNodes as node
-     RETURN node {.*}
-     ORDER BY node.level`,
-    { categoryId }
-  )
-
-  return result.records.map(record => record.get('node'))
-}
-
-/**
  * Find duplicate category names across hierarchies
  */
 export async function findDuplicateNames(session: Session): Promise<{
@@ -720,28 +700,6 @@ export async function getLeafCategories(session: Session): Promise<Category[]> {
      WITH c, count(DISTINCT p) as productCount
      RETURN c {.*, productCount: productCount}
      ORDER BY c.hierarchy, c.level, c.name`
-  )
-
-  return result.records.map(record => convertNeo4jIntegers(record.get('c')))
-}
-
-/**
- * Get leaf categories by hierarchy
- */
-export async function getLeafCategoriesByHierarchy(
-  session: Session,
-  hierarchy: string
-): Promise<Category[]> {
-  const result = await session.run(
-    `MATCH (c:Category {hierarchy: $hierarchy})
-     WHERE NOT EXISTS {
-       MATCH (c)<-[:CHILD_OF]-(child:Category)
-     }
-     OPTIONAL MATCH (p:Product)-[:HAS_CATEGORY]->(c)
-     WITH c, count(DISTINCT p) as productCount
-     RETURN c {.*, productCount: productCount}
-     ORDER BY c.level, c.name`,
-    { hierarchy }
   )
 
   return result.records.map(record => convertNeo4jIntegers(record.get('c')))

@@ -1,7 +1,12 @@
-import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers'
-import type { JWTPayload, User } from '@softx/engine'
+import type { JWTPayload } from '@softx/engine'
+
+// NOTE (Phase 5 Task 7): password hashing/verification and the email/password
+// validators previously duplicated here were deleted — the engine's account
+// service (packages/engine/src/account.ts) is the single home for those,
+// owning the bcrypt hashes behind the contract boundary. This file now only
+// handles tokens, cookies and the current-user session.
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET
@@ -13,24 +18,6 @@ function getJwtSecret(): string {
 
 const JWT_SECRET = getJwtSecret()
 const TOKEN_NAME = 'auth_token'
-const SALT_ROUNDS = 12
-
-/**
- * Hash a password using bcrypt
- */
-export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, SALT_ROUNDS)
-}
-
-/**
- * Verify a password against a hash
- */
-export async function verifyPassword(
-  password: string,
-  hash: string
-): Promise<boolean> {
-  return bcrypt.compare(password, hash)
-}
 
 /**
  * Generate a JWT token for a user
@@ -114,28 +101,4 @@ export async function isAdmin(): Promise<boolean> {
 export async function getCurrentUserId(): Promise<string | null> {
   const user = await getCurrentUser()
   return user?.userId || null
-}
-
-/**
- * Validate email format
- */
-export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
-
-/**
- * Validate password strength and return error message
- */
-export function validatePassword(password: string): string | null {
-  if (password.length < 8) {
-    return 'Password must be at least 8 characters long'
-  }
-  if (!/[A-Z]/.test(password)) {
-    return 'Password must contain at least one uppercase letter'
-  }
-  if (!/[0-9]/.test(password)) {
-    return 'Password must contain at least one number'
-  }
-  return null
 }

@@ -6,13 +6,13 @@
  */
 
 import dotenv from 'dotenv'
-import { getSession, closeDriver } from '@softx/engine'
-import { hashPassword } from '../src/lib/auth'
-import { createUser, findUserByEmail } from '@softx/engine'
+import { internal, createEngine, engineConfigFromEnv } from '@softx/engine'
 import { seedHeroSlides } from './seed-hero-slides'
 
 // Load environment variables
 dotenv.config({ path: '.env.local' })
+
+const { closeDriver } = internal.db
 
 interface SeedUser {
   email: string
@@ -43,35 +43,37 @@ const DEFAULT_USERS: SeedUser[] = [
 async function seedUsers() {
   console.log('\n👥 Seeding users...')
 
+  // Users are created through the engine's account service so password
+  // hashing is engine-owned (the app's lib/auth hash helpers are gone);
+  // signUp CONFLICTs on an existing email, which this script treats as a skip.
+  const account = createEngine(engineConfigFromEnv())
+    .for({ clientId: process.env.CLIENT_ID || 'factorybay' })
+    .account
+
   let created = 0
   let skipped = 0
 
   for (const userData of DEFAULT_USERS) {
     try {
-      // Check if user already exists
-      const existingUser = await findUserByEmail(userData.email)
-
-      if (existingUser) {
-        console.log(`   ⏭️  Skipped: ${userData.email} (already exists)`)
-        skipped++
-        continue
-      }
-
-      // Hash password
-      const passwordHash = await hashPassword(userData.password)
-
-      // Create user
-      const user = await createUser({
+      const r = await account.signUp({
         email: userData.email,
-        password: '', // Dummy value, passwordHash is used instead
-        passwordHash,
+        password: userData.password,
         firstName: userData.firstName,
         lastName: userData.lastName,
         role: userData.role,
-        phone: userData.phone,
+        ...(userData.phone !== undefined ? { phone: userData.phone } : {}),
       })
 
-      console.log(`   ✅ Created: ${user.email} (${user.role})`)
+      if (!r.ok) {
+        if (r.error.code === 'CONFLICT') {
+          console.log(`   ⏭️  Skipped: ${userData.email} (already exists)`)
+          skipped++
+          continue
+        }
+        throw new Error(r.error.message)
+      }
+
+      console.log(`   ✅ Created: ${r.data.email} (${r.data.role})`)
       created++
     } catch (error) {
       console.error(`   ❌ Failed to create ${userData.email}:`, error)

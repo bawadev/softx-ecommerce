@@ -15,7 +15,7 @@ import ColorPicker from '@/components/admin/ColorPicker'
 interface ProductFormDialogProps {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (formData: FormData, variants: VariantFormData[]) => Promise<void>
+  onSubmit: (formData: ProductFormData, variants: VariantFormData[]) => Promise<void>
   editingProduct: ProductWithVariants | null
   isEditing: boolean
   allBrands: string[]
@@ -23,7 +23,7 @@ interface ProductFormDialogProps {
   selectedCategoryIds: string[]
 }
 
-export type FormData = {
+export type ProductFormData = {
   name: string
   description: string
   brand: string
@@ -68,7 +68,7 @@ export default function ProductFormDialog({
   onOpenCategoryPicker,
   selectedCategoryIds,
 }: ProductFormDialogProps) {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
     brand: '',
