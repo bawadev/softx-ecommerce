@@ -89,7 +89,7 @@ export async function updateCartItemQuantity(
   variantId: string,
   quantity: number,
   database?: string
-): Promise<CartItem> {
+): Promise<CartItem | undefined> {
   const session = getSession(database)
   try {
     if (quantity <= 0) {

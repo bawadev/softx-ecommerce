@@ -59,7 +59,11 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
   }
 
   async function guestResult(items: v1.GuestCartLine[]): Promise<v1.Result<v1.CartMutation>> {
-    return ok({ cart: cartFrom(await hydrateGuest(items)), guestItems: items })
+    const hydrated = await hydrateGuest(items)
+    return ok({
+      cart: cartFrom(hydrated),
+      guestItems: hydrated.map((i) => ({ variantId: i.variantId, quantity: i.quantity })),
+    })
   }
 
   return {
@@ -97,7 +101,8 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
             owner.items.map((l) => (l.variantId === variantId ? { ...l, quantity } : l))
           )
         }
-        await cartRepo.updateCartItemQuantity(owner.userId, variantId, quantity, db)
+        const updated = await cartRepo.updateCartItemQuantity(owner.userId, variantId, quantity, db)
+        if (!updated) return err('NOT_FOUND', `Cart line for ${variantId} not found`)
         return await this.getCart(owner)
       } catch (e) {
         return err('UNAVAILABLE', 'Failed to update item', { cause: String(e) })
