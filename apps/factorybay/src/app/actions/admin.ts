@@ -1,6 +1,6 @@
 'use server'
 
-import { isAdmin } from '@/lib/auth'
+import { getCurrentUserId, isAdmin } from '@/lib/auth'
 import { internal } from '@softx/engine'
 import type { ActionResponse } from '@softx/engine'
 
@@ -15,6 +15,24 @@ export async function makeUserAdmin(
   email: string
 ): Promise<ActionResponse<{ email: string }>> {
   try {
+    // Check authentication
+    const currentUserId = await getCurrentUserId()
+    if (!currentUserId) {
+      return {
+        success: false,
+        message: 'You must be logged in',
+      }
+    }
+
+    // Check admin authorization
+    const adminAccess = await isAdmin()
+    if (!adminAccess) {
+      return {
+        success: false,
+        message: 'Unauthorized: Admin access required',
+      }
+    }
+
     const user = await findUserByEmail(email)
     if (!user) {
       return {
