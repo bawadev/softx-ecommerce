@@ -5,12 +5,15 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
-# NOTE: this image deploys factorybay only. Other storefront apps (apps/_template,
-# future per-client apps like apps/acornbay) are NOT part of it. Root workspaces is
-# an explicit list, so an app absent from this image cannot desync npm ci — but any
-# app added to the root workspaces list with a lockfile entry MUST also get its
-# package.json COPYied here (or be built into its own image).
+# NOTE: this image deploys factorybay only. apps/_template is not a workspace and
+# is never installed. apps/acornbay IS a workspace (it has a lockfile entry), so
+# its package.json MUST be COPYied here to keep `npm ci` in sync — but only
+# factorybay is built and run by this image (the runner stage copies factorybay's
+# standalone output only). Deploying acornbay is a deliberate future task: build
+# it its own image (same pattern, its own runner stage) rather than bundling
+# clients together.
 COPY apps/factorybay/package.json ./apps/factorybay/
+COPY apps/acornbay/package.json ./apps/acornbay/
 COPY packages/contract/package.json ./packages/contract/
 COPY packages/engine/package.json ./packages/engine/
 COPY packages/engine-fixtures/package.json ./packages/engine-fixtures/

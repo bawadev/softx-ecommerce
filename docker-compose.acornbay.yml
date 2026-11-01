@@ -1,0 +1,33 @@
+# Acorn Bay pilot tenant — its OWN Neo4j container (container-per-client).
+# Mirrors exactly what `npm run new-client -- --client acornbay` creates via
+# `docker run` (name, image, volume, port, auth), so this file is a drop-in
+# replacement for it:
+#
+#   docker compose -f docker-compose.acornbay.yml up -d
+#
+# `name: acornbay` pins the compose project: the root docker-compose.yml
+# (factorybay) runs under the default project `softx-ecommerce` with a service
+# also called `neo4j` — without this pin, `up -d` would resolve to factorybay's
+# container and try to recreate it.
+#
+# The bolt port is intentionally in the 7600-7699 client range (never 7687 —
+# that is factorybay's compose). Password is dev-grade, matching the value in
+# apps/acornbay/.env.local (printed by the provisioning script).
+
+name: acornbay
+
+services:
+  neo4j:
+    image: neo4j:latest
+    container_name: ecom-acornbay-neo4j
+    ports:
+      - "7601:7687"  # Bolt (host 7601 -> container 7687)
+    environment:
+      - NEO4J_AUTH=neo4j/acornbay123
+    volumes:
+      - ecom_acornbay_neo4j_data:/data
+    restart: unless-stopped
+
+volumes:
+  ecom_acornbay_neo4j_data:
+    name: ecom-acornbay-neo4j-data

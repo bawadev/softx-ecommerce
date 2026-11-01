@@ -48,10 +48,12 @@ The root `package.json` lists workspaces **explicitly** — `apps/factorybay`,
 by the `apps/*` glob. Consequences:
 
 - The template's `package.json` is intentionally **dependency-free**: the
-  instantiated app's manifest is written by the provisioning script, which adds
-  the real dependency set (`next`, `react`, `react-dom`, `@softx/contract`,
-  `@softx/engine`, `typescript`, types, `tsx`, …), rewrites the name to the
-  client id, and runs `npm install` to link the workspace packages.
+  instantiated app's manifest is written by the provisioning script
+  (`scripts/new-client.ts`), which rewrites the name to the client id and
+  declares the workspace dependencies (`@softx/contract`, `@softx/engine`) —
+  everything else (next, react, typescript, …) resolves through the workspace
+  root's hoisted `node_modules`, exactly like `npx tsc -p apps/_template`
+  already does — then runs `npm install` to link the workspace packages.
 - **When provisioning a new client, the script must also add `apps/<id>` to the
   root workspaces list** — that is what makes the copied app a real workspace.
 - The Docker image deploys factorybay only; its deps stage installs exactly the
