@@ -269,7 +269,9 @@
       "viewMyOrders": "මගේ ඇණවුම් බලන්න",
       "each": "එක් එක",
       "phone": "දුරකථනය:",
-      "noImage": "රූපයක් නැත"
+      "noImage": "රූපයක් නැත",
+      "paymentProof": "ගෙවීම් රිසිට්පත",
+      "viewPaymentProof": "ගෙවීම් රිසිට්පත බලන්න"
     },
     "list": {
       "title": "මගේ ඇණවුම්",

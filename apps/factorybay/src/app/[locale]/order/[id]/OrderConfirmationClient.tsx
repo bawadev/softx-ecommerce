@@ -85,6 +85,22 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
                   {tStatus(order.status)}
                 </span>
               </div>
+              {/* LKD-15: payment proof the buyer uploaded from the
+                  CONFIRMED-only payment page — visible to the buyer and to
+                  admins reviewing the order. */}
+              {order.paymentProof && (
+                <div className="mt-4 border-t border-gray-100 pt-4">
+                  <p className="text-sm text-gray-600">{t('paymentProof')}</p>
+                  <a
+                    href={order.paymentProof}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 break-all"
+                  >
+                    {t('viewPaymentProof')} →
+                  </a>
+                </div>
+              )}
             </div>
 
             {/* Order Items */}

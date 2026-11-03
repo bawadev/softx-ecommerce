@@ -270,7 +270,9 @@
       "viewMyOrders": "View My Orders",
       "each": "each",
       "phone": "Phone:",
-      "noImage": "No Image"
+      "noImage": "No Image",
+      "paymentProof": "Payment Proof",
+      "viewPaymentProof": "View payment proof"
     },
     "list": {
       "title": "My Orders",
