@@ -78,7 +78,93 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
     return () => clearInterval(interval)
   }, [currentSlide, slides.length, isMobile]) // reset on manual navigation
 
-  if (slides.length === 0) return null
+  // Full-screen search overlay — portaled to body to escape overflow-hidden.
+  // Computed before the slides guard so the no-slides fallback below can
+  // reuse it (LKD-8: search must stay reachable without hero slides).
+  const searchOverlay =
+    typeof document !== 'undefined'
+      ? createPortal(
+
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => { if (e.target === e.currentTarget) setSearchOpen(false) }}
+            >
+              {/* Backdrop blur */}
+              <div
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onClick={() => setSearchOpen(false)}
+              />
+
+              {/* Search container */}
+              <motion.div
+                className="relative z-10 w-full max-w-xl mx-4"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Close button */}
+                <button
+                  onClick={() => setSearchOpen(false)}
+                  className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors text-2xl leading-none"
+                  aria-label="Close search"
+                >
+                  &#x2715;
+                </button>
+
+                {/* The actual SearchAutocomplete */}
+                <div ref={(el) => {
+                  if (el) {
+                    const input = el.querySelector('input')
+                    if (input) (searchInputRef as React.MutableRefObject<HTMLInputElement | null>).current = input
+                  }
+                }}>
+                  <SearchAutocomplete
+                    placeholder="Search products..."
+                    large={true}
+                    className="!bg-white/20 !backdrop-blur-md !shadow-2xl !border-white/30 [&_input]:!text-white [&_input]:!placeholder-white/70"
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )
+      : null
+
+  if (slides.length === 0) {
+    // LKD-8: minimal black strip with the same search trigger + overlay —
+    // previously the whole hero (and its mounted SearchAutocomplete)
+    // vanished with zero slides, leaving no search input anywhere.
+    return (
+      <div className="relative overflow-hidden bg-black-900 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-14 text-center sm:px-6 lg:px-8">
+          <h1 className="font-display text-display-sm uppercase">LOCKED</h1>
+          <p className="mt-2 text-body text-white/70">Premium brands at stock prices</p>
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Search products..."
+            className="mt-6 flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm text-white/90 backdrop-blur-md transition-colors hover:bg-white/20"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            Search products...
+          </button>
+        </div>
+        {searchOverlay}
+      </div>
+    )
+  }
 
   const currentSlideData = slides[currentSlide]
   const SlideComponent = SLIDE_MAP[currentSlideData.animationType] || SlideLeftPanel
@@ -187,61 +273,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
         </div>
       </div>
 
-      {/* Full-screen search overlay — portaled to body to escape overflow-hidden */}
-      {typeof document !== 'undefined' && createPortal(
-        <AnimatePresence>
-          {searchOpen && (
-            <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={(e) => { if (e.target === e.currentTarget) setSearchOpen(false) }}
-            >
-              {/* Backdrop blur */}
-              <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                onClick={() => setSearchOpen(false)}
-              />
-
-              {/* Search container */}
-              <motion.div
-                className="relative z-10 w-full max-w-xl mx-4"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Close button */}
-                <button
-                  onClick={() => setSearchOpen(false)}
-                  className="absolute -top-10 right-0 text-white/70 hover:text-white transition-colors text-2xl leading-none"
-                  aria-label="Close search"
-                >
-                  &#x2715;
-                </button>
-
-                {/* The actual SearchAutocomplete */}
-                <div ref={(el) => {
-                  if (el) {
-                    const input = el.querySelector('input')
-                    if (input) (searchInputRef as React.MutableRefObject<HTMLInputElement | null>).current = input
-                  }
-                }}>
-                  <SearchAutocomplete
-                    placeholder="Search products..."
-                    large={true}
-                    className="!bg-white/20 !backdrop-blur-md !shadow-2xl !border-white/30 [&_input]:!text-white [&_input]:!placeholder-white/70"
-                  />
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+      {searchOverlay}
 
       {/* Dot indicators */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">

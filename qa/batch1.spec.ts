@@ -277,6 +277,36 @@ test('FLOW 04 — search: suggestions for "Cotton", submit navigates to results'
   await shot(page, 'flow04-search-filtered')
 })
 
+// ---------------------------------------------------------------- FLOW 04b
+test('FLOW 04b — LKD-8: search stays reachable with zero hero slides', async ({
+  page,
+}) => {
+  // Wipe ALL hero slides (the suite's temp slide included) — the exact
+  // condition under which the storefront used to render no <input> at all.
+  runCypher(`MATCH (h:HeroSlide) DETACH DELETE h`)
+
+  await page.goto('/en')
+
+  // The fallback strip renders the search trigger (and no hero slider).
+  const trigger = page.getByRole('button', { name: 'Search products...' })
+  await expect(trigger).toBeVisible()
+  await expect(page.locator('input')).toHaveCount(0) // no input until opened — but search IS reachable
+
+  // The trigger opens the same full-screen search overlay.
+  await trigger.click()
+  const searchInput = page.getByPlaceholder('Search products...')
+  await expect(searchInput).toBeVisible()
+  await searchInput.fill('Cotton')
+  await expect(page.locator('h4:has-text("Classic Cotton T-Shirt")')).toBeVisible()
+  await searchInput.press('Enter')
+  await page.waitForURL(/\/en\/shop\?search=Cotton/)
+  await expect(page.getByText('1 products')).toBeVisible()
+  await shot(page, 'flow04b-search-without-hero')
+
+  // Restore the suite's temp slide (later flows / reruns expect it).
+  seedTempHeroSlide()
+})
+
 // ---------------------------------------------------------------- FLOW 05
 test('FLOW 05 — PDP: gallery section, Rs price, variant buttons, details', async ({
   page,
