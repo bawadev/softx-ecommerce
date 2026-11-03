@@ -44,6 +44,8 @@ export type VariantFormData = {
 
 // New hierarchical variant structure for UI
 export type ColorQty = {
+  /** Existing engine variant id — present only when the entry was loaded for edit. */
+  id?: string
   color: string
   quantity: number
 }
@@ -386,6 +388,7 @@ export default function ProductFormDialog({
     Object.entries(sizeVariants).forEach(([size, sizeData]) => {
       sizeData.colors.forEach((colorQty) => {
         flatVariants.push({
+          id: colorQty.id,
           size: size as SizeOption,
           color: colorQty.color,
           stockQuantity: colorQty.quantity
@@ -405,6 +408,7 @@ export default function ProductFormDialog({
         hierarchical[variant.size] = { colors: [], total: 0 }
       }
       hierarchical[variant.size].colors.push({
+        id: variant.id,
         color: variant.color,
         quantity: variant.stockQuantity
       })

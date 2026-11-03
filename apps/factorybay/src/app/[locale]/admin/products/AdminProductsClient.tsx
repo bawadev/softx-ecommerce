@@ -8,6 +8,9 @@ import {
   deleteProductAction,
   createProductAction,
   updateProductAction,
+  addVariantAction,
+  updateVariantAction,
+  deleteVariantAction,
   searchProductsByNameAction,
   checkProductNameExistsAction,
   getAllBrandsAction,
@@ -401,6 +404,54 @@ export default function AdminProductsClient({ products: initialProducts }: Admin
         const result = await updateProductAction(editingId, updates)
 
         if (result.success) {
+          // Reconcile the dialog's variants against the loaded product
+          // (LKD-11): the dialog hands back every variant with its engine id
+          // when it already exists, and without one when it was added in the
+          // session — so add/update/delete each difference via the variant
+          // write paths. A failed step fails the whole round (no false
+          // "updated successfully" while variant work was dropped).
+          const originals = editingProduct?.variants ?? []
+          let variantError: string | null = null
+
+          for (const v of variantsParam) {
+            if (variantError) break
+            if (!v.id) {
+              const added = await addVariantAction(editingId, {
+                size: v.size,
+                color: v.color,
+                stockQuantity: v.stockQuantity,
+              })
+              if (!added.success) variantError = added.message || 'Failed to add variant'
+            } else {
+              const before = originals.find(o => o.id === v.id)
+              if (before && (before.size !== v.size || before.color !== v.color || before.stockQuantity !== v.stockQuantity)) {
+                const saved = await updateVariantAction(v.id, {
+                  size: v.size,
+                  color: v.color,
+                  stockQuantity: v.stockQuantity,
+                })
+                if (!saved.success) variantError = saved.message || 'Failed to update variant'
+              }
+            }
+          }
+
+          if (!variantError) {
+            const submittedIds = new Set(variantsParam.map(v => v.id).filter(Boolean) as string[])
+            for (const o of originals) {
+              if (variantError) break
+              if (!submittedIds.has(o.id)) {
+                const removed = await deleteVariantAction(o.id)
+                if (!removed.success) variantError = removed.message || 'Failed to delete variant'
+              }
+            }
+          }
+
+          if (variantError) {
+            showNotification('error', 'Variant changes failed', variantError)
+            resetForm()
+            return
+          }
+
           // Assign product to selected categories
           await assignProductToCategoriesAction(editingId, formDataParam.categoryIds)
 

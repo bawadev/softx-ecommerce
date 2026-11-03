@@ -190,6 +190,104 @@ export async function updateProductAction(
 }
 
 /**
+ * Add a variant to an existing product (engine addVariant → refreshed ProductDTO)
+ */
+export async function addVariantAction(
+  productId: string,
+  variant: v1.VariantWriteInput
+): Promise<ActionResponse<null>> {
+  try {
+    const r = await getAdminCatalog().addVariant(await currentActor(), productId, variant)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Variant added successfully',
+    }
+  } catch (error) {
+    console.error('Add variant error:', error)
+    return {
+      success: false,
+      message: 'Failed to add variant',
+    }
+  }
+}
+
+/**
+ * Update an existing variant (engine updateVariant → refreshed ProductDTO)
+ */
+export async function updateVariantAction(
+  variantId: string,
+  updates: v1.VariantUpdateInput
+): Promise<ActionResponse<null>> {
+  try {
+    const r = await getAdminCatalog().updateVariant(await currentActor(), variantId, updates)
+
+    if (!r.ok) {
+      return {
+        success: false,
+        message: resultMessage(r),
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Variant updated successfully',
+    }
+  } catch (error) {
+    console.error('Update variant error:', error)
+    return {
+      success: false,
+      message: 'Failed to update variant',
+    }
+  }
+}
+
+/**
+ * Delete a variant (LKD-11 companion of the edit dialog's remove action).
+ *
+ * Repository-shaped write on purpose: the contract's AdminCatalogService has no
+ * deleteVariant this phase (adding one is a contract-bump decision), so the
+ * action guards on the session (isAdmin) and uses the internal repository
+ * primitive directly — the same escape hatch as getAdminProductAction above.
+ * The repo delete is order-safe (order mapper re-points ITEM_OF edges).
+ */
+export async function deleteVariantAction(
+  variantId: string
+): Promise<ActionResponse<null>> {
+  const adminAccess = await isAdmin()
+
+  if (!adminAccess) {
+    return {
+      success: false,
+      message: 'Unauthorized',
+    }
+  }
+
+  try {
+    const { deleteVariant } = internal.repositories.productRepository
+    await deleteVariant(variantId)
+
+    return {
+      success: true,
+      message: 'Variant deleted successfully',
+    }
+  } catch (error) {
+    console.error('Delete variant error:', error)
+    return {
+      success: false,
+      message: 'Failed to delete variant',
+    }
+  }
+}
+
+/**
  * Search products by name (for autocomplete)
  */
 export async function searchProductsByNameAction(
