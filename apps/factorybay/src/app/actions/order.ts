@@ -1,6 +1,6 @@
 'use server'
 
-import { getCurrentUserId } from '@/lib/auth'
+import { getCurrentUserId, isAdmin } from '@/lib/auth'
 import { getOrderService, getAdminOrder, currentActor } from '@/lib/engine'
 import type { OrderStatus, ActionResponse } from '@softx/engine'
 import type { v1 } from '@softx/contract'
@@ -76,6 +76,20 @@ export async function getOrderAction(
     const r = await getOrderService().getOrder(userId, orderId)
 
     if (!r.ok) {
+      // LKD-14: the ownership check blocks admins from customer orders, so
+      // the admin "View Details" link 404'd for every order. Fall back to
+      // the admin read (engine-guarded admin actor; same listAllOrders read
+      // the admin orders page already pays for) before giving up.
+      if (r.error.code === 'UNAUTHORIZED' && (await isAdmin())) {
+        const admin = await getAdminOrder().listAllOrders(await currentActor())
+        const order = admin.ok ? admin.data.find((o) => o.id === orderId) : null
+        if (order) {
+          return {
+            success: true,
+            data: { order },
+          }
+        }
+      }
       return {
         success: false,
         message:
