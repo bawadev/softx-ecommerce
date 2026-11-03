@@ -66,3 +66,6 @@ apps/*/public/images/uploads
 
 # Development notes
 devnotes.txt
+
+# Playwright QA artifacts
+qa/test-results/
