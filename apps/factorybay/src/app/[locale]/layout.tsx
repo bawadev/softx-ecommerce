@@ -9,6 +9,7 @@ import Navigation from '@/components/layout/Navigation'
 import { verifyToken } from '@/lib/auth'
 import { locales, type Locale } from '@/i18n/request'
 import { shopConfig } from '@/config/shop'
+import { Toaster } from 'sonner'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -89,6 +90,9 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <Navigation isAuthenticated={isAuthenticated} userEmail={userEmail} isAdmin={isAdmin} />
           {children}
+          {/* sonner host — admin CRUD clients (colors/categories) fire
+              toast.* calls that were silently dropped without it (LKD-13) */}
+          <Toaster position="top-right" richColors />
         </NextIntlClientProvider>
       </body>
     </html>
