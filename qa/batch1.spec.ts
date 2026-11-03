@@ -24,7 +24,7 @@ import path from 'node:path'
  * - Profile menu toggle: button[aria-label="Profile menu"]; logout lives in
  *   that dropdown ("Logout"); logout reloads to /{locale}.
  * - /en/profile server guard redirects anonymous users to
- *   /en/login?returnTo=/en/profile (profile/page.tsx).
+ *   /en/login?redirect=/en/profile (profile/page.tsx — LKD-28 unified the param).
  */
 
 const REPO_ROOT = fs.existsSync(path.join(process.cwd(), 'docker-compose.yml'))
@@ -613,8 +613,8 @@ test('FLOW 15 — logout: nav shows Sign in; /en/profile redirects to login', as
   // Profile guard: anonymous users are redirected by the server component.
   await page.goto('/en/profile')
   await page.waitForURL(/\/en\/login/)
-  // Next serves the returnTo param unencoded (see profile/page.tsx redirect).
-  await expect(page).toHaveURL(/returnTo=(\/|%2F)en(\/|%2F)profile/)
+  // Next serves the redirect param unencoded (see profile/page.tsx redirect).
+  await expect(page).toHaveURL(/redirect=(\/|%2F)en(\/|%2F)profile/)
   await expect(
     page.getByRole('heading', { name: 'Sign In' })
   ).toBeVisible()
