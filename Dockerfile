@@ -79,6 +79,13 @@ RUN chown nextjs:nodejs apps/factorybay/.next
 COPY --from=builder --chown=nextjs:nodejs /app/apps/factorybay/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/factorybay/.next/static ./apps/factorybay/.next/static
 
+# nft standalone tracing drops sharp's native deps (@img/sharp-libvips-linuxmusl-x64
+# provides libvips-cpp.so, which sharp-linuxmusl-x64 dlopens at runtime). Copy the
+# full sharp tree from the deps install so image processing works at runtime.
+# Ported from playmate-landing (OPS-93/PM-80).
+COPY --from=builder /app/node_modules/sharp ./node_modules/sharp
+COPY --from=builder /app/node_modules/@img ./node_modules/@img
+
 USER nextjs
 
 EXPOSE 3000
