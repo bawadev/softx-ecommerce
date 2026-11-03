@@ -1006,9 +1006,7 @@ test('FLOW 32 — colors CRUD (create/toggle/delete) + admin-only surface', asyn
   // The makeUserAdmin ACTION itself is guarded server-side (code-verified in
   // Phase 5: actions/admin.ts requires an authenticated ADMIN; engine enforces
   // the admin actor) — active probing via crafted action calls is out of
-  // scope for browser QA per the batch plan. Observation only: the dev page
-  // /en/dev/make-admin renders its FORM to any visitor — the guard lives in
-  // the action, not the page.
+  // scope for browser QA per the batch plan.
   const buyer = await newBuyerPage()
   try {
     await login(buyer, CUSTOMER_EMAIL, CUSTOMER_PASSWORD)
@@ -1018,12 +1016,20 @@ test('FLOW 32 — colors CRUD (create/toggle/delete) + admin-only surface', asyn
       buyer.getByRole('heading', { name: 'Admin Dashboard' })
     ).toHaveCount(0)
     await shot(buyer, 'flow32-customer-admin-blocked')
+
+    // LKD-16 FIXED: the dev utility page itself is now admin-gated — a
+    // logged-in CUSTOMER gets a 404 instead of the Make User Admin form
+    // (previously the form rendered to anyone; only the action rejected).
+    const res = await buyer.goto('/en/dev/make-admin')
+    expect(res?.status()).toBe(404)
+    await expect(buyer.getByRole('heading', { name: 'Make User Admin' })).toHaveCount(0)
+    await shot(buyer, 'flow32-make-admin-gated-404')
   } finally {
     await buyer.context().close()
   }
   test.info().annotations.push({
     type: 'note',
     description:
-      'makeUserAdmin guard code-verified (actions/admin.ts isAdmin check + engine actor); no active probing. /en/dev/make-admin page itself is not access-gated (form visible to anyone) — the action rejects non-admins.',
+      'makeUserAdmin guard code-verified (actions/admin.ts isAdmin check + engine actor); no active probing. LKD-16: /en/dev/make-admin now 404s for non-admins (page gated, not just the action).',
   })
 })
