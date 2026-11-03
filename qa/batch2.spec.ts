@@ -485,6 +485,57 @@ test('FLOW 19 — place order (SHIP): confirmation, FB- number, cart badge 0', a
   await shot(page, 'flow19-confirmation')
 })
 
+// ---------------------------------------------------------------- FLOW 20b
+test('FLOW 20b — LKD-28: buyer orders/payment guards land on localized login, sign-in returns', async ({
+  page,
+}) => {
+  // Logged-OUT buyer persona: /en/orders used to dead-end at a locale-less
+  // /login 404 (LKD-12's bug class on buyer pages).
+  await page.context().clearCookies()
+  await page.goto('/en/orders')
+  await page.waitForURL(/\/en\/login\?redirect=/)
+  await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible()
+  await shot(page, 'flow20b-orders-guard-login')
+
+  // The customer's newest CONFIRMED order exercises the payment guard (the
+  // page bounces PENDING orders to the order page — status rule, not auth).
+  // Same setup pattern as FLOW 20: flip the newest PENDING if none exists.
+  const confirmedId = runCypher(
+    `MATCH (u:User {email: "${TEST_EMAIL}"})-[:PLACED_ORDER]->(o:Order {status: "CONFIRMED"}) RETURN o.id AS id ORDER BY o.createdAt DESC LIMIT 1`
+  ).match(/"([^"]+)"/)?.[1]
+  let orderId = confirmedId
+  if (!orderId) {
+    orderId = runCypher(
+      `MATCH (u:User {email: "${TEST_EMAIL}"})-[:PLACED_ORDER]->(o:Order) RETURN o.id AS id ORDER BY o.createdAt DESC LIMIT 1`
+    ).match(/"([^"]+)"/)?.[1]
+    if (orderId) {
+      runCypher(`MATCH (o:Order {id: "${orderId}"}) SET o.status = "CONFIRMED"`)
+    }
+  }
+  test.skip(!orderId, 'customer has no orders to exercise the payment guard')
+  await page.goto(`/en/order/${orderId}/payment`)
+  await page.waitForURL(/\/en\/login\?redirect=/)
+  await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible()
+
+  // Signing in from that login page RETURNS to the guarded page (validated
+  // ?redirect= honored) instead of the generic shop landing. Do NOT re-goto
+  // /en/login — that would drop the ?redirect= the guard appended.
+  // submitLogin's per-attempt race mis-fires here: a slow sign-in that lands
+  // on /payment makes attempt 2's fill wait on a page with no Email field
+  // and error out even though attempt 1 succeeded. Gate the retry on the
+  // URL instead — only fill while still on /login, then wait for the target.
+  await page.waitForTimeout(300)
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (!page.url().includes('/login')) break
+    await page.getByLabel('Email').fill(TEST_EMAIL)
+    await page.getByLabel('Password', { exact: true }).fill(TEST_PASSWORD)
+    await page.getByRole('button', { name: 'Sign In' }).click()
+    await page.waitForTimeout(1500)
+  }
+  await page.waitForURL(new RegExp(`/en/order/${orderId}/payment$`), { timeout: 30_000 })
+  await shot(page, 'flow20b-returned-to-payment')
+})
+
 // ---------------------------------------------------------------- FLOW 20
 test('FLOW 20 — orders list + payment proof upload (MinIO down)', async ({
   page,

@@ -14,7 +14,7 @@ export default async function ProfilePage({
   const currentUser = await getCurrentUser()
 
   if (!currentUser) {
-    redirect(`/${locale}/login?returnTo=/${locale}/profile`)
+    redirect(`/${locale}/login?redirect=/${locale}/profile`)
   }
 
   // Fetch full user data (repository-shaped read — the profile UI's legacy
@@ -22,7 +22,7 @@ export default async function ProfilePage({
   const user = await internal.repositories.userRepository.findUserById(currentUser.userId)
 
   if (!user) {
-    redirect(`/${locale}/login?returnTo=/${locale}/profile`)
+    redirect(`/${locale}/login?redirect=/${locale}/profile`)
   }
 
   const [preferencesResult, measurementsResult] = await Promise.all([

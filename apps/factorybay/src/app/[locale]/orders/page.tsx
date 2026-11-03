@@ -1,25 +1,28 @@
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, getLocale } from 'next-intl/server'
 import { verifyToken } from '@/lib/auth'
 import { getUserOrdersAction } from '@/app/actions/order'
 import OrdersPageClient from './OrdersPageClient'
 
 export default async function OrdersPage() {
   const t = await getTranslations('order.list')
+  // LKD-28: locale-aware guard — a bare /login 404s under the middleware
+  // matcher (same class LKD-12 fixed on the admin pages).
+  const locale = await getLocale()
 
   // Check authentication
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')
 
   if (!token) {
-    redirect('/login?redirect=/orders')
+    redirect(`/${locale}/login?redirect=/${locale}/orders`)
   }
 
   try {
     await verifyToken(token.value)
   } catch {
-    redirect('/login?redirect=/orders')
+    redirect(`/${locale}/login?redirect=/${locale}/orders`)
   }
 
   // Get orders

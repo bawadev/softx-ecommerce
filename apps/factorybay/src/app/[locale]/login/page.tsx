@@ -20,6 +20,19 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  // LKD-28: honor the ?redirect= the page guards append — validated to a
+  // same-site relative path (single leading slash, no protocol, no //) and
+  // locale-prefixed if missing. Without it the param was dead weight and
+  // everyone landed on the role default.
+  const postLoginTarget = (): string | null => {
+    if (typeof window === 'undefined') return null
+    const raw = new URLSearchParams(window.location.search).get('redirect')
+    if (!raw) return null
+    if (!raw.startsWith('/') || raw.startsWith('//') || raw.includes('://')) return null
+    if (raw === `/${locale}` || raw.startsWith(`/${locale}/`)) return raw
+    return `/${locale}${raw}`
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -30,7 +43,10 @@ export default function LoginPage() {
 
       if (result.success) {
         // Use full page reload to ensure layout picks up new auth cookie
-        if (result.user?.role === 'ADMIN') {
+        const target = postLoginTarget()
+        if (target) {
+          window.location.href = target
+        } else if (result.user?.role === 'ADMIN') {
           window.location.href = `/${locale}/admin/dashboard`
         } else {
           window.location.href = `/${locale}/shop`
