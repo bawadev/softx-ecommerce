@@ -472,26 +472,11 @@ test('FLOW 19 — place order (SHIP): confirmation, FB- number, cart badge 0', a
 
   placedOrder = { id: orderId, orderNumber }
 
-  // KNOWN BUG (evidence): createOrderAction bypasses the zustand cart store,
-  // so after a CLIENT-SIDE navigation the nav badge keeps showing the
-  // pre-order count on the confirmation page until a full reload (Navigation
-  // calls loadCart() only on mount). Capture whatever the badge shows now
-  // (skipped when the hydration-recovery path already reloaded the page),
-  // then prove the badge clears on reload.
-  const badgeNow = await navBadge(page).count()
-    ? ((await navBadge(page).textContent()) ?? '').trim()
-    : '(not rendered)'
-  test.info().annotations.push({
-    type: 'bug-evidence',
-    description: `Cart badge on the confirmation page before any reload: ${badgeNow} (stale zustand store; server cart IS empty — clears on reload)`,
-  })
-  if (badgeNow === '1') await shot(page, 'flow19-stale-badge')
-
-  await page.reload()
-  await expect(
-    page.getByRole('heading', { name: 'Order Confirmed!' })
-  ).toBeVisible()
+  // LKD-10 FIXED (was BUG 5): the checkout success path refreshes the
+  // zustand store BEFORE the client-side navigation, so the nav badge is
+  // already gone on the confirmation page — no reload needed.
   await expect(navBadge(page)).toHaveCount(0)
+  await shot(page, 'flow19-badge-cleared-instantly')
 
   test.info().annotations.push({
     type: 'note',

@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import type { v1 } from '@softx/contract'
 import type { ShippingAddress, DeliveryMethod } from '@softx/engine'
 import { createOrderAction } from '@/app/actions/order'
+import { useCartStore } from '@/stores/cartStore'
 import { getColorHex } from '@/lib/color-utils'
 import { amount } from '@/lib/price'
 import Input from '@/components/ui/Input'
@@ -71,6 +72,10 @@ export default function CheckoutPageClient({
       const result = await createOrderAction(shippingAddress, deliveryMethod, email)
 
       if (result.success && result.data) {
+        // The server cleared the cart — refresh the store so the nav badge
+        // drops immediately instead of showing the stale pre-order count
+        // until a full reload (LKD-10).
+        await useCartStore.getState().loadCart()
         // Redirect to order confirmation page
         router.push(`/${locale}/order/${result.data.orderId}`)
       } else {
