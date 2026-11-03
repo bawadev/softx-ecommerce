@@ -144,7 +144,8 @@
     "title": "සියලුම නිෂ්පාදන සාප්පු සවාරි",
     "subtitle": "තොග මිලට වාරික සන්නාම",
     "productsCount": "නිෂ්පාදන {count}",
-    "filteredProducts": "පෙරන ලද නිෂ්පාදන"
+    "filteredProducts": "පෙරන ලද නිෂ්පාදන",
+    "searchResults": "සෙවුම් ප්‍රතිඵල"
   },
   "product": {
     "salePrice": "තොග මිල",

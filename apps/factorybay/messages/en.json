@@ -144,7 +144,8 @@
     "title": "Shop All Products",
     "subtitle": "Premium brands at stock prices",
     "productsCount": "{count} products",
-    "filteredProducts": "Filtered Products"
+    "filteredProducts": "Filtered Products",
+    "searchResults": "Search results"
   },
   "product": {
     "salePrice": "Stock Price",
