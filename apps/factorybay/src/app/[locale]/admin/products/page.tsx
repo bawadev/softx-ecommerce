@@ -1,13 +1,15 @@
 import { redirect } from 'next/navigation'
+import { getLocale } from 'next-intl/server'
 import { isAdmin } from '@/lib/auth'
 import { getAdminProductsAction } from '@/app/actions/admin-products'
 import AdminProductsClient from './AdminProductsClient'
 
 export default async function AdminProductsPage() {
+  const locale = await getLocale()
   const adminAccess = await isAdmin()
 
   if (!adminAccess) {
-    redirect('/login?redirect=/admin/products')
+    redirect(`/${locale}/login?redirect=/${locale}/admin/products`)
   }
 
   const result = await getAdminProductsAction()

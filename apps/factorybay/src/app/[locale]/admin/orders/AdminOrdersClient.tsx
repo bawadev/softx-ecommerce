@@ -165,6 +165,21 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
                       <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(order.status)}`}>
                         {order.status}
                       </span>
+                      {/* LKD-15: surface the buyer's payment proof when the
+                          order carries one (uploaded from the CONFIRMED-only
+                          payment page); otherwise say so explicitly. */}
+                      {order.paymentProof ? (
+                        <a
+                          href={order.paymentProof}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                        >
+                          Payment Proof →
+                        </a>
+                      ) : (
+                        <span className="text-xs text-gray-400">No payment proof</span>
+                      )}
                       <Link
                         href={`/${locale}/order/${order.id}`}
                         className="text-sm font-medium text-black-700 hover:text-black-700"

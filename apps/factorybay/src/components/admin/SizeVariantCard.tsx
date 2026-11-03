@@ -4,6 +4,8 @@ import { type SizeOption } from '@softx/engine'
 import { getColorHex } from '@/lib/color-utils'
 
 export type ColorQty = {
+  /** Existing engine variant id — present only when the entry was loaded for edit. */
+  id?: string
   color: string
   quantity: number
 }

@@ -62,6 +62,46 @@ export default function CartPageClient({
   const retailTotal = cartRetailTotal(items)
   const savings = retailTotal - totalAmount
 
+  // Empty state — mirrors the server component's (cart/page.tsx). Without
+  // this branch the client-rendered page kept showing the order summary and
+  // a live checkout CTA after the last item was removed (LKD-7).
+  if (!isLoading && items.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold text-black-700">{t('title')}</h1>
+
+          <div className="mt-12 flex flex-col items-center justify-center">
+            <div className="text-center">
+              <svg
+                className="mx-auto h-24 w-24 text-gray-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
+              <h2 className="mt-6 text-xl font-semibold text-black-700">
+                {t('empty')}
+              </h2>
+              <p className="mt-2 text-gray-600">
+                {t('emptyMessage')}
+              </p>
+              <Link href={`/${locale}/shop`} className="btn-primary mt-8 inline-block">
+                {t('startShopping')}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}

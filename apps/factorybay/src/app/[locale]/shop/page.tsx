@@ -14,12 +14,15 @@ import type { v1 } from '@softx/contract'
 export default async function ShopPage({
   searchParams,
 }: {
-  searchParams: Promise<{ promo?: string; category?: string }>
+  searchParams: Promise<{ promo?: string; category?: string; search?: string }>
 }) {
   const t = await getTranslations('shop')
   const params = await searchParams
   const promoSlug = params.promo
   const categoryParam = params.category
+  // LKD-6: the hero search pushes ?search= — filter on it instead of
+  // listing the whole catalog (repo search = CONTAINS on name/brand).
+  const searchParam = params.search?.trim() || null
 
   let products: v1.ProductDTO[] = []
   let promoCategory: v1.PromotionalCategoryDTO | null = null
@@ -55,14 +58,16 @@ export default async function ShopPage({
     }
   }
 
-  // Default: show all products
+  // Default: all products, or the ?search= matches when present
   if (!categoryParam && (!promoSlug || !promoCategory)) {
-    const result = await getProductsAction()
+    const result = searchParam
+      ? await getProductsAction({ search: searchParam })
+      : await getProductsAction()
     products = result.products
   }
 
-  const headerTitle = categoryTitle || (promoCategory ? promoCategory.name : t('title'))
-  const headerSubtitle = promoCategory?.description || t('subtitle')
+  const headerTitle = categoryTitle || (promoCategory ? promoCategory.name : searchParam) || t('title')
+  const headerSubtitle = promoCategory?.description || (searchParam ? t('searchResults') : t('subtitle'))
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -144,7 +144,8 @@
     "title": "Shop All Products",
     "subtitle": "Premium brands at stock prices",
     "productsCount": "{count} products",
-    "filteredProducts": "Filtered Products"
+    "filteredProducts": "Filtered Products",
+    "searchResults": "Search results"
   },
   "product": {
     "salePrice": "Stock Price",
@@ -245,7 +246,10 @@
     "shipDescription": "We'll deliver to your shipping address",
     "collect": "Collect in Person",
     "collectDescription": "Pick up from our location",
-    "paymentMethod": "Payment Method"
+    "paymentMethod": "Payment Method",
+    "guestCheckoutNotice": "You're checking out as a guest",
+    "guestCheckoutBenefits": "You can place an order without an account. Sign in to track orders, save your cart, and check out faster next time.",
+    "emailOptionalHint": "We'll send your order confirmation here — no account needed"
   },
   "order": {
     "confirmation": {
@@ -266,7 +270,9 @@
       "viewMyOrders": "View My Orders",
       "each": "each",
       "phone": "Phone:",
-      "noImage": "No Image"
+      "noImage": "No Image",
+      "paymentProof": "Payment Proof",
+      "viewPaymentProof": "View payment proof"
     },
     "list": {
       "title": "My Orders",

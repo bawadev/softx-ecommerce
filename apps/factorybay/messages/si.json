@@ -144,7 +144,8 @@
     "title": "සියලුම නිෂ්පාදන සාප්පු සවාරි",
     "subtitle": "තොග මිලට වාරික සන්නාම",
     "productsCount": "නිෂ්පාදන {count}",
-    "filteredProducts": "පෙරන ලද නිෂ්පාදන"
+    "filteredProducts": "පෙරන ලද නිෂ්පාදන",
+    "searchResults": "සෙවුම් ප්‍රතිඵල"
   },
   "product": {
     "salePrice": "තොග මිල",
@@ -244,7 +245,10 @@
     "ship": "ලිපිනයට යවන්න",
     "shipDescription": "අපි ඔබේ බෙදා හැරීමේ ලිපිනයට භාණ්ඩ යවන්නෙමු",
     "collect": "පුද්ගලිකව එකතු කරන්න",
-    "collectDescription": "අපේ ස්ථානයෙන් ලබා ගන්න"
+    "collectDescription": "අපේ ස්ථානයෙන් ලබා ගන්න",
+    "guestCheckoutNotice": "ඔබ අමුත්තෙකු ලෙස ගෙවීම කරමින් සිටී",
+    "guestCheckoutBenefits": "ගිණුමක් නොමැතිව ඇණවුමක් ලබා ගත හැක. ඇණවුම් නිරීක්ෂණයට, කරත්තය සුරැකීමට සහ ඊළඟ වර වේගවත් ලෙස ගෙවීමට පිවිසෙන්න.",
+    "emailOptionalHint": "ඇණවුම් තහවුරු කිරීම මෙහි එවනු ලැබේ — ගිණුමක් අවශ්‍ය නොවේ"
   },
   "order": {
     "confirmation": {
@@ -265,7 +269,9 @@
       "viewMyOrders": "මගේ ඇණවුම් බලන්න",
       "each": "එක් එක",
       "phone": "දුරකථනය:",
-      "noImage": "රූපයක් නැත"
+      "noImage": "රූපයක් නැත",
+      "paymentProof": "ගෙවීම් රිසිට්පත",
+      "viewPaymentProof": "ගෙවීම් රිසිට්පත බලන්න"
     },
     "list": {
       "title": "මගේ ඇණවුම්",
