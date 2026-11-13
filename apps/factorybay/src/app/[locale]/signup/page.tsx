@@ -16,6 +16,7 @@ export default function SignupPage() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     firstName: '',
     lastName: '',
     phone: '',
@@ -23,8 +24,16 @@ export default function SignupPage() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  // Mismatch text is compared against the translated message so a
+  // server-side error (e.g. password policy) is never cleared by typing.
+  const mismatchMessage = t('passwordMismatch')
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (formData.confirmPassword !== formData.password) {
+      setError(mismatchMessage)
+      return
+    }
     setError('')
     setIsLoading(true)
 
@@ -135,6 +144,24 @@ export default function SignupPage() {
               autoComplete="new-password"
               showPasswordToggle
               hint="Min 8 characters, 1 uppercase, 1 number"
+            />
+
+            <Input
+              id="confirmPassword"
+              type="password"
+              label={t('confirmPassword')}
+              placeholder="••••••••"
+              value={formData.confirmPassword}
+              onChange={(e) => {
+                const confirmPassword = e.target.value
+                setFormData({ ...formData, confirmPassword })
+                if (error === mismatchMessage && confirmPassword === formData.password) {
+                  setError('')
+                }
+              }}
+              required
+              autoComplete="new-password"
+              showPasswordToggle
             />
 
             <Button type="submit" className="w-full" isLoading={isLoading}>

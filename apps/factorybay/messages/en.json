@@ -91,6 +91,7 @@
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Confirm Password",
+      "passwordMismatch": "Passwords do not match",
       "submit": "Create Account",
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",

@@ -91,6 +91,7 @@
       "email": "විද්‍යුත් තැපැල",
       "password": "මුරපදය",
       "confirmPassword": "මුරපදය තහවුරු කරන්න",
+      "passwordMismatch": "මුරපද නොගැලපේ",
       "submit": "ගිණුමක් තනන්න",
       "hasAccount": "දැනටමත් ගිණුමක් තිබේද?",
       "signIn": "පුරනය වන්න",
