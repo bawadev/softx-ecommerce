@@ -86,7 +86,7 @@ export default function AuthPage() {
       content: (
         <form onSubmit={handleLoginSubmit} className="space-y-5">
           {loginError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-none text-red-700 text-sm">
+            <div role="alert" className="mb-6 p-4 bg-red-50 border border-red-200 rounded-none text-red-700 text-sm">
               {loginError}
             </div>
           )}
@@ -130,7 +130,7 @@ export default function AuthPage() {
       content: (
         <form onSubmit={handleSignupSubmit} className="space-y-5">
           {signupError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-none text-red-700 text-sm">
+            <div role="alert" className="mb-6 p-4 bg-red-50 border border-red-200 rounded-none text-red-700 text-sm">
               {signupError}
             </div>
           )}

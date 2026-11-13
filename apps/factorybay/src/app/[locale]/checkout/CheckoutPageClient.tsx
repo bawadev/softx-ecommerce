@@ -48,7 +48,7 @@ export default function CheckoutPageClient({
     city: '',
     state: '',
     postalCode: '',
-    country: 'United States',
+    country: 'Sri Lanka',
     phone: '',
   })
 

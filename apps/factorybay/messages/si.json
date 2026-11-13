@@ -18,7 +18,10 @@
     "submit": "ඉදිරිපත් කරන්න",
     "loading": "පූරණය වෙමින්...",
     "inStock": "තොගයේ ඇත",
-    "outOfStock": "තොගයෙන් අවසන්"
+    "outOfStock": "තොගයෙන් අවසන්",
+    "notFoundTitle": "පිටුව හමු නොවිය",
+    "notFoundMessage": "ඔබ සොයන පිටුව නොපවතී නැතහොත් ගෙන යා ඇත.",
+    "notFoundBackToShop": "සාප්පු සවාරියට ආපසු"
   },
   "nav": {
     "shop": "සාප්පු සවාරිය",
