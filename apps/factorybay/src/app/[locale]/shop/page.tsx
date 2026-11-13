@@ -7,6 +7,7 @@ import {
 import {
   getFullProductsByCategoriesAction,
   getCategoryByIdAction,
+  resolveCategoryParamsAction,
 } from '@/app/actions/categories'
 import ProductGrid from '@/components/products/ProductGrid'
 import type { v1 } from '@softx/contract'
@@ -30,7 +31,10 @@ export default async function ShopPage({
 
   // Category-based filtering
   if (categoryParam) {
-    const categoryIds = categoryParam.split(',').filter(Boolean)
+    // LKD-30: accept slugs (deep links like ?category=gents) as well as IDs
+    const rawValues = categoryParam.split(',').filter(Boolean)
+    const resolved = await resolveCategoryParamsAction(rawValues)
+    const categoryIds = resolved.success && resolved.data ? resolved.data : rawValues
     if (categoryIds.length > 0) {
       const result = await getFullProductsByCategoriesAction(categoryIds)
       if (result.success && result.data) {
