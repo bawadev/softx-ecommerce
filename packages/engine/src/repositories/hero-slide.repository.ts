@@ -47,6 +47,9 @@ function mapToHeroSlide(properties: any): HeroSlide {
     badgeText: properties.badgeText,
     title: properties.title,
     subtitle: properties.subtitle,
+    badgeTextSi: properties.badgeTextSi || undefined,
+    titleSi: properties.titleSi || undefined,
+    subtitleSi: properties.subtitleSi || undefined,
     linkUrl: properties.linkUrl || undefined,
     displayOrder: toNumber(properties.displayOrder),
     isActive: properties.isActive,
@@ -117,6 +120,9 @@ export async function createHeroSlide(
     badgeText: string
     title: string
     subtitle: string
+    badgeTextSi?: string
+    titleSi?: string
+    subtitleSi?: string
     linkUrl?: string
     displayOrder: number
     isActive?: boolean
@@ -137,6 +143,9 @@ export async function createHeroSlide(
       badgeText: $badgeText,
       title: $title,
       subtitle: $subtitle,
+      badgeTextSi: $badgeTextSi,
+      titleSi: $titleSi,
+      subtitleSi: $subtitleSi,
       linkUrl: $linkUrl,
       displayOrder: $displayOrder,
       isActive: $isActive,
@@ -157,6 +166,9 @@ export async function createHeroSlide(
       badgeText: data.badgeText,
       title: data.title,
       subtitle: data.subtitle,
+      badgeTextSi: data.badgeTextSi || null,
+      titleSi: data.titleSi || null,
+      subtitleSi: data.subtitleSi || null,
       linkUrl: data.linkUrl || null,
       displayOrder: data.displayOrder,
       isActive: data.isActive ?? true,
@@ -185,6 +197,9 @@ export async function updateHeroSlide(
     badgeText: string
     title: string
     subtitle: string
+    badgeTextSi: string | null
+    titleSi: string | null
+    subtitleSi: string | null
     linkUrl: string | null
     displayOrder: number
     isActive: boolean
@@ -236,6 +251,18 @@ export async function updateHeroSlide(
   if (data.subtitle !== undefined) {
     updates.push('h.subtitle = $subtitle')
     params.subtitle = data.subtitle
+  }
+  if (data.badgeTextSi !== undefined) {
+    updates.push('h.badgeTextSi = $badgeTextSi')
+    params.badgeTextSi = data.badgeTextSi || null
+  }
+  if (data.titleSi !== undefined) {
+    updates.push('h.titleSi = $titleSi')
+    params.titleSi = data.titleSi || null
+  }
+  if (data.subtitleSi !== undefined) {
+    updates.push('h.subtitleSi = $subtitleSi')
+    params.subtitleSi = data.subtitleSi || null
   }
   if (data.linkUrl !== undefined) {
     updates.push('h.linkUrl = $linkUrl')

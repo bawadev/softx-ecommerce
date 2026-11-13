@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from 'next-intl'
 import SearchAutocomplete from '@/components/SearchAutocomplete'
 import {
   SLIDE_INTERVAL,
@@ -33,6 +34,7 @@ interface HeroSliderProps {
 }
 
 export default function HeroSlider({ slides }: HeroSliderProps) {
+  const locale = useLocale()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [slideDirection, setSlideDirection] = useState(1) // 1 = push left, -1 = push right
   const [searchOpen, setSearchOpen] = useState(false)
@@ -168,9 +170,15 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
 
   const currentSlideData = slides[currentSlide]
   const SlideComponent = SLIDE_MAP[currentSlideData.animationType] || SlideLeftPanel
+  // Locale-aware copy: /si uses the Sinhala override when set (non-empty),
+  // else the English field (LKD-41). Every other locale sees English, so /en
+  // output is unchanged while Si fields are empty.
+  const useSi = locale === 'si'
+  const resolveTitle = (s: v1.HeroSlideDTO) => (useSi && s.titleSi ? s.titleSi : s.title)
+  const resolveSubtitle = (s: v1.HeroSlideDTO) => (useSi && s.subtitleSi ? s.subtitleSi : s.subtitle)
   const slideProps = {
-    title: currentSlideData.title,
-    subtitle: currentSlideData.subtitle,
+    title: resolveTitle(currentSlideData),
+    subtitle: resolveSubtitle(currentSlideData),
     linkUrl: currentSlideData.linkUrl,
     onSearchClick: () => setSearchOpen(true),
     colorTheme: currentSlideData.colorTheme,
@@ -190,7 +198,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
           >
             <Image
               src={slide.imageUrl}
-              alt={slide.title || `Fashion background ${i + 1}`}
+              alt={resolveTitle(slide) || `Fashion background ${i + 1}`}
               fill
               className="object-cover"
               priority={i === 0}
@@ -217,7 +225,7 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
           >
             <Image
               src={currentSlideData.mobileImageUrl || currentSlideData.imageUrl}
-              alt={currentSlideData.title || `Fashion background ${currentSlide + 1}`}
+              alt={resolveTitle(currentSlideData) || `Fashion background ${currentSlide + 1}`}
               fill
               className="object-cover"
               priority={currentSlide === 0}
@@ -260,8 +268,8 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
           <AnimatePresence initial={false} custom={slideDirection}>
             <SlideMobile
               key={currentSlide}
-              title={currentSlideData.title}
-              subtitle={currentSlideData.subtitle}
+              title={resolveTitle(currentSlideData)}
+              subtitle={resolveSubtitle(currentSlideData)}
               linkUrl={currentSlideData.linkUrl}
               animationType={currentSlideData.mobileAnimationType || 'bottom-pill'}
               colorTheme={currentSlideData.mobileColorTheme || currentSlideData.colorTheme}

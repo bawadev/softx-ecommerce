@@ -80,6 +80,9 @@ export function toHeroSlideDTO(s: HeroSlide): v1.HeroSlideDTO {
     ...(s.customDesktopStyle ? { customDesktopStyle: s.customDesktopStyle } : {}),
     ...(s.customMobileStyle ? { customMobileStyle: s.customMobileStyle } : {}),
     badgeText: s.badgeText, title: s.title, subtitle: s.subtitle,
+    ...(s.badgeTextSi ? { badgeTextSi: s.badgeTextSi } : {}),
+    ...(s.titleSi ? { titleSi: s.titleSi } : {}),
+    ...(s.subtitleSi ? { subtitleSi: s.subtitleSi } : {}),
     ...(s.linkUrl ? { linkUrl: s.linkUrl } : {}),
     displayOrder: s.displayOrder, isActive: s.isActive,
   }

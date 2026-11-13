@@ -185,6 +185,10 @@ export interface HeroSlide {
   badgeText: string
   title: string
   subtitle: string
+  /** Optional Sinhala overrides (/si storefront); English is the fallback. */
+  badgeTextSi?: string
+  titleSi?: string
+  subtitleSi?: string
   linkUrl?: string
   displayOrder: number
   isActive: boolean

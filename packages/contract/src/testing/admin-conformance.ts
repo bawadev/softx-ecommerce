@@ -289,15 +289,27 @@ export function runAdminConformance(
         badgeText: 'Admin',
         title: 'Conformance Admin Hero A',
         subtitle: 'sub-a',
+        titleSi: 'නිවාඩු කාලීන එකතුව',
+        subtitleSi: 'සතුට මගෙ සමඟ',
+        badgeTextSi: 'අලුත් එකතුවක්',
         displayOrder: 10,
       })
       expect(a.ok).toBe(true)
       if (!a.ok) return
       expect(() => v1.HeroSlideSchema.parse(a.data)).not.toThrow()
       expect(a.data.isActive).toBe(true) // defaults engine-side
+      // optional Si overrides round-trip through the read DTO; b (created
+      // without them) must omit the keys entirely — English-only legacy
+      // slides stay valid and /en output is unchanged.
+      expect(a.data.titleSi).toBe('නිවාඩු කාලීන එකතුව')
+      expect(a.data.subtitleSi).toBe('සතුට මගෙ සමඟ')
+      expect(a.data.badgeTextSi).toBe('අලුත් එකතුවක්')
 
       const b = await s.createHeroSlide(admin, heroCreate(11))
       if (!b.ok) throw new Error('setup failed')
+      expect(b.data.titleSi).toBeUndefined()
+      expect(b.data.subtitleSi).toBeUndefined()
+      expect(b.data.badgeTextSi).toBeUndefined()
 
       // update sets badgeText and null-CLEARS mobileImageUrl (HeroSlideUpdateInput
       // discipline) — the cleared field must vanish (undefined), not linger as null
@@ -307,6 +319,24 @@ export function runAdminConformance(
       expect(updated.data.badgeText).toBe('Admin2')
       expect(updated.data.mobileImageUrl).toBeUndefined()
       expect(() => v1.HeroSlideSchema.parse(updated.data)).not.toThrow()
+
+      // a partial update of ONLY isActive must not clear the Si overrides
+      // (the admin toggle-active path sends { isActive } alone) — LKD-41 A3
+      const toggled = await s.updateHeroSlide(admin, a.data.id, { isActive: false })
+      expect(toggled.ok).toBe(true)
+      if (!toggled.ok) return
+      expect(toggled.data.isActive).toBe(false)
+      expect(toggled.data.titleSi).toBe('නිවාඩු කාලීන එකතුව')
+      expect(toggled.data.subtitleSi).toBe('සතුට මගෙ සමඟ')
+      expect(toggled.data.badgeTextSi).toBe('අලුත් එකතුවක්')
+      // null-CLEARING a Si field restores the English fallback (undefined key)
+      const cleared = await s.updateHeroSlide(admin, a.data.id, { titleSi: null })
+      expect(cleared.ok).toBe(true)
+      if (!cleared.ok) return
+      expect(cleared.data.titleSi).toBeUndefined()
+      expect(cleared.data.subtitleSi).toBe('සතුට මගෙ සමඟ')
+      // clearing one Si field leaves the English title intact
+      expect(cleared.data.title).toBe('Conformance Admin Hero A')
 
       // swap the two display orders; verify through the storefront read
       const reordered = await s.reorderHeroSlides(admin, [
