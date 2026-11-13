@@ -22,8 +22,23 @@ export default function CartPageClient({
 }: CartPageClientProps) {
   const locale = useLocale()
   const t = useTranslations('cart')
-  const { items, total, itemCount, isLoading, clearCart } = useCartStore()
+  const store = useCartStore()
   const [isClearing, setIsClearing] = useState(false)
+
+  // LKD-31: the store is a module singleton that starts empty, so the SSR
+  // HTML (and first client render) painted "0 items / Rs 0.00" until
+  // Navigation's loadCart() resolved a second or two later — the cart looked
+  // wiped on every full page load. Until the store has loaded from the
+  // server, render the projection the server component already fetched
+  // (initialItems/initialTotal/initialItemCount — per-request props, safe to
+  // SSR; seeding the global store during render would leak across requests).
+  // Once any projection lands (loadCart or a mutation), the store is
+  // authoritative. CheckoutPageClient already follows this props-first shape.
+  const items = store.hasLoaded ? store.items : initialItems
+  const total = store.hasLoaded ? store.total : initialTotal
+  const itemCount = store.hasLoaded ? store.itemCount : initialItemCount
+  const isLoading = store.isLoading
+  const clearCart = store.clearCart
 
   // Confirm dialog state
   const [confirmDialog, setConfirmDialog] = useState<{
