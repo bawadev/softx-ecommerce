@@ -200,7 +200,7 @@
     "continueShopping": "← Continue Shopping",
     "youSave": "You Save",
     "retailTotal": "Retail Price",
-    "addMoreForFreeShipping": "Add ${amount} more for free shipping",
+    "addMoreForFreeShipping": "Add Rs {amount} more for free shipping",
     "secureCheckout": "Secure checkout powered by LOCKED",
     "failedToLoad": "Failed to load cart",
     "noImage": "No Image"

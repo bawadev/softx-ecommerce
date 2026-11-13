@@ -7,6 +7,7 @@ import CartItem from '@/components/cart/CartItem'
 import type { v1 } from '@softx/contract'
 import { useCartStore } from '@/stores/cartStore'
 import { amount, cartRetailTotal } from '@/lib/price'
+import { FREE_SHIPPING_THRESHOLD_MAJOR, shippingMajor } from '@/lib/shipping'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 interface CartPageClientProps {
@@ -195,18 +196,22 @@ export default function CartPageClient({
                   </div>
                 )}
 
-                {/* Shipping */}
+                {/* Shipping — mirrors the engine's charge rule (LKD-32, lib/shipping) */}
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">{t('shipping')}</span>
                   <span className="font-medium text-black-700">
-                    {totalAmount >= 100 ? t('free') : 'Rs 9.99'}
+                    {shippingMajor('SHIP', totalAmount) === 0
+                      ? t('free')
+                      : `Rs ${shippingMajor('SHIP', totalAmount).toFixed(2)}`}
                   </span>
                 </div>
 
                 {/* Free shipping notice */}
-                {totalAmount < 100 && (
+                {totalAmount < FREE_SHIPPING_THRESHOLD_MAJOR && (
                   <p className="text-xs text-gray-500">
-                    {t('addMoreForFreeShipping', { amount: (100 - totalAmount).toFixed(2) })}
+                    {t('addMoreForFreeShipping', {
+                      amount: (FREE_SHIPPING_THRESHOLD_MAJOR - totalAmount).toFixed(2),
+                    })}
                   </p>
                 )}
 
@@ -215,7 +220,7 @@ export default function CartPageClient({
                   <div className="flex justify-between">
                     <span className="text-base font-bold text-black-700">{t('total')}</span>
                     <span className="text-2xl font-bold text-black-700">
-                      Rs {(totalAmount + (totalAmount >= 100 ? 0 : 9.99)).toFixed(2)}
+                      Rs {(totalAmount + shippingMajor('SHIP', totalAmount)).toFixed(2)}
                     </span>
                   </div>
                 </div>

@@ -11,6 +11,7 @@ import { createOrderAction } from '@/app/actions/order'
 import { useCartStore } from '@/stores/cartStore'
 import { getColorHex } from '@/lib/color-utils'
 import { amount } from '@/lib/price'
+import { shippingMajor } from '@/lib/shipping'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 
@@ -51,9 +52,9 @@ export default function CheckoutPageClient({
     phone: '',
   })
 
-  // Calculate shipping based on delivery method (Money total → major units)
+  // Shipping mirrors the engine's charge rule via the shared UI constant (LKD-32)
   const totalAmount = amount(total)
-  const shipping = deliveryMethod === 'SHIP' ? (totalAmount >= 100 ? 0 : 9.99) : 0
+  const shipping = shippingMajor(deliveryMethod, totalAmount)
   const finalTotal = totalAmount + shipping
 
   const handleSubmit = async (e: React.FormEvent) => {
