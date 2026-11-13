@@ -28,12 +28,17 @@ export default function AuthPage() {
   const [signupData, setSignupData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     firstName: '',
     lastName: '',
     phone: '',
   })
   const [signupError, setSignupError] = useState('')
   const [isSignupLoading, setIsSignupLoading] = useState(false)
+
+  // Mismatch text is compared against the translated message so a
+  // server-side error (e.g. password policy) is never cleared by typing.
+  const signupMismatchMessage = tSignup('passwordMismatch')
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -61,6 +66,10 @@ export default function AuthPage() {
 
   const handleSignupSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (signupData.confirmPassword !== signupData.password) {
+      setSignupError(signupMismatchMessage)
+      return
+    }
     setSignupError('')
     setIsSignupLoading(true)
 
@@ -201,6 +210,27 @@ export default function AuthPage() {
             autoComplete="new-password"
             showPasswordToggle
             hint="Min 8 characters, 1 uppercase, 1 number"
+          />
+
+          <Input
+            id="confirmPassword"
+            type="password"
+            label={tSignup('confirmPassword')}
+            placeholder="••••••••"
+            value={signupData.confirmPassword}
+            onChange={(e) => {
+              const confirmPassword = e.target.value
+              setSignupData({ ...signupData, confirmPassword })
+              if (
+                signupError === signupMismatchMessage &&
+                confirmPassword === signupData.password
+              ) {
+                setSignupError('')
+              }
+            }}
+            required
+            autoComplete="new-password"
+            showPasswordToggle
           />
 
           <Button type="submit" className="w-full" isLoading={isSignupLoading} variant="primary">

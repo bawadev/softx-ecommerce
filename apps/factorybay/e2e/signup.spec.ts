@@ -37,6 +37,127 @@ import { test, expect } from '@playwright/test'
  * Acceptable for a dev database, same stance as the FB orders left behind by
  * order.spec.ts — the account is intentionally NOT deleted afterwards.
  */
+
+/**
+ * Shared helper for the confirm-password cases: fills a complete, valid
+ * signup form on the given surface with the supplied confirm value. The
+ * submit is issued by the caller (the surfaces' buttons differ — see the
+ * auth-page case for the tab/submit collision).
+ */
+async function fillValidSignup(
+  page: import('@playwright/test').Page,
+  email: string,
+  password: string,
+  confirm: string
+) {
+  await page.getByLabel('First Name').fill('Smoke')
+  await page.getByLabel('Last Name').fill('Signup')
+  await page.getByLabel('Email').fill(email)
+  await page.getByLabel('Password', { exact: true }).fill(password)
+  await page.getByLabel('Confirm Password').fill(confirm)
+}
+
+/**
+ * LKD-42 A1+A3 — mismatched confirm password blocks signup on /en/signup:
+ * the mismatch message renders inside the role="alert" error box (the a11y
+ * fix from 040b743) and signupAction is never called (no POST leaves the
+ * page, no navigation, form values intact). Negative controls: no alert box
+ * before submit; correcting the confirm value clears the message and the
+ * (matching) signup then completes and lands signed-in.
+ */
+test('signup with mismatched confirm password is blocked on /en/signup', async ({
+  page,
+}) => {
+  const email = `smoke+${Date.now()}@example.com`
+
+  // The form's role="alert" error box lives inside the .card; the layout's
+  // sonner <Toaster/> also exposes an (empty) alert live region on every
+  // page, so the assertions below are scoped to the card.
+  const formAlert = page.locator('.card').getByRole('alert')
+
+  await page.goto('/en/signup')
+
+  // Negative control (A3): no error box before submit is attempted.
+  await expect(formAlert).toHaveCount(0)
+
+  // Instrument the page so a blocked signup is provable: any request the
+  // server action would fire is recorded. A Next.js server action submits
+  // via fetch with the Next-Action header (progressive enhancement path),
+  // so counting POSTs catches both transports.
+  const posts: string[] = []
+  page.on('request', (req) => {
+    if (req.method() === 'POST') posts.push(req.url())
+  })
+
+  await fillValidSignup(page, email, 'Password1', 'Password2')
+  await page.getByRole('button', { name: 'Create Account' }).click()
+
+  // A3: the mismatch text is announced from the existing role="alert" box.
+  await expect(formAlert).toHaveText('Passwords do not match')
+  // A1: still on the signup page — no navigation to /shop, nothing created.
+  await expect(page).toHaveURL(/\/en\/signup$/)
+
+  // Give a late (never-fired) action response plenty of time to surface.
+  await page.waitForTimeout(1500)
+  expect(posts).toEqual([])
+  // The typed values survive, so the user corrects rather than retypes.
+  await expect(page.getByLabel('Email')).toHaveValue(email)
+
+  // Clearing: matching the confirm value dismisses the mismatch message.
+  await page.getByLabel('Confirm Password').fill('Password1')
+  await expect(formAlert).toHaveCount(0)
+
+  // Negative control (A1): with matching values the submit completes the
+  // signup and lands the user signed-in on /shop.
+  await page.getByRole('button', { name: 'Create Account' }).click()
+  await page.waitForURL('**/en/shop')
+  await expect(
+    page.getByRole('button', { name: 'Profile menu' })
+  ).toBeVisible()
+})
+
+/**
+ * LKD-42 A2 — the combined auth page's signup tab behaves the same. The
+ * tab header ("Create Account") and the submit button share their label,
+ * so the tab is switched via the header button and the submit scoped to
+ * the form element. Negative control: matching passwords submit normally.
+ */
+test('signup with mismatched confirm password is blocked on /en/auth', async ({
+  page,
+}) => {
+  const email = `smoke+auth-${Date.now()}@example.com`
+
+  await page.goto('/en/auth')
+  await page.getByRole('button', { name: 'Create Account' }).first().click()
+
+  // Scoped to the card — the layout Toaster also carries an empty alert
+  // live region (see the /en/signup case above).
+  const formAlert = page.locator('.card').getByRole('alert')
+  await expect(formAlert).toHaveCount(0)
+
+  const posts: string[] = []
+  page.on('request', (req) => {
+    if (req.method() === 'POST') posts.push(req.url())
+  })
+
+  await fillValidSignup(page, email, 'Password1', 'Password2')
+  await page.locator('form').getByRole('button', { name: 'Create Account' }).click()
+
+  await expect(formAlert).toHaveText('Passwords do not match')
+  await expect(page).toHaveURL(/\/en\/auth$/)
+
+  await page.waitForTimeout(1500)
+  expect(posts).toEqual([])
+
+  // Negative control (A2): matching passwords on this surface submit
+  // normally and land signed-in.
+  await page.getByLabel('Confirm Password').fill('Password1')
+  await page.locator('form').getByRole('button', { name: 'Create Account' }).click()
+  await page.waitForURL('**/en/shop')
+  await expect(
+    page.getByRole('button', { name: 'Profile menu' })
+  ).toBeVisible()
+})
 test('signup lands signed-in and reaches the profile page', async ({
   page,
 }) => {
@@ -49,6 +170,7 @@ test('signup lands signed-in and reaches the profile page', async ({
   await page.getByLabel('Email').fill(email)
   // exact: the password field's eye toggle carries aria-label "Show password"
   await page.getByLabel('Password', { exact: true }).fill('Smoke123!')
+  await page.getByLabel('Confirm Password').fill('Smoke123!')
   await page.getByRole('button', { name: 'Create Account' }).click()
   await page.waitForURL('**/en/shop')
 
