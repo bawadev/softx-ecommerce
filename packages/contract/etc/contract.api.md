@@ -1298,6 +1298,9 @@ const HeroSlideSchema: z.ZodObject<{
     badgeText: z.ZodString;
     title: z.ZodString;
     subtitle: z.ZodString;
+    badgeTextSi: z.ZodOptional<z.ZodString>;
+    titleSi: z.ZodOptional<z.ZodString>;
+    subtitleSi: z.ZodOptional<z.ZodString>;
     linkUrl: z.ZodOptional<z.ZodString>;
     displayOrder: z.ZodNumber;
     isActive: z.ZodBoolean;
@@ -1332,6 +1335,9 @@ const HeroSlideSchema: z.ZodObject<{
         borderOpacity: number;
         borderWidth: number;
     } | undefined;
+    badgeTextSi?: string | undefined;
+    titleSi?: string | undefined;
+    subtitleSi?: string | undefined;
     linkUrl?: string | undefined;
 }, {
     id: string;
@@ -1364,6 +1370,9 @@ const HeroSlideSchema: z.ZodObject<{
         borderOpacity: number;
         borderWidth: number;
     } | undefined;
+    badgeTextSi?: string | undefined;
+    titleSi?: string | undefined;
+    subtitleSi?: string | undefined;
     linkUrl?: string | undefined;
 }>;
 
@@ -1431,6 +1440,9 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
     badgeText: z.ZodOptional<z.ZodString>;
     title: z.ZodOptional<z.ZodString>;
     subtitle: z.ZodOptional<z.ZodString>;
+    badgeTextSi: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    titleSi: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    subtitleSi: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     linkUrl: z.ZodOptional<z.ZodNullable<z.ZodString>>;
     displayOrder: z.ZodOptional<z.ZodNumber>;
     isActive: z.ZodOptional<z.ZodBoolean>;
@@ -1464,6 +1476,9 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
     badgeText?: string | undefined;
     title?: string | undefined;
     subtitle?: string | undefined;
+    badgeTextSi?: string | null | undefined;
+    titleSi?: string | null | undefined;
+    subtitleSi?: string | null | undefined;
     linkUrl?: string | null | undefined;
 }, {
     isActive?: boolean | undefined;
@@ -1495,6 +1510,9 @@ const HeroSlideUpdateInputSchema: z.ZodObject<{
     badgeText?: string | undefined;
     title?: string | undefined;
     subtitle?: string | undefined;
+    badgeTextSi?: string | null | undefined;
+    titleSi?: string | null | undefined;
+    subtitleSi?: string | null | undefined;
     linkUrl?: string | null | undefined;
 }>;
 
@@ -1562,6 +1580,9 @@ const HeroSlideWriteInputSchema: z.ZodObject<{
     badgeText: z.ZodString;
     title: z.ZodString;
     subtitle: z.ZodString;
+    badgeTextSi: z.ZodOptional<z.ZodString>;
+    titleSi: z.ZodOptional<z.ZodString>;
+    subtitleSi: z.ZodOptional<z.ZodString>;
     linkUrl: z.ZodOptional<z.ZodString>;
     displayOrder: z.ZodNumber;
     isActive: z.ZodOptional<z.ZodBoolean>;
@@ -1595,6 +1616,9 @@ const HeroSlideWriteInputSchema: z.ZodObject<{
         borderOpacity: number;
         borderWidth: number;
     } | undefined;
+    badgeTextSi?: string | undefined;
+    titleSi?: string | undefined;
+    subtitleSi?: string | undefined;
     linkUrl?: string | undefined;
 }, {
     displayOrder: number;
@@ -1626,6 +1650,9 @@ const HeroSlideWriteInputSchema: z.ZodObject<{
         borderOpacity: number;
         borderWidth: number;
     } | undefined;
+    badgeTextSi?: string | undefined;
+    titleSi?: string | undefined;
+    subtitleSi?: string | undefined;
     linkUrl?: string | undefined;
 }>;
 

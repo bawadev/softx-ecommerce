@@ -26,6 +26,7 @@
     "filters:recalculate": "tsx scripts/recalculate-levels.ts",
     "filters:seed": "tsx scripts/seed-default-filters.ts",
     "seed:hero-slides": "tsx scripts/seed-hero-slides.ts",
+    "seed:hero-si": "tsx scripts/seed-hero-si.ts",
     "minio:init": "tsx scripts/init-minio.ts",
     "setup:categories": "tsx scripts/setup-category-hierarchy.ts"
   },

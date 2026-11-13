@@ -545,6 +545,9 @@ export function createFakeAdminServices(
         badgeText: input.badgeText,
         title: input.title,
         subtitle: input.subtitle,
+        ...(input.badgeTextSi ? { badgeTextSi: input.badgeTextSi } : {}),
+        ...(input.titleSi ? { titleSi: input.titleSi } : {}),
+        ...(input.subtitleSi ? { subtitleSi: input.subtitleSi } : {}),
         ...(input.linkUrl ? { linkUrl: input.linkUrl } : {}),
         displayOrder: input.displayOrder,
         isActive: input.isActive ?? true,
@@ -591,6 +594,20 @@ export function createFakeAdminServices(
       if (input.badgeText !== undefined) slide.badgeText = input.badgeText
       if (input.title !== undefined) slide.title = input.title
       if (input.subtitle !== undefined) slide.subtitle = input.subtitle
+      // Si overrides follow the same null-CLEARING discipline: null deletes
+      // the key so the DTO omits it (undefined) and /si falls back to English.
+      if (input.badgeTextSi !== undefined) {
+        if (input.badgeTextSi === null) delete slide.badgeTextSi
+        else slide.badgeTextSi = input.badgeTextSi
+      }
+      if (input.titleSi !== undefined) {
+        if (input.titleSi === null) delete slide.titleSi
+        else slide.titleSi = input.titleSi
+      }
+      if (input.subtitleSi !== undefined) {
+        if (input.subtitleSi === null) delete slide.subtitleSi
+        else slide.subtitleSi = input.subtitleSi
+      }
       if (input.linkUrl !== undefined) {
         if (input.linkUrl === null) delete slide.linkUrl
         else slide.linkUrl = input.linkUrl

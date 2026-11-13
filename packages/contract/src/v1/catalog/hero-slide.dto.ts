@@ -28,6 +28,12 @@ export const HeroSlideSchema = z.object({
   badgeText: z.string(),
   title: z.string(),
   subtitle: z.string(),
+  // Optional Sinhala overrides for the /si storefront — English stays the
+  // fallback when absent/empty (LKD-41). Same optional-field idiom as
+  // mobileImageUrl.
+  badgeTextSi: z.string().optional(),
+  titleSi: z.string().optional(),
+  subtitleSi: z.string().optional(),
   linkUrl: z.string().optional(),
   displayOrder: z.number().int(),
   isActive: z.boolean(),

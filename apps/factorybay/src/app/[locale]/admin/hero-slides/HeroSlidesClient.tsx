@@ -60,6 +60,9 @@ type FormData = {
   badgeText: string
   title: string
   subtitle: string
+  badgeTextSi: string
+  titleSi: string
+  subtitleSi: string
   linkUrl: string
   isActive: boolean
 }
@@ -76,6 +79,9 @@ const emptyForm: FormData = {
   badgeText: '',
   title: '',
   subtitle: '',
+  badgeTextSi: '',
+  titleSi: '',
+  subtitleSi: '',
   linkUrl: '',
   isActive: true,
 }
@@ -137,6 +143,9 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
       badgeText: slide.badgeText,
       title: slide.title,
       subtitle: slide.subtitle,
+      badgeTextSi: slide.badgeTextSi || '',
+      titleSi: slide.titleSi || '',
+      subtitleSi: slide.subtitleSi || '',
       linkUrl: slide.linkUrl || '',
       isActive: slide.isActive,
     })
@@ -178,6 +187,9 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
           badgeText: form.badgeText,
           title: form.title,
           subtitle: form.subtitle,
+          badgeTextSi: form.badgeTextSi || null,
+          titleSi: form.titleSi || null,
+          subtitleSi: form.subtitleSi || null,
           linkUrl: sanitizedLinkUrl,
           isActive: form.isActive,
         })
@@ -224,6 +236,9 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
           badgeText: form.badgeText,
           title: form.title,
           subtitle: form.subtitle,
+          badgeTextSi: form.badgeTextSi || undefined,
+          titleSi: form.titleSi || undefined,
+          subtitleSi: form.subtitleSi || undefined,
           linkUrl: sanitizedLinkUrl,
           isActive: form.isActive,
           displayOrder,
@@ -846,6 +861,49 @@ export default function HeroSlidesClient({ initialSlides, promotionalCategories 
                     value={form.subtitle}
                     onChange={(e) => setForm((prev) => ({ ...prev, subtitle: e.target.value }))}
                     placeholder={`e.g. ${shopConfig.tagline}`}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
+                  />
+                </div>
+
+                {/* Sinhala (/si) overrides — optional; English is the fallback */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Sinhala Title <span className="font-normal text-gray-400">(optional — /si)</span>
+                  </label>
+                  <input
+                    type="text"
+                    dir="auto"
+                    value={form.titleSi}
+                    onChange={(e) => setForm((prev) => ({ ...prev, titleSi: e.target.value }))}
+                    placeholder="e.g. නිවාඩු කාලීන එකතුව"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Sinhala Subtitle <span className="font-normal text-gray-400">(optional — /si)</span>
+                  </label>
+                  <input
+                    type="text"
+                    dir="auto"
+                    value={form.subtitleSi}
+                    onChange={(e) => setForm((prev) => ({ ...prev, subtitleSi: e.target.value }))}
+                    placeholder="e.g. සතුට මගෙ සමඟ"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Sinhala Badge <span className="font-normal text-gray-400">(optional — /si)</span>
+                  </label>
+                  <input
+                    type="text"
+                    dir="auto"
+                    value={form.badgeTextSi}
+                    onChange={(e) => setForm((prev) => ({ ...prev, badgeTextSi: e.target.value }))}
+                    placeholder="e.g. අලුත් එකතුවක්"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black-700 focus:border-transparent text-sm"
                   />
                 </div>
