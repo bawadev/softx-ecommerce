@@ -18,7 +18,10 @@
     "submit": "Submit",
     "loading": "Loading...",
     "inStock": "in stock",
-    "outOfStock": "Out of stock"
+    "outOfStock": "Out of stock",
+    "notFoundTitle": "Page not found",
+    "notFoundMessage": "The page you're looking for doesn't exist or may have moved.",
+    "notFoundBackToShop": "Back to Shop"
   },
   "nav": {
     "shop": "Shop",
@@ -144,7 +147,7 @@
   "shop": {
     "title": "Shop All Products",
     "subtitle": "Premium brands at stock prices",
-    "productsCount": "{count} products",
+    "productsCount": "{count, plural, =1 {1 product} other {# products}}",
     "filteredProducts": "Filtered Products",
     "searchResults": "Search results"
   },
@@ -200,7 +203,7 @@
     "continueShopping": "← Continue Shopping",
     "youSave": "You Save",
     "retailTotal": "Retail Price",
-    "addMoreForFreeShipping": "Add ${amount} more for free shipping",
+    "addMoreForFreeShipping": "Add Rs {amount} more for free shipping",
     "secureCheckout": "Secure checkout powered by LOCKED",
     "failedToLoad": "Failed to load cart",
     "noImage": "No Image"

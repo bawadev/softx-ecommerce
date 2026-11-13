@@ -14,6 +14,11 @@ interface CartStore {
   itemCount: number
   total: v1.Money
 
+  // True once a server projection has landed here (loadCart or a mutation).
+  // LKD-31: surfaces let pages render their server-fetched props until this
+  // flips, instead of flashing the empty initial store.
+  hasLoaded: boolean
+
   // Loading states
   isAdding: boolean
   isUpdating: boolean
@@ -44,7 +49,7 @@ function setProjection(
   set: (partial: Partial<CartStore>) => void,
   data: { items: v1.CartItemDTO[]; total: v1.Money; itemCount: number }
 ) {
-  set({ items: data.items, itemCount: data.itemCount, total: data.total })
+  set({ items: data.items, itemCount: data.itemCount, total: data.total, hasLoaded: true })
 }
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -52,6 +57,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   items: [],
   itemCount: 0,
   total: EMPTY_MONEY,
+  hasLoaded: false,
   isAdding: false,
   isUpdating: false,
   isRemoving: false,
@@ -176,6 +182,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
           items: [],
           itemCount: 0,
           total: EMPTY_MONEY,
+          hasLoaded: true,
         })
         return true
       }

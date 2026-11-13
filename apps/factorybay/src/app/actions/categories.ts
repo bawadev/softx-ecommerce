@@ -104,6 +104,46 @@ export async function getCategoriesByHierarchyAction(
 }
 
 /**
+ * Resolve ?category= values to category IDs (LKD-30).
+ *
+ * The shop page's category filter takes IDs, but humans and external links
+ * reasonably type slugs (?category=gents) — those used to render "0 products".
+ * Values that already look like UUIDs pass through; anything else is matched
+ * case-insensitively against slugs in the tree.
+ */
+export async function resolveCategoryParamsAction(values: string[]) {
+  try {
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const passthrough: string[] = []
+    const slugs = new Set<string>()
+    for (const value of values) {
+      const v = value.trim()
+      if (!v) continue
+      if (UUID_RE.test(v)) passthrough.push(v.toLowerCase())
+      else slugs.add(v.toLowerCase())
+    }
+
+    const resolved = new Set(passthrough)
+    if (slugs.size > 0) {
+      const r = await getCatalog().getCategoryTree()
+      if (!r.ok) {
+        return { success: false, message: r.error.message }
+      }
+      const bySlug = collectFromTree(
+        r.data,
+        (node) => node.isActive && slugs.has(node.slug.toLowerCase())
+      )
+      for (const node of bySlug) resolved.add(node.id)
+    }
+
+    return { success: true, data: Array.from(resolved) }
+  } catch (error: unknown) {
+    console.error('Error resolving category params:', error)
+    return { success: false, message: error instanceof Error ? error.message : 'Failed to resolve categories' }
+  }
+}
+
+/**
  * Get category by ID
  */
 export async function getCategoryByIdAction(id: string) {
