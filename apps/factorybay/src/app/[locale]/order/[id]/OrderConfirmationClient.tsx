@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
 import type { v1 } from '@softx/contract'
 import { amount } from '@/lib/price'
+import { formatDate } from '@/lib/format' // LKD-45
 
 interface OrderConfirmationClientProps {
   order: v1.OrderDTO
@@ -15,11 +16,7 @@ export default function OrderConfirmationClient({ order }: OrderConfirmationClie
   const t = useTranslations('order.confirmation')
   const tStatus = useTranslations('order.status')
 
-  const orderDate = new Date(order.createdAt).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  const orderDate = formatDate(order.createdAt, locale, { month: 'long' }) // LKD-45: fixed TZ
 
   // Money total → major units; shipping recomputed for display like before.
   // COLLECT orders carry no shipping charge — and no shipping LINE below;

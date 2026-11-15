@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useTranslations, useLocale } from 'next-intl'
 import type { v1 } from '@softx/contract'
 import { amount } from '@/lib/price'
+import { formatDate } from '@/lib/format' // LKD-45
 
 interface OrdersPageClientProps {
   orders: v1.OrderDTO[]
@@ -66,11 +67,7 @@ export default function OrdersPageClient({ orders, count }: OrdersPageClientProp
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-6">
           {orders.map((order) => {
-            const orderDate = new Date(order.createdAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            })
+            const orderDate = formatDate(order.createdAt, locale) // LKD-45: fixed TZ, hydration-safe
 
             return (
               <div key={order.id} className="rounded-lg bg-white shadow-sm">
