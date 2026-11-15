@@ -2,8 +2,10 @@ import { v1 } from '@softx/contract'
 import type { EngineConfig, TenantRef } from './engine'
 import { toCartItemDTO } from './mappers/cart.mapper'
 import { toOrderDTO } from './mappers/order.mapper'
+import { convertNeo4jIntegers } from './neo4j-utils'
 import * as orderRepo from './repositories/order.repository'
 import * as cartRepo from './repositories/cart.repository'
+import * as productRepo from './repositories/product.repository'
 
 const { ok, err } = v1
 
@@ -25,6 +27,25 @@ export function computeShippingMinor(
 ): number {
   if (deliveryMethod !== 'SHIP') return 0
   return subtotalMinor >= FREE_SHIPPING_THRESHOLD_MINOR ? 0 : SHIP_COST_MINOR
+}
+
+/**
+ * LKD-46: first cart line whose quantity exceeds the variant's live stock —
+ * pure for hermetic tests. `stockOf` returns the available quantity (or
+ * undefined when the variant can no longer be resolved, treated as 0).
+ * A null result means every line is sellable as-is.
+ */
+export function findStockShortfall(
+  lines: { variantId: string; quantity: number; productName?: string }[],
+  stockOf: (variantId: string) => number | undefined
+): { variantId: string; productName?: string; available: number } | null {
+  for (const line of lines) {
+    const available = stockOf(line.variantId) ?? 0
+    if (line.quantity > available) {
+      return { variantId: line.variantId, productName: line.productName, available }
+    }
+  }
+  return null
 }
 
 /**
@@ -63,6 +84,28 @@ export function createOrderService(config: EngineConfig, _tenant: TenantRef): v1
       try {
         const items = await userCartItems(userId)
         if (items.length === 0) return err('VALIDATION', 'Cart is empty')
+
+        // LKD-46: reject any line exceeding live stock — the order is not
+        // written and the cart is left untouched. Clamping already happens
+        // at add/update time; this is the checkout-time backstop.
+        const stockByVariant = new Map<string, number>()
+        for (const i of items) {
+          const v = await productRepo.getVariantWithProduct(i.variantId, db)
+          if (v) stockByVariant.set(i.variantId, Number(convertNeo4jIntegers(v.variant).stockQuantity ?? 0))
+        }
+        const shortfall = findStockShortfall(
+          items.map((i) => ({ variantId: i.variantId, quantity: i.quantity, productName: i.product.name })),
+          (variantId) => stockByVariant.get(variantId)
+        )
+        if (shortfall) {
+          const name = shortfall.productName ?? 'An item in your cart'
+          return err(
+            'VALIDATION',
+            shortfall.available > 0
+              ? `Insufficient stock for ${name} — only ${shortfall.available} left`
+              : `${name} is no longer available`
+          )
+        }
 
         const subtotalMinor = items.reduce(
           (n, i) => n + i.product.price.stock.amountMinor * i.quantity,
