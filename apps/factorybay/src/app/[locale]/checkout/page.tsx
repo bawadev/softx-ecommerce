@@ -20,7 +20,11 @@ export default async function CheckoutPage({
 
   const { items, total, itemCount } = result.data
 
-  // Check if user is authenticated (optional for checkout)
+  // LKD-44: checkout requires an account. The page used to advertise "no
+  // account needed" guest checkout while Place Order popped "Sign In
+  // Required" — dishonest UX. Gate here server-side (parity with the orders
+  // list guard) so guests get the login form with a return path, and the
+  // client never renders the guest-copy flow.
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')
   let userEmail: string | undefined
@@ -35,6 +39,10 @@ export default async function CheckoutPage({
       // Invalid token, treat as guest
       userEmail = undefined
     }
+  }
+
+  if (!userEmail) {
+    redirect(`/${locale}/login?redirect=/${locale}/checkout`)
   }
 
   return (
