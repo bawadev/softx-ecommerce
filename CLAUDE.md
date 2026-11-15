@@ -285,7 +285,7 @@ All uploaded images are automatically converted to WebP format (except SVGs) for
 ### Guest Cart vs. User Cart
 - Guest carts stored in localStorage (`apps/factorybay/src/lib/guest-cart.ts`)
 - User carts stored in Neo4j via `HAS_CART_ITEM` relationships
-- Cart migration happens on login (guest cart → user cart)
+- Cart migration happens on login AND signup (guest cart → user cart; LKD-43 added the signup path)
 
 ## Development Workflow
 

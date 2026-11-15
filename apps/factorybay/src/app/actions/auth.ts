@@ -67,6 +67,20 @@ export async function signupAction(
     // Set auth cookie
     await setAuthCookie(token)
 
+    // LKD-43: migrate the guest cart on signup, exactly like loginAction —
+    // previously only login merged, so a guest cart was stranded in the
+    // cookie (reads now resolve the empty user cart) and the cart looked
+    // wiped after account creation.
+    try {
+      const guestCart = (await getGuestCart()).filter((l) => l.quantity >= 1)
+      if (guestCart.length > 0) {
+        const result = await getCartService().mergeCarts({ kind: 'guest', items: guestCart }, user.id)
+        if (result.ok) await clearGuestCart().catch(() => {})
+      }
+    } catch (error) {
+      console.error('Cart migration error:', error) // don't fail signup if migration fails
+    }
+
     return {
       success: true,
       message: 'Account created successfully!',

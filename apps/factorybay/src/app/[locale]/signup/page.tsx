@@ -28,6 +28,18 @@ export default function SignupPage() {
   // server-side error (e.g. password policy) is never cleared by typing.
   const mismatchMessage = t('passwordMismatch')
 
+  // LKD-43: honor the ?redirect= like the login page does (same validation).
+  // The checkout modal links here as /signup?redirect=/<locale>/checkout, and
+  // signup previously hardcoded /shop, dropping the return path.
+  const postSignupTarget = (): string | null => {
+    if (typeof window === 'undefined') return null
+    const raw = new URLSearchParams(window.location.search).get('redirect')
+    if (!raw) return null
+    if (!raw.startsWith('/') || raw.startsWith('//') || raw.includes('://')) return null
+    if (raw === `/${locale}` || raw.startsWith(`/${locale}/`)) return raw
+    return `/${locale}${raw}`
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (formData.confirmPassword !== formData.password) {
@@ -42,7 +54,7 @@ export default function SignupPage() {
 
       if (result.success) {
         // Use full page reload to ensure layout picks up new auth cookie
-        window.location.href = `/${locale}/shop`
+        window.location.href = postSignupTarget() ?? `/${locale}/shop`
       } else {
         setError(result.message || 'Signup failed')
       }
