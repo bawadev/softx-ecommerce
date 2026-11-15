@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { getProductsAction } from '@/app/actions/products'
 import {
@@ -10,7 +11,22 @@ import {
   resolveCategoryParamsAction,
 } from '@/app/actions/categories'
 import ProductGrid from '@/components/products/ProductGrid'
+import { shopConfig } from '@/config/shop'
 import type { v1 } from '@softx/contract'
+
+// LKD-50: the shop page used to serve the generic layout title; reflect the
+// search query at least (category/promo names need DB reads — generic there).
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ promo?: string; category?: string; search?: string }>
+}): Promise<Metadata> {
+  const params = await searchParams
+  const q = params.search?.trim()
+  return {
+    title: q ? `Search: ${q} — ${shopConfig.name}` : `Shop — ${shopConfig.name}`,
+  }
+}
 
 export default async function ShopPage({
   searchParams,
