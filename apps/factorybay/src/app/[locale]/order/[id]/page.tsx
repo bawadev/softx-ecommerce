@@ -16,13 +16,15 @@ export default async function OrderConfirmationPage({
   const token = cookieStore.get('auth_token')
 
   if (!token) {
-    redirect(`/${locale}/login`)
+    // LKD-48: honor the return path like every other guard (orders list,
+    // payment page) instead of dropping the visitor on a bare login form.
+    redirect(`/${locale}/login?redirect=/${locale}/order/${id}`)
   }
 
   try {
     await verifyToken(token.value)
   } catch {
-    redirect(`/${locale}/login`)
+    redirect(`/${locale}/login?redirect=/${locale}/order/${id}`)
   }
 
   // Get order
