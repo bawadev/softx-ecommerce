@@ -1,16 +1,33 @@
 import { v1 } from '@softx/contract'
 import type { EngineConfig, TenantRef } from './engine'
 import { toCartItemDTO, cartTotal } from './mappers/cart.mapper'
+import { convertNeo4jIntegers } from './neo4j-utils'
 import * as cartRepo from './repositories/cart.repository'
 import * as productRepo from './repositories/product.repository'
 
 const { ok, err } = v1
 
 /** Pure guest-line reducer — the cookie model, engine-side. */
-function guestAdd(items: v1.GuestCartLine[], variantId: string, quantity: number): v1.GuestCartLine[] {
+function guestAdd(items: v1.GuestCartLine[], variantId: string, targetQuantity: number): v1.GuestCartLine[] {
   const existing = items.find((l) => l.variantId === variantId)
-  if (!existing) return [...items, { variantId, quantity }]
-  return items.map((l) => (l.variantId === variantId ? { ...l, quantity: l.quantity + quantity } : l))
+  if (!existing) return [...items, { variantId, quantity: targetQuantity }]
+  return items.map((l) => (l.variantId === variantId ? { ...l, quantity: targetQuantity } : l))
+}
+
+/**
+ * LKD-46: capped line quantity for a stock level — pure for hermetic tests.
+ * `requested` is the DELTA for add-to-cart; the resulting line never exceeds
+ * `stockQuantity`, and a zero/negative stock yields 0 (nothing addable).
+ */
+export function clampLineQuantity(currentQuantity: number, requested: number, stockQuantity: number): number {
+  if (stockQuantity <= 0) return 0
+  return Math.min(currentQuantity + requested, stockQuantity)
+}
+
+/** LKD-46: normalized stock for a raw variant row (stockQuantity may be a Neo4j Integer). */
+export function stockOfVariant(variant: unknown): number {
+  const stock = convertNeo4jIntegers(variant as Record<string, unknown>).stockQuantity
+  return typeof stock === 'number' ? stock : 0
 }
 
 /**
@@ -82,8 +99,15 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
         if (quantity < 1) return err('VALIDATION', 'Quantity must be at least 1')
         const exists = await productRepo.getVariantWithProduct(variantId, db)
         if (!exists) return err('NOT_FOUND', `Variant ${variantId} not found`)
-        if (owner.kind === 'guest') return await guestResult(guestAdd(owner.items, variantId, quantity))
-        await cartRepo.addToCart(owner.userId, variantId, quantity, db)
+        // LKD-46: cap the line at available stock — the "Only N left in stock"
+        // badge is now authoritative, not cosmetic.
+        const stock = stockOfVariant(exists.variant)
+        if (stock <= 0) return err('VALIDATION', 'Out of stock')
+        if (owner.kind === 'guest') {
+          const current = owner.items.find((l) => l.variantId === variantId)?.quantity ?? 0
+          return await guestResult(guestAdd(owner.items, variantId, clampLineQuantity(current, quantity, stock)))
+        }
+        await cartRepo.addToCart(owner.userId, variantId, quantity, db, stock)
         return await this.getCart(owner)
       } catch (e) {
         return err('UNAVAILABLE', 'Failed to add item', { cause: String(e) })
@@ -93,15 +117,21 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
     async updateItem(owner, variantId, quantity) {
       try {
         if (quantity < 1) return err('VALIDATION', 'Quantity must be at least 1')
+        const exists = await productRepo.getVariantWithProduct(variantId, db)
+        if (!exists) return err('NOT_FOUND', `Variant ${variantId} not found`)
+        const stock = stockOfVariant(exists.variant)
+        if (stock <= 0) return err('VALIDATION', 'Out of stock')
+        // LKD-46: an explicit set can still never exceed the live stock.
+        const capped = Math.min(quantity, stock)
         if (owner.kind === 'guest') {
           if (!owner.items.some((l) => l.variantId === variantId)) {
             return err('NOT_FOUND', `Cart line for ${variantId} not found`)
           }
           return await guestResult(
-            owner.items.map((l) => (l.variantId === variantId ? { ...l, quantity } : l))
+            owner.items.map((l) => (l.variantId === variantId ? { ...l, quantity: capped } : l))
           )
         }
-        const updated = await cartRepo.updateCartItemQuantity(owner.userId, variantId, quantity, db)
+        const updated = await cartRepo.updateCartItemQuantity(owner.userId, variantId, capped, db)
         if (!updated) return err('NOT_FOUND', `Cart line for ${variantId} not found`)
         return await this.getCart(owner)
       } catch (e) {
@@ -152,7 +182,9 @@ export function createCartService(config: EngineConfig, _tenant: TenantRef): v1.
             ? await hydrateGuest(from.items)
             : (await cartRepo.getCartItems(from.userId, db)).map((r) => toCartItemDTO(r, currency))
         for (const line of source) {
-          await cartRepo.addToCart(toUserId, line.variantId, line.quantity, db)
+          // LKD-46: merges are capped per line too (DTO stockQuantity is
+          // already normalized by the mapper).
+          await cartRepo.addToCart(toUserId, line.variantId, line.quantity, db, line.variant.stockQuantity)
         }
         if (from.kind === 'user') await cartRepo.clearCart(from.userId, db)
         const rows = await cartRepo.getCartItems(toUserId, db)

@@ -32,11 +32,18 @@ export async function addToCart(
   userId: string,
   variantId: string,
   quantity: number = 1,
-  database?: string
+  database?: string,
+  stock?: number
 ): Promise<CartItem> {
   if (quantity <= 0) {
     throw new Error('Quantity must be greater than 0')
   }
+
+  // LKD-46: optional per-line stock ceiling. When provided, the persisted
+  // line quantity can never exceed it (create and increment paths alike),
+  // so repeated add-to-cart clicks and guest-cart merges cap at the
+  // variant's available stock.
+  const cap = stock ?? Number.MAX_SAFE_INTEGER
 
   const session = getSession(database)
   try {
@@ -48,13 +55,17 @@ export async function addToCart(
       MATCH (u:User {id: $userId})
       MATCH (v:ProductVariant {id: $variantId})
       MERGE (u)-[:HAS_CART_ITEM]->(c:CartItem {userId: $userId, variantId: $variantId})
-      ON CREATE SET c.id = $cartItemId, c.quantity = $quantity, c.addedAt = $addedAt
-      ON MATCH SET c.quantity = c.quantity + $quantity
+      ON CREATE SET c.id = $cartItemId,
+                    c.quantity = CASE WHEN $quantity > $cap THEN $cap ELSE $quantity END,
+                    c.addedAt = $addedAt
+      ON MATCH SET c.quantity = CASE WHEN c.quantity + $quantity > $cap
+                                     THEN $cap
+                                     ELSE c.quantity + $quantity END
       WITH c, v
       MERGE (c)-[:CART_ITEM_FOR]->(v)
       RETURN c {.*}
       `,
-      { cartItemId, userId, variantId, quantity, addedAt: now }
+      { cartItemId, userId, variantId, quantity, addedAt: now, cap }
     )
 
     return result.records[0].get('c')

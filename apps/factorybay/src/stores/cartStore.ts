@@ -25,6 +25,10 @@ interface CartStore {
   isRemoving: boolean
   isLoading: boolean
 
+  // LKD-46: engine reason for the last failed mutation (Out of stock, …)
+  // so UI can surface it instead of a generic failure string.
+  lastError: string | null
+
   // Actions
   loadCart: () => Promise<void>
   addToCart: (variantId: string, quantity?: number) => Promise<boolean>
@@ -62,6 +66,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
   isUpdating: false,
   isRemoving: false,
   isLoading: false,
+  lastError: null,
 
   // Load cart from server
   loadCart: async () => {
@@ -80,7 +85,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   // Add item to cart — server projection applied on success, no refetch
   addToCart: async (variantId: string, quantity = 1) => {
-    set({ isAdding: true })
+    set({ isAdding: true, lastError: null })
 
     try {
       const result = await addToCartAction(variantId, quantity)
@@ -89,6 +94,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
         setProjection(set, result.data)
         return true
       }
+      set({ lastError: result.message ?? null })
       return false
     } catch (error) {
       console.error('Failed to add to cart:', error)

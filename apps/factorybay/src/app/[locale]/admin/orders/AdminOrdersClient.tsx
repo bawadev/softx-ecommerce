@@ -7,6 +7,7 @@ import { useLocale } from 'next-intl'
 import { updateAdminOrderStatusAction } from '@/app/actions/admin-orders'
 import type { v1 } from '@softx/contract'
 import { amount } from '@/lib/price'
+import { formatDate } from '@/lib/format' // LKD-45
 import Notification, { type NotificationType } from '@/components/ui/Notification'
 
 type OrderStatus = v1.OrderDTO['status']
@@ -122,13 +123,8 @@ export default function AdminOrdersClient({ orders: initialOrders }: AdminOrders
       <div className="mx-auto max-w-7xl px-4 pb-8 sm:px-6 lg:px-8">
         <div className="space-y-4">
           {orders.map((order) => {
-            const orderDate = new Date(order.createdAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
+            // LKD-45: fixed TZ
+            const orderDate = formatDate(order.createdAt, locale, { time: true })
 
             return (
               <div key={order.id} className="bg-white rounded-lg shadow-sm border border-gray-200">

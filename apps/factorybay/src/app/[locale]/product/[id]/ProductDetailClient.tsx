@@ -54,6 +54,14 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       ? product.variants.find((v) => v.size === selectedSize && v.color === selectedColor)
       : null
 
+  // LKD-46: cap Add to Cart at the variant's live stock — how much of it is
+  // already in the cart (store projection is kept fresh by Navigation).
+  const cartLineQty = useCartStore(
+    (s) => s.items.find((i) => i.variantId === selectedVariant?.id)?.quantity ?? 0
+  )
+  const atStockLimit =
+    !!selectedVariant && selectedVariant.stockQuantity > 0 && cartLineQty >= selectedVariant.stockQuantity
+
   // Get available colors for selected size
   const availableColors = selectedSize
     ? Array.from(
@@ -92,7 +100,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       // Clear message after 3 seconds
       setTimeout(() => setMessage(null), 3000)
     } else {
-      setMessage({ type: 'error', text: t('failedToAddToCart') })
+      // LKD-46: surface the engine's reason (Out of stock / capped) when it
+      // provides one, instead of a generic failure string.
+      const reason = useCartStore.getState().lastError
+      setMessage({ type: 'error', text: reason || t('failedToAddToCart') })
     }
 
     setIsAdding(false)
@@ -364,17 +375,30 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             <div className="space-y-3">
               <button
                 onClick={handleAddToCart}
-                disabled={!selectedVariant || selectedVariant.stockQuantity === 0 || isAdding || isAddingToCart}
+                disabled={
+                  !selectedVariant ||
+                  selectedVariant.stockQuantity === 0 ||
+                  atStockLimit ||
+                  isAdding ||
+                  isAddingToCart
+                }
                 className="btn-primary w-full text-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isAdding || isAddingToCart
                   ? t('adding')
                   : !selectedSize || !selectedColor
                   ? t('selectSizeAndColor')
+                  : atStockLimit
+                  ? t('allInCart')
                   : selectedVariant && selectedVariant.stockQuantity > 0
                   ? t('addToCart')
                   : t('outOfStock')}
               </button>
+              {atStockLimit && (
+                <p className="text-center text-xs font-medium text-gray-700">
+                  {t('allInCartNote', { count: cartLineQty })}
+                </p>
+              )}
               <p className="text-center text-xs text-gray-500">{t('freeShipping')}</p>
             </div>
 

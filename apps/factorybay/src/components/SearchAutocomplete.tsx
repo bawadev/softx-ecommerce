@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { searchProductsAction } from '@/app/actions/products'
 import type { v1 } from '@softx/contract'
 import { amount } from '@/lib/price'
@@ -17,10 +17,14 @@ interface SearchAutocompleteProps {
 
 export default function SearchAutocomplete({
   onSearch,
-  placeholder = 'Search for products...',
+  // LKD-49: placeholder falls back to the locale message (was hardcoded
+  // English); callers may still override with an explicit placeholder.
+  placeholder,
   className = '',
   large = false,
 }: SearchAutocompleteProps) {
+  const t = useTranslations('home')
+  const resolvedPlaceholder = placeholder ?? t('searchPlaceholder')
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<v1.ProductDTO[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -92,7 +96,7 @@ export default function SearchAutocomplete({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={placeholder}
+            placeholder={resolvedPlaceholder}
             className={`${inputClasses} ${className}`}
           />
           <button

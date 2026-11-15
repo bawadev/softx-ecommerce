@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import type { v1 } from '@softx/contract'
 import { useCartStore } from '@/stores/cartStore'
 import { getColorHex } from '@/lib/color-utils'
@@ -15,6 +15,7 @@ interface CartItemProps {
 
 export default function CartItem({ item }: CartItemProps) {
   const locale = useLocale()
+  const t = useTranslations('product')
   const { updateQuantity, removeFromCart, isUpdating, isRemoving } = useCartStore()
   const [localQuantity, setLocalQuantity] = useState(item.quantity)
 
@@ -124,7 +125,7 @@ export default function CartItem({ item }: CartItemProps) {
         {/* Stock Warning */}
         {item.variant.stockQuantity < 5 && (
           <p className="mt-2 text-xs text-black-600">
-            Only {item.variant.stockQuantity} left in stock
+            {t('onlyLeft', { count: item.variant.stockQuantity })}
           </p>
         )}
       </div>
