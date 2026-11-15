@@ -28,6 +28,7 @@
     "profile": "පැතිකඩ",
     "cart": "කරත්තය",
     "signIn": "පුරනය වන්න",
+    "signInSignUp": "පුරනය වන්න / ලියාපදිංචි වන්න",
     "getStarted": "ආරම්භ කරන්න",
     "home": "මුල් පිටුව",
     "stockPrices": "තොග මිල",
@@ -35,6 +36,21 @@
     "adminPanel": "පරිපාලක පැනලය",
     "menu": "මෙනුව",
     "signedInAs": "ලෙස පිවිසී ඇත"
+  },
+  "hierarchyCategories": {
+    "gents": "පිරිමි",
+    "ladies": "කාන්තා",
+    "kids": "ළමා",
+    "tops": "ටොප්",
+    "bottoms": "පහළ ඇඳුම්",
+    "dresses": "ඇඳුම්",
+    "accessories": "උපාංග",
+    "activewear": "ක්‍රීඩා ඇඳුම්",
+    "footwear": "පාවහන",
+    "formal-wear": "නිල ඇඳුම්",
+    "innerwear": "ඇතුළු ඇඳුම්",
+    "outerwear": "පිටත ඇඳුම්",
+    "sleepwear": "නින්ද ඇඳුම්"
   },
   "home": {
     "hero": {
@@ -53,6 +69,7 @@
     "newArrivalsSubtitle": "අපගේ නවතම නිෂ්පාදන බලන්න",
     "viewAll": "සියල්ල බලන්න →",
     "shopByCategory": "කාණ්ඩය අනුව සාප්පු සවාරි",
+    "searchPlaceholder": "නිෂ්පාදන සොයන්න...",
     "clearAll": "සියල්ල ඉවත් කරන්න",
     "subcategories": "උප කාණ්ඩ (පෙරීමට ක්ලික් කරන්න)",
     "filteredProducts": "පෙරන ලද නිෂ්පාදන",
@@ -159,6 +176,8 @@
     "selectColor": "වර්ණය තෝරන්න",
     "inStock": "තොගයේ ඇත",
     "onlyLeft": "තවත් {count} ක් පමණක් තොගයේ ඇත",
+    "allInCart": "කරත්තයේ ඇත",
+    "allInCartNote": "තොගයේ ඇති {count} සියල්ලම ඔබේ කරත්තයේ ඇත",
     "outOfStock": "තොගයෙන් අවසන්",
     "addToCart": "කරත්තයට එක් කරන්න",
     "adding": "එක් කරමින්...",

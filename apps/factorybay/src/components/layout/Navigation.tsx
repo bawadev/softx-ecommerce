@@ -215,7 +215,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                   href={`/${locale}/auth`}
                   className="px-4 py-2 rounded-none text-sm font-medium text-gray-700 hover:bg-gray-50/50 hover:text-black-700 hover:backdrop-blur-sm transition-all duration-200"
                 >
-                  Sign in / Sign up
+                  {t('signInSignUp')}
                 </Link>
               )}
             </div>
@@ -372,7 +372,7 @@ export default function Navigation({ isAuthenticated, userEmail, isAdmin }: Navi
                     href={`/${locale}/auth`}
                     className="block px-4 py-3.5 rounded-none text-base font-medium text-gray-700 hover:bg-gray-50/50 hover:backdrop-blur-sm transition-all duration-200 text-center"
                   >
-                    Sign in / Sign up
+                    {t('signInSignUp')}
                   </Link>
                 </>
               )}

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import SearchAutocomplete from '@/components/SearchAutocomplete'
 import {
   SLIDE_INTERVAL,
@@ -35,6 +35,8 @@ interface HeroSliderProps {
 
 export default function HeroSlider({ slides }: HeroSliderProps) {
   const locale = useLocale()
+  // LKD-49: hero search affordances come from i18n (were hardcoded English).
+  const t = useTranslations('home')
   const [currentSlide, setCurrentSlide] = useState(0)
   const [slideDirection, setSlideDirection] = useState(1) // 1 = push left, -1 = push right
   const [searchOpen, setSearchOpen] = useState(false)
@@ -129,7 +131,6 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
                   }
                 }}>
                   <SearchAutocomplete
-                    placeholder="Search products..."
                     large={true}
                     className="!bg-white/20 !backdrop-blur-md !shadow-2xl !border-white/30 [&_input]:!text-white [&_input]:!placeholder-white/70"
                   />
@@ -154,13 +155,13 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            aria-label="Search products..."
+            aria-label={t('searchPlaceholder')}
             className="mt-6 flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm text-white/90 backdrop-blur-md transition-colors hover:bg-white/20"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            Search products...
+            {t('searchPlaceholder')}
           </button>
         </div>
         {searchOverlay}

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import type { HeroSlideProps } from '../heroAnimationConfig'
 import {
   bottomSweepVariants,
@@ -13,6 +14,8 @@ import {
 
 export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchClick, colorTheme = 'light', customStyle }: HeroSlideProps) {
   const shouldReduce = useReducedMotion()
+  // LKD-49: slide search labels come from i18n
+  const t = useTranslations('home')
   const variants = shouldReduce ? reducedMotionVariants : bottomSweepVariants
   const theme = resolveTheme(colorTheme, customStyle)
 
@@ -86,7 +89,7 @@ export default function SlideBottomSweep({ title, subtitle, linkUrl, onSearchCli
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span className="text-sm">Search products...</span>
+            <span className="text-sm">{t('searchPlaceholder')}</span>
           </button>
         </motion.div>
 

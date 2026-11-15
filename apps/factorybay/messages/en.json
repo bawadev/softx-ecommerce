@@ -28,6 +28,7 @@
     "profile": "Profile",
     "cart": "Cart",
     "signIn": "Sign In",
+    "signInSignUp": "Sign in / Sign up",
     "getStarted": "Get Started",
     "home": "Home",
     "stockPrices": "Stock Prices",
@@ -35,6 +36,21 @@
     "adminPanel": "Admin Panel",
     "menu": "Menu",
     "signedInAs": "Signed in as"
+  },
+  "hierarchyCategories": {
+    "gents": "Gents",
+    "ladies": "Ladies",
+    "kids": "Kids",
+    "tops": "Tops",
+    "bottoms": "Bottoms",
+    "dresses": "Dresses",
+    "accessories": "Accessories",
+    "activewear": "Activewear",
+    "footwear": "Footwear",
+    "formal-wear": "Formal Wear",
+    "innerwear": "Innerwear",
+    "outerwear": "Outerwear",
+    "sleepwear": "Sleepwear"
   },
   "home": {
     "hero": {
@@ -53,6 +69,7 @@
     "newArrivalsSubtitle": "Check out our latest products",
     "viewAll": "View All →",
     "shopByCategory": "Shop by Category",
+    "searchPlaceholder": "Search products...",
     "clearAll": "Clear All",
     "subcategories": "Subcategories (click to filter)",
     "filteredProducts": "Filtered Products",
@@ -159,6 +176,8 @@
     "selectColor": "Select Color",
     "inStock": "In Stock",
     "onlyLeft": "Only {count} left in stock",
+    "allInCart": "All in cart",
+    "allInCartNote": "All {count} available are already in your cart",
     "outOfStock": "Out of Stock",
     "addToCart": "Add to Cart",
     "adding": "Adding...",

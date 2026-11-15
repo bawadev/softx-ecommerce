@@ -37,6 +37,17 @@ export default function HomePageClient({
   const locale = useLocale()
   const router = useRouter()
   const t = useTranslations('home')
+  // LKD-49: DB category names are English-only — display the locale's
+  // hierarchyCategories entry when one exists, falling back to the raw name.
+  const catT = useTranslations('hierarchyCategories')
+  const categoryLabel = (category: { name: string; slug: string }) => {
+    try {
+      return catT.has(category.slug) ? catT(category.slug) : category.name
+    } catch {
+      return category.name
+    }
+  }
+  const tShop = useTranslations('shop')
 
   // Category state
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(new Set())
@@ -164,7 +175,7 @@ export default function HomePageClient({
                     }
                   `}
                 >
-                  <span>{category.name}</span>
+                  <span>{categoryLabel(category)}</span>
 
                   {/* Product count badge */}
                   {category.productCount !== undefined && category.productCount > 0 && (
@@ -215,7 +226,7 @@ export default function HomePageClient({
                         }
                       `}
                     >
-                      <span>{childCategory.name}</span>
+                      <span>{categoryLabel(childCategory)}</span>
 
                       {/* Product count badge */}
                       {childCategory.productCount !== undefined && childCategory.productCount > 0 && (
@@ -243,7 +254,7 @@ export default function HomePageClient({
             <div>
               <h2 className="font-heading text-heading-xl text-black-700">{t('filteredProducts')}</h2>
               <p className="text-sm text-gray-600 mt-1">
-                {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
+                {tShop('productsCount', { count: filteredProducts.length })}
               </p>
             </div>
             <Link
